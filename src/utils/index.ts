@@ -45,3 +45,7 @@ export const sanitizeMinMaxValue = (
 ) => {
   return Math.max(Math.min(val, maxVal), minVal);
 };
+
+export const calcFrameSize = (height: number, frameProportion: number) => {
+  return (height * frameProportion) / 2;
+};

@@ -16,3 +16,5 @@ export interface LEDMessageSignProps {
   /** Delay between animations in ms. Default is 0. */
   animationDelay?: number;
 }
+
+export type LEDMessageSignContextProps = Required<LEDMessageSignProps>;
