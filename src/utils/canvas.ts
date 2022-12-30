@@ -33,8 +33,8 @@ export const drawFrame = (
     COLOR_VALUES.FRAME.saturation,
     COLOR_VALUES.FRAME.lightness - 10
   );
-  const HORIZONTAL_SHADE_SIZE = 0.5;
-  const VERTICAL_SHADE_SIZE = 0.5;
+  const HORIZONTAL_SHADE_SIZE = 0.3;
+  const VERTICAL_SHADE_SIZE = 0.4;
 
   const topLeftCorner: Tuple = [0, 0];
   const topRightCorner: Tuple = [WIDTH, 0];

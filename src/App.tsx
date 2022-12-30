@@ -8,9 +8,9 @@ const App: FC = () => {
     <Container>
       <LEDMessageSign
         text="LED Message Sign"
-        // height={100}
+        height={250}
         // width={500}
-        // fullWidth
+        fullWidth
         // hueDegrees={110}
         // frameProportion={0.15}
         // animationFramesPerUpdate={2}
