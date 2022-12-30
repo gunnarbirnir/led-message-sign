@@ -48,6 +48,18 @@ export const sanitizeMinMaxValue = (
   return Math.max(Math.min(val, maxVal), minVal);
 };
 
+export const hslValuesToCss = (
+  hue: number,
+  saturation: number,
+  lightness: number,
+  opacity?: number
+) => {
+  if (opacity === undefined) {
+    return `hsl(${hue}deg ${saturation}% ${lightness}%)`;
+  }
+  return `hsl(${hue}deg ${saturation}% ${lightness}% / ${opacity})`;
+};
+
 export const calcFrameId = (id: string) => {
   return `sign-frame-${id}`;
 };

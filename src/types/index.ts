@@ -20,3 +20,9 @@ export interface LEDMessageSignProps {
 export interface SignConfig extends Required<LEDMessageSignProps> {
   id: string;
 }
+
+export interface HSLColorValues {
+  hue: number;
+  saturation: number;
+  lightness: number;
+}

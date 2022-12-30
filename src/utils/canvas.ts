@@ -1,6 +1,7 @@
 import { SignConfig } from "../types";
 import { CANVAS_SCALING } from "../constants";
-import { calcFrameSize } from "../utils";
+import { COLORS, COLOR_VALUES } from "../constants/colors";
+import { calcFrameSize, hslValuesToCss } from "../utils";
 
 type Tuple = [number, number];
 
@@ -21,9 +22,17 @@ export const drawFrame = (
   const WIDTH = width * CANVAS_SCALING;
   const SIZE = calcFrameSize(HEIGHT, frameProportion);
 
-  const TRANSPARENT_COLOR = "hsl(0deg 0% 0% / 0)";
-  const HORIZONTAL_SHADE_COLOR = "hsl(0deg 0% 100% / 0.15)";
-  const VERTICAL_SHADE_COLOR = "hsl(0deg 0% 0% / 0.3)";
+  const FRAME_COLOR = COLORS.FRAME;
+  const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
+    COLOR_VALUES.FRAME.hue,
+    COLOR_VALUES.FRAME.saturation,
+    COLOR_VALUES.FRAME.lightness + 10
+  );
+  const VERTICAL_SHADE_COLOR = hslValuesToCss(
+    COLOR_VALUES.FRAME.hue,
+    COLOR_VALUES.FRAME.saturation,
+    COLOR_VALUES.FRAME.lightness - 10
+  );
   const HORIZONTAL_SHADE_SIZE = 0.5;
   const VERTICAL_SHADE_SIZE = 0.5;
 
@@ -41,14 +50,14 @@ export const drawFrame = (
 
   const hGrd = ctx.createLinearGradient(0, 0, WIDTH, 0);
   hGrd.addColorStop(0, HORIZONTAL_SHADE_COLOR);
-  hGrd.addColorStop(HORIZONTAL_SHADE_SIZE, TRANSPARENT_COLOR);
-  hGrd.addColorStop(1 - HORIZONTAL_SHADE_SIZE, TRANSPARENT_COLOR);
+  hGrd.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_COLOR);
+  hGrd.addColorStop(1 - HORIZONTAL_SHADE_SIZE, FRAME_COLOR);
   hGrd.addColorStop(1, HORIZONTAL_SHADE_COLOR);
 
   const vGrd = ctx.createLinearGradient(0, 0, 0, HEIGHT);
   vGrd.addColorStop(0, VERTICAL_SHADE_COLOR);
-  vGrd.addColorStop(VERTICAL_SHADE_SIZE, TRANSPARENT_COLOR);
-  vGrd.addColorStop(1 - VERTICAL_SHADE_SIZE, TRANSPARENT_COLOR);
+  vGrd.addColorStop(VERTICAL_SHADE_SIZE, FRAME_COLOR);
+  vGrd.addColorStop(1 - VERTICAL_SHADE_SIZE, FRAME_COLOR);
   vGrd.addColorStop(1, VERTICAL_SHADE_COLOR);
 
   // Top border
