@@ -1,4 +1,5 @@
 import useObjectSize from "./useObjectSize";
-import useLEDMessageSignContext from "./useLEDMessageSignContext";
+import useRenderCanvas from "./useRenderCanvas";
+import useSignConfigContext from "./useSignConfigContext";
 
-export { useObjectSize, useLEDMessageSignContext };
+export { useObjectSize, useRenderCanvas, useSignConfigContext };

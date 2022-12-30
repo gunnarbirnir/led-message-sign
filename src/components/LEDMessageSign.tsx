@@ -1,35 +1,37 @@
-import { FC, memo, useRef, useMemo } from "react";
+import { FC, memo, useRef, useMemo, useId } from "react";
 
 import { LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils";
-import { useObjectSize } from "../hooks";
-import { LEDMessageSignContext } from "../context";
+import { useObjectSize, useRenderCanvas } from "../hooks";
+import { SignConfigContext } from "../context";
 import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
 
 const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
+  const signId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const { width: containerWidth } = useObjectSize(containerRef);
-
   const sanitizedProps = useMemo(() => sanitizeProps(props), [props]);
   const { fullWidth } = sanitizedProps;
 
-  const contextValue = useMemo(
+  const config = useMemo(
     () => ({
       ...sanitizedProps,
+      id: signId,
       width: sanitizedProps.fullWidth ? containerWidth : sanitizedProps.width,
     }),
-    [sanitizedProps, containerWidth]
+    [signId, sanitizedProps, containerWidth]
   );
+  useRenderCanvas(config);
 
   return (
-    <LEDMessageSignContext.Provider value={contextValue}>
+    <SignConfigContext.Provider value={config}>
       <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
         <SignFrame>
           <SignDisplay />
         </SignFrame>
       </div>
-    </LEDMessageSignContext.Provider>
+    </SignConfigContext.Provider>
   );
 };
 

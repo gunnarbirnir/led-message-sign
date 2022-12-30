@@ -1,3 +1,3 @@
-import LEDMessageSignContext from "./LEDMessageSignContext";
+import SignConfigContext from "./SignConfigContext";
 
-export { LEDMessageSignContext };
+export { SignConfigContext };

@@ -17,4 +17,6 @@ export interface LEDMessageSignProps {
   animationDelay?: number;
 }
 
-export type LEDMessageSignContextProps = Required<LEDMessageSignProps>;
+export interface SignConfig extends Required<LEDMessageSignProps> {
+  id: string;
+}

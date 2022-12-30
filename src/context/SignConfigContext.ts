@@ -1,8 +1,9 @@
 import { createContext } from "react";
 
-import { LEDMessageSignContextProps } from "../types";
+import { SignConfig } from "../types";
 
-const LEDMessageSignContext = createContext<LEDMessageSignContextProps>({
+const SignConfigContext = createContext<SignConfig>({
+  id: "",
   text: "",
   height: 0,
   width: 0,
@@ -13,4 +14,4 @@ const LEDMessageSignContext = createContext<LEDMessageSignContextProps>({
   animationDelay: 0,
 });
 
-export default LEDMessageSignContext;
+export default SignConfigContext;

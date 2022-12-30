@@ -1,6 +1,8 @@
 import { LEDMessageSignProps } from "../types";
 import { DEFAULT_VALUE, MIN_VALUE, MAX_VALUE } from "../constants/props";
 
+// TODO: Test
+
 export const sanitizeProps = ({
   text,
   height = DEFAULT_VALUE.HEIGHT,
@@ -44,6 +46,10 @@ export const sanitizeMinMaxValue = (
   maxVal: number
 ) => {
   return Math.max(Math.min(val, maxVal), minVal);
+};
+
+export const calcFrameId = (id: string) => {
+  return `sign-frame-${id}`;
 };
 
 export const calcFrameSize = (height: number, frameProportion: number) => {
