@@ -13,6 +13,7 @@ export const drawFrame = (
   animationFrame: number
 ) => {
   // TODO
+  // Testing
 };
 
 export const drawMessage = (
