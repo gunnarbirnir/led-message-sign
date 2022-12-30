@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useSignConfigContext } from "../hooks";
 import { COLORS } from "../constants/colors";
 import { calcFrameId, calcFrameSize } from "../utils";
+import Canvas from "./Canvas";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { id, height, width, frameProportion } = useSignConfigContext();
@@ -15,7 +16,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <StyledSignFrame style={{ height, width, padding: frameSize }}>
-      <FrameCanvas id={frameId} />
+      <FrameCanvas id={frameId} height={height} width={width} />
       {children}
     </StyledSignFrame>
   );
@@ -26,12 +27,10 @@ const StyledSignFrame = styled.div`
   position: relative;
 `;
 
-const FrameCanvas = styled.canvas`
+const FrameCanvas = styled(Canvas)`
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
-  width: 100%;
 `;
 
 export default SignFrame;

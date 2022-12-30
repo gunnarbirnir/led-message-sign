@@ -11,7 +11,9 @@ const useRenderCanvas = (config: SignConfig) => {
 
     let animationFrame = 0;
     const renderCanvas = () => {
-      drawFrame(frameCtx, config, animationFrame);
+      if (frameCtx) {
+        drawFrame(frameCtx, config, animationFrame);
+      }
       // drawMessage(config, animationFrame);
 
       animationFrame = requestAnimationFrame(renderCanvas);
