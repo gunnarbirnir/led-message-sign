@@ -1,5 +1,5 @@
 export const DEFAULT_VALUE = {
-  HEIGHT: 300,
+  HEIGHT: 200,
   WIDTH: 800,
   FULL_WIDTH: false,
   HUE_DEGREES: 0,

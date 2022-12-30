@@ -1,7 +1,7 @@
 export interface LEDMessageSignProps {
   /** Message text. */
   text: string;
-  /** Sign height. Default is 300. */
+  /** Sign height. Default is 200. */
   height?: number;
   /** Sign width. Default is 800. */
   width?: number;

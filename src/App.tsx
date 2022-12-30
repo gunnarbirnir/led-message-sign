@@ -10,7 +10,7 @@ const App: FC = () => {
         text="LED Message Sign"
         // height={100}
         // width={500}
-        fullWidth
+        // fullWidth
         // hueDegrees={110}
         // frameProportion={0.15}
         // animationFramesPerUpdate={2}
