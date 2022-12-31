@@ -1,21 +1,30 @@
 import { useEffect } from "react";
 
 import { SignConfig } from "../types";
-import { calcFrameId } from "../utils";
-import { getCanvasContext, drawFrame } from "../utils/canvas";
+import { calcFrameId, calcDisplayId } from "../utils";
+import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
+import { CANVAS_SCALING } from "../constants";
 
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
+    let animationFrame = 0;
     const frameId = calcFrameId(config.id);
     const frameCtx = getCanvasContext(frameId);
+    const displayId = calcDisplayId(config.id);
+    const displayCtx = getCanvasContext(displayId);
+    const adjustedConfig = {
+      ...config,
+      height: config.height * CANVAS_SCALING,
+      width: config.width * CANVAS_SCALING,
+    };
 
-    let animationFrame = 0;
     const renderCanvas = () => {
       if (frameCtx) {
-        drawFrame(frameCtx, config, animationFrame);
+        drawFrame(frameCtx, adjustedConfig, animationFrame);
       }
-      // drawMessage(config, animationFrame);
-
+      if (displayCtx) {
+        drawDisplay(displayCtx, adjustedConfig, animationFrame);
+      }
       animationFrame = requestAnimationFrame(renderCanvas);
     };
     renderCanvas();

@@ -1,4 +1,5 @@
 import { LEDMessageSignProps } from "../types";
+import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { DEFAULT_VALUE, MIN_VALUE, MAX_VALUE } from "../constants/props";
 
 // TODO: Test
@@ -64,6 +65,56 @@ export const calcFrameId = (id: string) => {
   return `sign-frame-${id}`;
 };
 
-export const calcFrameSize = (height: number, frameProportion: number) => {
-  return (height * frameProportion) / 2;
+export const calcFrameSize = (signHeight: number, frameProportion: number) => {
+  return (signHeight * frameProportion) / 2;
+};
+
+export const calcDisplayId = (id: string) => {
+  return `sign-display-${id}`;
+};
+
+export const calcDisplayHeight = (signHeight: number, frameSize: number) => {
+  return signHeight - frameSize * 2;
+};
+
+export const calcDisplayWidth = (signWidth: number, frameSize: number) => {
+  return signWidth - frameSize * 2;
+};
+
+export const calcDisplayVerticalPadding = (signHeight: number) => {
+  return Math.floor(signHeight * PADDING_TO_HEIGHT_RATIO);
+};
+
+export const calcPixelAreaHeight = (
+  displayHeight: number,
+  verticalPadding: number
+) => {
+  return displayHeight - verticalPadding * 2;
+};
+
+export const calcPixelSize = (pixelAreaHeight: number) => {
+  return pixelAreaHeight / VERTICAL_PIXEL_COUNT;
+};
+
+export const calcHorizontalPixelCount = (
+  displayWidth: number,
+  verticalPadding: number,
+  pixelSize: number
+) => {
+  const widthWithoutPadding = displayWidth - verticalPadding * 2;
+  return Math.floor(widthWithoutPadding / pixelSize);
+};
+
+export const calcPixelAreaWidth = (
+  pixelSize: number,
+  horizontalPixelCount: number
+) => {
+  return pixelSize * horizontalPixelCount;
+};
+
+export const calcDisplayHorizontalPadding = (
+  displayWidth: number,
+  pixelAreaWidth: number
+) => {
+  return (displayWidth - pixelAreaWidth) / 2;
 };
