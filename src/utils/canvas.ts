@@ -1,19 +1,22 @@
-import { SignConfig } from "../types";
 import { COLORS, COLOR_VALUES } from "../constants/colors";
-import {
-  calcFrameSize,
-  hslValuesToCss,
-  calcDisplayHeight,
-  calcDisplayWidth,
-  calcDisplayVerticalPadding,
-  calcPixelAreaHeight,
-  calcPixelSize,
-  calcHorizontalPixelCount,
-  calcPixelAreaWidth,
-  calcDisplayHorizontalPadding,
-} from "../utils";
+import { hslValuesToCss } from "../utils";
 
 type Tuple = [number, number];
+
+interface SignComputedValues {
+  signHeight: number;
+  signWidth: number;
+  frameSize: number;
+  displayHeight: number;
+  displayWidth: number;
+  displayPaddingX: number;
+  displayPaddingY: number;
+  pixelAreaHeight: number;
+  pixelAreaWidth: number;
+  pixelSize: number;
+  pixelCountX: number;
+  pixelCountY: number;
+}
 
 export const getCanvasContext = (id: string) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -38,31 +41,33 @@ const VERTICAL_SHADE_SIZE = 0.4;
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
-  config: SignConfig,
+  computedValues: SignComputedValues,
   animationFrame: number
 ) => {
-  const { height, width, frameProportion } = config;
-  const frameSize = calcFrameSize(height, frameProportion);
+  const { signHeight, signWidth, frameSize } = computedValues;
 
   const topLeftCorner: Tuple = [0, 0];
-  const topRightCorner: Tuple = [width, 0];
-  const bottomRightCorner: Tuple = [width, height];
-  const bottomLeftCorner: Tuple = [0, height];
+  const topRightCorner: Tuple = [signWidth, 0];
+  const bottomRightCorner: Tuple = [signWidth, signHeight];
+  const bottomLeftCorner: Tuple = [0, signHeight];
 
   const topLeftInner: Tuple = [frameSize, frameSize];
-  const topRightInner: Tuple = [width - frameSize, frameSize];
-  const bottomRightInner: Tuple = [width - frameSize, height - frameSize];
-  const bottomLeftInner: Tuple = [frameSize, height - frameSize];
+  const topRightInner: Tuple = [signWidth - frameSize, frameSize];
+  const bottomRightInner: Tuple = [
+    signWidth - frameSize,
+    signHeight - frameSize,
+  ];
+  const bottomLeftInner: Tuple = [frameSize, signHeight - frameSize];
 
-  ctx.clearRect(0, 0, width, height);
+  ctx.clearRect(0, 0, signWidth, signHeight);
 
-  const hGrd = ctx.createLinearGradient(0, 0, width, 0);
+  const hGrd = ctx.createLinearGradient(0, 0, signWidth, 0);
   hGrd.addColorStop(0, HORIZONTAL_SHADE_COLOR);
   hGrd.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_COLOR);
   hGrd.addColorStop(1 - HORIZONTAL_SHADE_SIZE, FRAME_COLOR);
   hGrd.addColorStop(1, HORIZONTAL_SHADE_COLOR);
 
-  const vGrd = ctx.createLinearGradient(0, 0, 0, height);
+  const vGrd = ctx.createLinearGradient(0, 0, 0, signHeight);
   vGrd.addColorStop(0, VERTICAL_SHADE_COLOR);
   vGrd.addColorStop(VERTICAL_SHADE_SIZE, FRAME_COLOR);
   vGrd.addColorStop(1 - VERTICAL_SHADE_SIZE, FRAME_COLOR);
@@ -113,27 +118,25 @@ export const drawFrame = (
 
 export const drawDisplay = (
   ctx: CanvasRenderingContext2D,
-  config: SignConfig,
+  computedValues: SignComputedValues,
   animationFrame: number
 ) => {
-  const { height, width, frameProportion } = config;
-  // TODO: Move calculations out of canvas functions
-  const frameSize = calcFrameSize(height, frameProportion);
-  const displayHeight = calcDisplayHeight(height, frameSize);
-  const displayWidth = calcDisplayWidth(width, frameSize);
-  const paddingY = calcDisplayVerticalPadding(height);
-  const pixelAreaHeight = calcPixelAreaHeight(displayHeight, paddingY);
-  const pixelSize = calcPixelSize(pixelAreaHeight);
-  const horizontalPixelCount = calcHorizontalPixelCount(
+  const {
+    displayHeight,
     displayWidth,
-    paddingY,
-    pixelSize
-  );
-  const pixelAreaWidth = calcPixelAreaWidth(pixelSize, horizontalPixelCount);
-  const paddingX = calcDisplayHorizontalPadding(displayWidth, pixelAreaWidth);
+    displayPaddingX,
+    displayPaddingY,
+    pixelAreaHeight,
+    pixelAreaWidth,
+  } = computedValues;
 
   ctx.fillStyle = hslValuesToCss(animationFrame % 360, 100, 50);
   ctx.fillRect(0, 0, displayWidth, displayHeight);
   ctx.fillStyle = hslValuesToCss(animationFrame % 360, 100, 20);
-  ctx.fillRect(paddingX, paddingY, pixelAreaWidth, pixelAreaHeight);
+  ctx.fillRect(
+    displayPaddingX,
+    displayPaddingY,
+    pixelAreaWidth,
+    pixelAreaHeight
+  );
 };
