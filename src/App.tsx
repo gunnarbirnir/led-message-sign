@@ -11,7 +11,7 @@ const App: FC = () => {
         height={250}
         // width={500}
         fullWidth
-        // hueDegrees={110}
+        // hueDegrees={100}
         // frameProportion={0.15}
         // animationFramesPerUpdate={2}
         // animationDelay={1000}

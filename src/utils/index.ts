@@ -51,8 +51,8 @@ export const sanitizeMinMaxValue = (
 
 export const hslValuesToCss = (
   hue: number,
-  saturation: number,
-  lightness: number,
+  saturation: number = 100,
+  lightness: number = 50,
   opacity?: number
 ) => {
   if (opacity === undefined) {

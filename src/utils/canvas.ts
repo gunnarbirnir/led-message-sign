@@ -14,6 +14,7 @@ interface SignComputedValues {
   pixelSize: number;
   pixelCountX: number;
   pixelCountY: number;
+  hueDegrees: number;
 }
 
 export const getCanvasContext = (id: string) => {
@@ -23,7 +24,6 @@ export const getCanvasContext = (id: string) => {
   return ctx;
 };
 
-const FRAME_COLOR = COLORS.FRAME;
 const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.hue,
   COLOR_VALUES.FRAME.saturation,
@@ -61,14 +61,14 @@ export const drawFrame = (
 
   const hGrd = ctx.createLinearGradient(0, 0, signWidth, 0);
   hGrd.addColorStop(0, HORIZONTAL_SHADE_COLOR);
-  hGrd.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_COLOR);
-  hGrd.addColorStop(1 - HORIZONTAL_SHADE_SIZE, FRAME_COLOR);
+  hGrd.addColorStop(HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
+  hGrd.addColorStop(1 - HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
   hGrd.addColorStop(1, HORIZONTAL_SHADE_COLOR);
 
   const vGrd = ctx.createLinearGradient(0, 0, 0, signHeight);
   vGrd.addColorStop(0, VERTICAL_SHADE_COLOR);
-  vGrd.addColorStop(VERTICAL_SHADE_SIZE, FRAME_COLOR);
-  vGrd.addColorStop(1 - VERTICAL_SHADE_SIZE, FRAME_COLOR);
+  vGrd.addColorStop(VERTICAL_SHADE_SIZE, COLORS.FRAME);
+  vGrd.addColorStop(1 - VERTICAL_SHADE_SIZE, COLORS.FRAME);
   vGrd.addColorStop(1, VERTICAL_SHADE_COLOR);
 
   // Top border
@@ -114,6 +114,10 @@ export const drawFrame = (
   // TODO: Add glow from letters
 };
 
+const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
+const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 1.8;
+const PIXEL_TO_BULB_RADIUS_RATIO = 6;
+
 export const drawDisplay = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
@@ -127,6 +131,7 @@ export const drawDisplay = (
     pixelSize,
     pixelCountX,
     pixelCountY,
+    hueDegrees,
   } = computedValues;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
@@ -136,12 +141,48 @@ export const drawDisplay = (
       // Pretty cool effect, use for something else?
       // ctx.fillStyle = hslValuesToCss((animationFrame + x + y) % 360, 100, 50);
 
-      const pixelX = displayPaddingX + (x + 0.5) * pixelSize;
-      const pixelY = displayPaddingY + (y + 0.5) * pixelSize;
+      const lightOn = (x + y) % 2 === 0;
+      const pixelX = displayPaddingX + x * pixelSize;
+      const pixelY = displayPaddingY + y * pixelSize;
+      const pixelCenterX = pixelX + pixelSize / 2;
+      const pixelCenterY = pixelY + pixelSize / 2;
+      const bulbColor = lightOn ? COLOR_VALUES.BULB_ON : COLOR_VALUES.BULB_OFF;
 
-      ctx.fillStyle = hslValuesToCss((animationFrame + y + x) % 360, 100, 50);
+      if (lightOn) {
+        const grd = ctx.createRadialGradient(
+          pixelCenterX,
+          pixelCenterY,
+          pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
+          pixelCenterX,
+          pixelCenterY,
+          pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
+        );
+        grd.addColorStop(
+          0,
+          hslValuesToCss(
+            hueDegrees,
+            COLOR_VALUES.LIGHT.saturation,
+            COLOR_VALUES.LIGHT.lightness
+          )
+        );
+        grd.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+        ctx.fillStyle = grd;
+        ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+      }
+
+      ctx.fillStyle = hslValuesToCss(
+        hueDegrees,
+        bulbColor.saturation,
+        bulbColor.lightness
+      );
       ctx.beginPath();
-      ctx.arc(pixelX, pixelY, pixelSize / 6, 0, 2 * Math.PI);
+      ctx.arc(
+        pixelCenterX,
+        pixelCenterY,
+        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+        0,
+        2 * Math.PI
+      );
       ctx.fill();
     }
   }

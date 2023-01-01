@@ -16,6 +16,7 @@ import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
 import { CANVAS_SCALING, VERTICAL_PIXEL_COUNT } from "../constants";
 
 const getComputedValues = (config: SignConfig) => {
+  const { hueDegrees } = config;
   const signHeight = config.height * CANVAS_SCALING;
   const signWidth = config.width * CANVAS_SCALING;
   const frameSize = calcFrameSize(signHeight, config.frameProportion);
@@ -46,6 +47,7 @@ const getComputedValues = (config: SignConfig) => {
     pixelSize,
     pixelCountX,
     pixelCountY,
+    hueDegrees,
   };
 };
 
