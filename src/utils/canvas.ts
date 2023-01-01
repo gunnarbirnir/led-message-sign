@@ -1,21 +1,6 @@
 import { COLORS, COLOR_VALUES } from "../constants/colors";
-import { hslValuesToCss } from "../utils";
-
-type Tuple = [number, number];
-
-interface SignComputedValues {
-  signHeight: number;
-  signWidth: number;
-  frameSize: number;
-  displayHeight: number;
-  displayWidth: number;
-  displayPaddingX: number;
-  displayPaddingY: number;
-  pixelSize: number;
-  pixelCountX: number;
-  pixelCountY: number;
-  hueDegrees: number;
-}
+import { hslValuesToCss, calcAnimationOffset, isPixelOn } from "../utils";
+import { SignComputedValues, Tuple } from "../types";
 
 export const getCanvasContext = (id: string) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -131,7 +116,9 @@ export const drawDisplay = (
     pixelSize,
     pixelCountX,
     pixelCountY,
+    pixelGrid,
     hueDegrees,
+    animationFramesPerUpdate,
   } = computedValues;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
@@ -141,14 +128,19 @@ export const drawDisplay = (
       // Pretty cool effect, use for something else?
       // ctx.fillStyle = hslValuesToCss((animationFrame + x + y) % 360, 100, 50);
 
-      const lightOn = (x + y) % 2 === 0;
+      const offset = calcAnimationOffset(
+        animationFrame,
+        animationFramesPerUpdate,
+        pixelCountX
+      );
+      const pixelOn = isPixelOn(x, y, offset, pixelGrid);
       const pixelX = displayPaddingX + x * pixelSize;
       const pixelY = displayPaddingY + y * pixelSize;
       const pixelCenterX = pixelX + pixelSize / 2;
       const pixelCenterY = pixelY + pixelSize / 2;
-      const bulbColor = lightOn ? COLOR_VALUES.BULB_ON : COLOR_VALUES.BULB_OFF;
+      const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : COLOR_VALUES.BULB_OFF;
 
-      if (lightOn) {
+      if (pixelOn) {
         const grd = ctx.createRadialGradient(
           pixelCenterX,
           pixelCenterY,

@@ -7,34 +7,32 @@ import {
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
-  calcDisplayVerticalPadding,
+  calcDisplayPaddingY,
   calcPixelSize,
-  calcHorizontalPixelCount,
-  calcDisplayHorizontalPadding,
+  calcPixelCountX,
+  calcDisplayPaddingX,
+  calcPixelGrid,
 } from "../utils";
 import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
 import { CANVAS_SCALING, VERTICAL_PIXEL_COUNT } from "../constants";
 
 const getComputedValues = (config: SignConfig) => {
-  const { hueDegrees } = config;
+  const { animationFramesPerUpdate, hueDegrees } = config;
   const signHeight = config.height * CANVAS_SCALING;
   const signWidth = config.width * CANVAS_SCALING;
   const frameSize = calcFrameSize(signHeight, config.frameProportion);
   const displayHeight = calcDisplayHeight(signHeight, frameSize);
   const displayWidth = calcDisplayWidth(signWidth, frameSize);
-  const displayPaddingY = calcDisplayVerticalPadding(signHeight);
+  const displayPaddingY = calcDisplayPaddingY(signHeight);
   const pixelSize = calcPixelSize(displayHeight, displayPaddingY);
-  const pixelCountX = calcHorizontalPixelCount(
-    displayWidth,
-    displayPaddingY,
-    pixelSize
-  );
-  const displayPaddingX = calcDisplayHorizontalPadding(
+  const pixelCountX = calcPixelCountX(displayWidth, displayPaddingY, pixelSize);
+  const displayPaddingX = calcDisplayPaddingX(
     displayWidth,
     pixelSize,
     pixelCountX
   );
   const pixelCountY = VERTICAL_PIXEL_COUNT;
+  const pixelGrid = calcPixelGrid(config.text, pixelCountX);
 
   return {
     signHeight,
@@ -47,7 +45,9 @@ const getComputedValues = (config: SignConfig) => {
     pixelSize,
     pixelCountX,
     pixelCountY,
+    pixelGrid,
     hueDegrees,
+    animationFramesPerUpdate,
   };
 };
 
