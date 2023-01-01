@@ -8,10 +8,8 @@ import {
   calcDisplayHeight,
   calcDisplayWidth,
   calcDisplayVerticalPadding,
-  calcPixelAreaHeight,
   calcPixelSize,
   calcHorizontalPixelCount,
-  calcPixelAreaWidth,
   calcDisplayHorizontalPadding,
 } from "../utils";
 import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
@@ -24,17 +22,16 @@ const getComputedValues = (config: SignConfig) => {
   const displayHeight = calcDisplayHeight(signHeight, frameSize);
   const displayWidth = calcDisplayWidth(signWidth, frameSize);
   const displayPaddingY = calcDisplayVerticalPadding(signHeight);
-  const pixelAreaHeight = calcPixelAreaHeight(displayHeight, displayPaddingY);
-  const pixelSize = calcPixelSize(pixelAreaHeight);
+  const pixelSize = calcPixelSize(displayHeight, displayPaddingY);
   const pixelCountX = calcHorizontalPixelCount(
     displayWidth,
     displayPaddingY,
     pixelSize
   );
-  const pixelAreaWidth = calcPixelAreaWidth(pixelSize, pixelCountX);
   const displayPaddingX = calcDisplayHorizontalPadding(
     displayWidth,
-    pixelAreaWidth
+    pixelSize,
+    pixelCountX
   );
   const pixelCountY = VERTICAL_PIXEL_COUNT;
 
@@ -46,8 +43,6 @@ const getComputedValues = (config: SignConfig) => {
     displayWidth,
     displayPaddingY,
     displayPaddingX,
-    pixelAreaHeight,
-    pixelAreaWidth,
     pixelSize,
     pixelCountX,
     pixelCountY,

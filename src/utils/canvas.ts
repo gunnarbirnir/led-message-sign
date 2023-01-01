@@ -11,8 +11,6 @@ interface SignComputedValues {
   displayWidth: number;
   displayPaddingX: number;
   displayPaddingY: number;
-  pixelAreaHeight: number;
-  pixelAreaWidth: number;
   pixelSize: number;
   pixelCountX: number;
   pixelCountY: number;
@@ -126,17 +124,25 @@ export const drawDisplay = (
     displayWidth,
     displayPaddingX,
     displayPaddingY,
-    pixelAreaHeight,
-    pixelAreaWidth,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
   } = computedValues;
 
-  ctx.fillStyle = hslValuesToCss(animationFrame % 360, 100, 50);
-  ctx.fillRect(0, 0, displayWidth, displayHeight);
-  ctx.fillStyle = hslValuesToCss(animationFrame % 360, 100, 20);
-  ctx.fillRect(
-    displayPaddingX,
-    displayPaddingY,
-    pixelAreaWidth,
-    pixelAreaHeight
-  );
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+  for (let x = 0; x < pixelCountX; x++) {
+    for (let y = 0; y < pixelCountY; y++) {
+      // Pretty cool effect, use for something else?
+      // ctx.fillStyle = hslValuesToCss((animationFrame + x + y) % 360, 100, 50);
+
+      const pixelX = displayPaddingX + (x + 0.5) * pixelSize;
+      const pixelY = displayPaddingY + (y + 0.5) * pixelSize;
+
+      ctx.fillStyle = hslValuesToCss((animationFrame + y + x) % 360, 100, 50);
+      ctx.beginPath();
+      ctx.arc(pixelX, pixelY, pixelSize / 6, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
 };
