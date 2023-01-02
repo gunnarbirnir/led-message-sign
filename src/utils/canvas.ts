@@ -3,6 +3,7 @@ import {
   hslValuesToCss,
   calcAnimationOffset,
   calcTotalOffset,
+  calcMultiColorValue,
   isPixelOn,
 } from "../utils";
 import { SignComputedValues, Tuple, SignConfig } from "../types";
@@ -140,7 +141,9 @@ export const drawDisplay = (
     const pixelCenterX = pixelX + pixelSize / 2;
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelHue = multiColor ? (animationFrame + x + y) % 360 : hueDegrees;
+      const pixelHue = multiColor
+        ? calcMultiColorValue(x, y, animationFrame)
+        : hueDegrees;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelY = displayPaddingY + y * pixelSize;
       const pixelCenterY = pixelY + pixelSize / 2;
