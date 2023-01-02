@@ -125,7 +125,7 @@ export const drawDisplay = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { hueDegrees, animationFramesPerUpdate, multiColor } = config;
+  const { hueDegrees, multiColor, animationFramesPerUpdate } = config;
 
   const animationOffset = calcAnimationOffset(
     animationFrame,

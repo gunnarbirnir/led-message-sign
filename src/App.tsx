@@ -12,10 +12,10 @@ const App: FC = () => {
         // width={500}
         fullWidth
         // hueDegrees={100}
+        multiColor
         // frameProportion={0.15}
         // animationFramesPerUpdate={3}
         // animationDelay={1000}
-        multiColor
       />
     </Container>
   );

@@ -14,10 +14,10 @@ export const sanitizeProps = ({
   width = DEFAULT_VALUE.WIDTH,
   fullWidth = DEFAULT_VALUE.FULL_WIDTH,
   hueDegrees = DEFAULT_VALUE.HUE_DEGREES,
+  multiColor = DEFAULT_VALUE.MULTI_COLOR,
   frameProportion = DEFAULT_VALUE.FRAME_PROPORTION,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
   animationDelay = DEFAULT_VALUE.ANIMATION_DELAY,
-  multiColor = DEFAULT_VALUE.MULTI_COLOR,
 }: LEDMessageSignProps) => {
   return {
     text:
@@ -30,6 +30,7 @@ export const sanitizeProps = ({
       MIN_VALUE.HUE_DEGREES,
       MAX_VALUE.HUE_DEGREES
     ),
+    multiColor,
     frameProportion: sanitizeMinMaxValue(
       frameProportion,
       MIN_VALUE.FRAME_PROPORTION,
@@ -40,7 +41,6 @@ export const sanitizeProps = ({
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
     animationDelay: sanitizeMinValue(animationDelay, MIN_VALUE.ANIMATION_DELAY),
-    multiColor,
   };
 };
 
