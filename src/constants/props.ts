@@ -6,7 +6,7 @@ export const DEFAULT_VALUE = {
   FRAME_PROPORTION: 0.2,
   ANIMATION_FRAMES_PER_UPDATE: 3,
   ANIMATION_DELAY: 0,
-  PARTY_MODE: false,
+  MULTI_COLOR: false,
 };
 
 export const MAX_CHARACTERS = 1000;

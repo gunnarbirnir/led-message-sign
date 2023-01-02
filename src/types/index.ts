@@ -16,7 +16,7 @@ export interface LEDMessageSignProps {
   /** Delay between animations in ms. Default is 0. */
   animationDelay?: number; // TODO: Implement. Maybe just pause every other cycle?
   /** Cycle between all available color values. If true hueDegrees prop will be ignored. Default is false.  */
-  partyMode?: boolean; // TODO: Remove if doesn't work with glow animation. Find better name?
+  multiColor?: boolean; // TODO: Remove if doesn't work with glow animation.
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {

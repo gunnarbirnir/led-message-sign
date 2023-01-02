@@ -17,7 +17,7 @@ export const sanitizeProps = ({
   frameProportion = DEFAULT_VALUE.FRAME_PROPORTION,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
   animationDelay = DEFAULT_VALUE.ANIMATION_DELAY,
-  partyMode = DEFAULT_VALUE.PARTY_MODE,
+  multiColor = DEFAULT_VALUE.MULTI_COLOR,
 }: LEDMessageSignProps) => {
   return {
     text:
@@ -40,7 +40,7 @@ export const sanitizeProps = ({
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
     animationDelay: sanitizeMinValue(animationDelay, MIN_VALUE.ANIMATION_DELAY),
-    partyMode,
+    multiColor,
   };
 };
 

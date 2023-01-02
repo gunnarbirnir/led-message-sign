@@ -125,7 +125,7 @@ export const drawDisplay = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { hueDegrees, animationFramesPerUpdate, partyMode } = config;
+  const { hueDegrees, animationFramesPerUpdate, multiColor } = config;
 
   const animationOffset = calcAnimationOffset(
     animationFrame,
@@ -140,7 +140,7 @@ export const drawDisplay = (
     const pixelCenterX = pixelX + pixelSize / 2;
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelHue = partyMode ? (animationFrame + x + y) % 360 : hueDegrees;
+      const pixelHue = multiColor ? (animationFrame + x + y) % 360 : hueDegrees;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelY = displayPaddingY + y * pixelSize;
       const pixelCenterY = pixelY + pixelSize / 2;
