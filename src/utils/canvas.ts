@@ -5,7 +5,7 @@ import {
   calcTotalOffset,
   isPixelOn,
 } from "../utils";
-import { SignComputedValues, Tuple } from "../types";
+import { SignComputedValues, Tuple, SignConfig } from "../types";
 
 export const getCanvasContext = (id: string) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -30,6 +30,7 @@ const VERTICAL_SHADE_SIZE = 0.4;
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
+  config: SignConfig,
   animationFrame: number = 0
 ) => {
   const { signHeight, signWidth, frameSize } = computedValues;
@@ -111,6 +112,7 @@ const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 export const drawDisplay = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
+  config: SignConfig,
   animationFrame: number = 0
 ) => {
   const {
@@ -122,9 +124,8 @@ export const drawDisplay = (
     pixelCountX,
     pixelCountY,
     pixelGrid,
-    hueDegrees,
-    animationFramesPerUpdate,
   } = computedValues;
+  const { hueDegrees, animationFramesPerUpdate, partyMode } = config;
 
   const animationOffset = calcAnimationOffset(
     animationFrame,
@@ -139,9 +140,7 @@ export const drawDisplay = (
     const pixelCenterX = pixelX + pixelSize / 2;
 
     for (let y = 0; y < pixelCountY; y++) {
-      // Pretty cool effect, use for something else?
-      // ctx.fillStyle = hslValuesToCss((animationFrame + x + y) % 360, 100, 50);
-
+      const pixelHue = partyMode ? (animationFrame + x + y) % 360 : hueDegrees;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelY = displayPaddingY + y * pixelSize;
       const pixelCenterY = pixelY + pixelSize / 2;
@@ -160,7 +159,7 @@ export const drawDisplay = (
         grd.addColorStop(
           0,
           hslValuesToCss(
-            hueDegrees,
+            pixelHue,
             COLOR_VALUES.LIGHT.saturation,
             COLOR_VALUES.LIGHT.lightness
           )
@@ -172,7 +171,7 @@ export const drawDisplay = (
 
       // Light bulb
       ctx.fillStyle = hslValuesToCss(
-        hueDegrees,
+        pixelHue,
         bulbColor.saturation,
         bulbColor.lightness
       );

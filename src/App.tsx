@@ -7,7 +7,7 @@ const App: FC = () => {
   return (
     <Container>
       <LEDMessageSign
-        text="LED"
+        text="LED Message Sign"
         // height={100}
         // width={500}
         fullWidth
@@ -15,6 +15,7 @@ const App: FC = () => {
         // frameProportion={0.15}
         // animationFramesPerUpdate={3}
         // animationDelay={1000}
+        partyMode
       />
     </Container>
   );

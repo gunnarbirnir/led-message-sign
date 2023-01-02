@@ -14,7 +14,9 @@ export interface LEDMessageSignProps {
   /** How many animation frames pass between sign updates. Default is 3. */
   animationFramesPerUpdate?: number;
   /** Delay between animations in ms. Default is 0. */
-  animationDelay?: number; // TODO
+  animationDelay?: number; // TODO: Implement. Maybe just pause every other cycle?
+  /** Cycle between all available color values. If true hueDegrees prop will be ignored. Default is false.  */
+  partyMode?: boolean; // TODO: Remove if doesn't work with glow animation. Find better name?
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
@@ -33,8 +35,6 @@ export interface SignComputedValues {
   pixelCountX: number;
   pixelCountY: number;
   pixelGrid: number[][];
-  hueDegrees: number;
-  animationFramesPerUpdate: number;
 }
 
 export type Tuple = [number, number];

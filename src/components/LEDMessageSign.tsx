@@ -1,7 +1,7 @@
 import { FC, memo, useRef, useMemo, useId } from "react";
 
 import { LEDMessageSignProps } from "../types";
-import { sanitizeProps } from "../utils";
+import { sanitizeProps } from "../utils/props";
 import { useObjectSize, useRenderCanvas } from "../hooks";
 import { SignConfigContext } from "../context";
 import SignFrame from "./SignFrame";
@@ -30,6 +30,7 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
         <SignFrame>
           <SignDisplay />
         </SignFrame>
+        {/* TODO: Transform sign to create reflection? */}
       </div>
     </SignConfigContext.Provider>
   );

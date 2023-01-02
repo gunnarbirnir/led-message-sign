@@ -17,7 +17,6 @@ import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
 import { CANVAS_SCALING, VERTICAL_PIXEL_COUNT } from "../constants";
 
 const getComputedValues = (config: SignConfig) => {
-  const { animationFramesPerUpdate, hueDegrees } = config;
   const signHeight = config.height * CANVAS_SCALING;
   const signWidth = config.width * CANVAS_SCALING;
   const frameSize = calcFrameSize(signHeight, config.frameProportion);
@@ -46,8 +45,6 @@ const getComputedValues = (config: SignConfig) => {
     pixelCountX,
     pixelCountY,
     pixelGrid,
-    hueDegrees,
-    animationFramesPerUpdate,
   };
 };
 
@@ -62,10 +59,10 @@ const useRenderCanvas = (config: SignConfig) => {
 
     const renderCanvas = () => {
       if (frameCtx) {
-        drawFrame(frameCtx, computedValues, animationFrame);
+        drawFrame(frameCtx, computedValues, config, animationFrame);
       }
       if (displayCtx) {
-        drawDisplay(displayCtx, computedValues, animationFrame);
+        drawDisplay(displayCtx, computedValues, config, animationFrame);
       }
       animationFrame = requestAnimationFrame(renderCanvas);
     };
