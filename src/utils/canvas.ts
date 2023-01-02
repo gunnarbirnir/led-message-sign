@@ -1,5 +1,10 @@
 import { COLORS, COLOR_VALUES } from "../constants/colors";
-import { hslValuesToCss, calcAnimationOffset, isPixelOn } from "../utils";
+import {
+  hslValuesToCss,
+  calcAnimationOffset,
+  calcTotalOffset,
+  isPixelOn,
+} from "../utils";
 import { SignComputedValues, Tuple } from "../types";
 
 export const getCanvasContext = (id: string) => {
@@ -25,7 +30,7 @@ const VERTICAL_SHADE_SIZE = 0.4;
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
-  animationFrame: number
+  animationFrame: number = 0
 ) => {
   const { signHeight, signWidth, frameSize } = computedValues;
 
@@ -106,7 +111,7 @@ const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 export const drawDisplay = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
-  animationFrame: number
+  animationFrame: number = 0
 ) => {
   const {
     displayHeight,
@@ -121,25 +126,28 @@ export const drawDisplay = (
     animationFramesPerUpdate,
   } = computedValues;
 
+  const animationOffset = calcAnimationOffset(
+    animationFrame,
+    animationFramesPerUpdate
+  );
+
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
   for (let x = 0; x < pixelCountX; x++) {
+    const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
+    const pixelX = displayPaddingX + x * pixelSize;
+    const pixelCenterX = pixelX + pixelSize / 2;
+
     for (let y = 0; y < pixelCountY; y++) {
       // Pretty cool effect, use for something else?
       // ctx.fillStyle = hslValuesToCss((animationFrame + x + y) % 360, 100, 50);
 
-      const offset = calcAnimationOffset(
-        animationFrame,
-        animationFramesPerUpdate,
-        pixelCountX
-      );
-      const pixelOn = isPixelOn(x, y, offset, pixelGrid);
-      const pixelX = displayPaddingX + x * pixelSize;
+      const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelY = displayPaddingY + y * pixelSize;
-      const pixelCenterX = pixelX + pixelSize / 2;
       const pixelCenterY = pixelY + pixelSize / 2;
       const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : COLOR_VALUES.BULB_OFF;
 
+      // Light gradient
       if (pixelOn) {
         const grd = ctx.createRadialGradient(
           pixelCenterX,
@@ -162,6 +170,7 @@ export const drawDisplay = (
         ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
       }
 
+      // Light bulb
       ctx.fillStyle = hslValuesToCss(
         hueDegrees,
         bulbColor.saturation,

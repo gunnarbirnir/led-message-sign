@@ -142,24 +142,22 @@ export const calcPixelGrid = (text: string, pixelCountX: number) => {
 
 export const calcAnimationOffset = (
   animationFrame: number,
-  animationFramesPerUpdate: number,
-  pixelCountX: number
+  animationFramesPerUpdate: number
 ) => {
-  const frameOffset = Math.floor(animationFrame / animationFramesPerUpdate);
-  // To start at the right place
-  return pixelCountX + frameOffset;
+  return Math.floor(animationFrame / animationFramesPerUpdate);
 };
 
-export const isPixelOn = (
+export const calcTotalOffset = (
   x: number,
-  y: number,
-  offset: number,
+  animationOffset: number,
   pixelGrid: number[][]
 ) => {
-  const offsetX = x + (offset % pixelGrid.length);
+  return (x + animationOffset) % pixelGrid.length;
+};
 
-  if (offsetX >= pixelGrid.length) {
+export const isPixelOn = (x: number, y: number, pixelGrid: number[][]) => {
+  if (x >= pixelGrid.length) {
     return false;
   }
-  return !!pixelGrid[offsetX][y];
+  return !!pixelGrid[x][y];
 };

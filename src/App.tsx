@@ -7,10 +7,10 @@ const App: FC = () => {
   return (
     <Container>
       <LEDMessageSign
-        text="LED Message Sign"
+        text="LED"
         // height={100}
         // width={500}
-        // fullWidth
+        fullWidth
         // hueDegrees={100}
         // frameProportion={0.15}
         // animationFramesPerUpdate={3}
