@@ -15,7 +15,6 @@ const App: FC = () => {
         multiColor
         // frameProportion={0.15}
         // animationFramesPerUpdate={3}
-        // animationDelay={1000}
       />
     </Container>
   );

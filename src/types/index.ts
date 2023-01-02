@@ -15,8 +15,6 @@ export interface LEDMessageSignProps {
   frameProportion?: number;
   /** How many animation frames pass between sign updates. Default is 3. */
   animationFramesPerUpdate?: number;
-  /** Delay between animations in ms. Default is 0. */
-  animationDelay?: number; // TODO: Implement. Maybe just pause every other cycle?
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
