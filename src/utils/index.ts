@@ -102,7 +102,7 @@ export const calcTotalOffset = (
   return (x + animationOffset) % pixelGrid.length;
 };
 
-export const calcMultiColorValue = (
+export const calcMultiColorHue = (
   x: number,
   y: number,
   animationFrame: number
@@ -111,8 +111,57 @@ export const calcMultiColorValue = (
 };
 
 export const isPixelOn = (x: number, y: number, pixelGrid: number[][]) => {
-  if (x >= pixelGrid.length) {
+  if (x < 0 || x >= pixelGrid.length) {
     return false;
   }
   return !!pixelGrid[x][y];
+};
+
+export const calcGlowPosition = (
+  // x or y
+  idx: number,
+  signSize: number,
+  pixelSize: number,
+  pixelCount: number
+) => {
+  const pixelProportion = pixelSize / (signSize || Infinity);
+  const pixelAreaProportion = pixelProportion * pixelCount;
+  const frameAndPaddingProportion = (1 - pixelAreaProportion) / 2;
+  const progress = idx / pixelCount;
+
+  return (
+    progress * pixelAreaProportion +
+    frameAndPaddingProportion +
+    pixelProportion / 2
+  );
+};
+
+// TODO: Delete if unused
+export const calcOffPixelGlowX = (
+  x: number,
+  y: number,
+  pixelCountX: number,
+  pixelGrid: number[][],
+  glowOpacity: number
+) => {
+  // To prevent glow from appearing before lights
+  if (x === pixelCountX - 1 || x === pixelCountX - 2) {
+    return 0;
+  }
+
+  const prevOn = isPixelOn(x - 1, y, pixelGrid);
+  const nextOn = isPixelOn(x + 1, y, pixelGrid);
+
+  if (prevOn || nextOn) {
+    return glowOpacity * (2 / 3);
+  }
+
+  const prevOn2 = isPixelOn(x - 2, y, pixelGrid);
+  const nextOn2 = isPixelOn(x + 2, y, pixelGrid);
+
+  if (prevOn2 || nextOn2) {
+    return glowOpacity * (1 / 3);
+  }
+
+  return 0;
 };

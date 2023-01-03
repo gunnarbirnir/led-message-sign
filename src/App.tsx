@@ -14,7 +14,7 @@ const App: FC = () => {
         // hueDegrees={100}
         multiColor
         // frameProportion={0.15}
-        // animationFramesPerUpdate={3}
+        // animationFramesPerUpdate={60}
       />
     </Container>
   );

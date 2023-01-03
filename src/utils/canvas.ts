@@ -3,8 +3,9 @@ import {
   hslValuesToCss,
   calcAnimationOffset,
   calcTotalOffset,
-  calcMultiColorValue,
+  calcMultiColorHue,
   isPixelOn,
+  calcGlowPosition,
 } from "../utils";
 import { SignComputedValues, Tuple, SignConfig } from "../types";
 
@@ -18,7 +19,7 @@ export const getCanvasContext = (id: string) => {
 const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.hue,
   COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness + 10
+  COLOR_VALUES.FRAME.lightness + 5
 );
 const VERTICAL_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.hue,
@@ -27,6 +28,7 @@ const VERTICAL_SHADE_COLOR = hslValuesToCss(
 );
 const HORIZONTAL_SHADE_SIZE = 0.3;
 const VERTICAL_SHADE_SIZE = 0.4;
+const GLOW_OPACITY = 0.2;
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
@@ -34,7 +36,21 @@ export const drawFrame = (
   config: SignConfig,
   animationFrame: number = 0
 ) => {
-  const { signHeight, signWidth, frameSize } = computedValues;
+  const {
+    signHeight,
+    signWidth,
+    frameSize,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+    pixelGrid,
+  } = computedValues;
+  const { animationFramesPerUpdate, hueDegrees, multiColor } = config;
+
+  const animationOffset = calcAnimationOffset(
+    animationFrame,
+    animationFramesPerUpdate
+  );
 
   const topLeftCorner: Tuple = [0, 0];
   const topRightCorner: Tuple = [signWidth, 0];
@@ -51,59 +67,174 @@ export const drawFrame = (
 
   ctx.clearRect(0, 0, signWidth, signHeight);
 
-  const hGrd = ctx.createLinearGradient(0, 0, signWidth, 0);
-  hGrd.addColorStop(0, HORIZONTAL_SHADE_COLOR);
-  hGrd.addColorStop(HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
-  hGrd.addColorStop(1 - HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
-  hGrd.addColorStop(1, HORIZONTAL_SHADE_COLOR);
+  const drawFrameTopBorder = (
+    fillStyle: string | CanvasGradient | CanvasPattern
+  ) => {
+    ctx.moveTo(...topLeftCorner);
+    ctx.beginPath();
+    ctx.lineTo(...topLeftInner);
+    ctx.lineTo(...topRightInner);
+    ctx.lineTo(...topRightCorner);
+    ctx.lineTo(...topLeftCorner);
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  };
 
-  const vGrd = ctx.createLinearGradient(0, 0, 0, signHeight);
-  vGrd.addColorStop(0, VERTICAL_SHADE_COLOR);
-  vGrd.addColorStop(VERTICAL_SHADE_SIZE, COLORS.FRAME);
-  vGrd.addColorStop(1 - VERTICAL_SHADE_SIZE, COLORS.FRAME);
-  vGrd.addColorStop(1, VERTICAL_SHADE_COLOR);
+  const drawFrameRightBorder = (
+    fillStyle: string | CanvasGradient | CanvasPattern
+  ) => {
+    ctx.moveTo(...topRightCorner);
+    ctx.beginPath();
+    ctx.lineTo(...topRightInner);
+    ctx.lineTo(...bottomRightInner);
+    ctx.lineTo(...bottomRightCorner);
+    ctx.lineTo(...topRightCorner);
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  };
 
-  // Top border
-  ctx.moveTo(...topLeftCorner);
-  ctx.beginPath();
-  ctx.lineTo(...topLeftInner);
-  ctx.lineTo(...topRightInner);
-  ctx.lineTo(...topRightCorner);
-  ctx.lineTo(...topLeftCorner);
-  ctx.fillStyle = hGrd;
-  ctx.fill();
+  const drawFrameBottomBorder = (
+    fillStyle: string | CanvasGradient | CanvasPattern
+  ) => {
+    ctx.moveTo(...bottomRightCorner);
+    ctx.beginPath();
+    ctx.lineTo(...bottomRightInner);
+    ctx.lineTo(...bottomLeftInner);
+    ctx.lineTo(...bottomLeftCorner);
+    ctx.lineTo(...bottomRightCorner);
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  };
 
-  // Right border
-  ctx.moveTo(...topRightCorner);
-  ctx.beginPath();
-  ctx.lineTo(...topRightInner);
-  ctx.lineTo(...bottomRightInner);
-  ctx.lineTo(...bottomRightCorner);
-  ctx.lineTo(...topRightCorner);
-  ctx.fillStyle = vGrd;
-  ctx.fill();
+  const drawFrameLeftBorder = (
+    fillStyle: string | CanvasGradient | CanvasPattern
+  ) => {
+    ctx.moveTo(...bottomLeftCorner);
+    ctx.beginPath();
+    ctx.lineTo(...bottomLeftInner);
+    ctx.lineTo(...topLeftInner);
+    ctx.lineTo(...topLeftCorner);
+    ctx.lineTo(...bottomLeftCorner);
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  };
 
-  // Bottom border
-  ctx.moveTo(...bottomRightCorner);
-  ctx.beginPath();
-  ctx.lineTo(...bottomRightInner);
-  ctx.lineTo(...bottomLeftInner);
-  ctx.lineTo(...bottomLeftCorner);
-  ctx.lineTo(...bottomRightCorner);
-  ctx.fillStyle = hGrd;
-  ctx.fill();
+  // Frame shading
+  const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
+  shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
+  shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
+  shadingX.addColorStop(1 - HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
+  shadingX.addColorStop(1, HORIZONTAL_SHADE_COLOR);
 
-  // Left border
-  ctx.moveTo(...bottomLeftCorner);
-  ctx.beginPath();
-  ctx.lineTo(...bottomLeftInner);
-  ctx.lineTo(...topLeftInner);
-  ctx.lineTo(...topLeftCorner);
-  ctx.lineTo(...bottomLeftCorner);
-  ctx.fillStyle = vGrd;
-  ctx.fill();
+  const shadingY = ctx.createLinearGradient(0, 0, 0, signHeight);
+  shadingY.addColorStop(0, VERTICAL_SHADE_COLOR);
+  shadingY.addColorStop(VERTICAL_SHADE_SIZE, COLORS.FRAME);
+  shadingY.addColorStop(1 - VERTICAL_SHADE_SIZE, COLORS.FRAME);
+  shadingY.addColorStop(1, VERTICAL_SHADE_COLOR);
 
-  // TODO: Add glow from letters
+  drawFrameTopBorder(shadingX);
+  drawFrameRightBorder(shadingY);
+  drawFrameBottomBorder(shadingX);
+  drawFrameLeftBorder(shadingY);
+
+  // Horizontal frame glow
+  const topGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
+  topGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
+  topGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  const bottomGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
+  bottomGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
+  bottomGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+
+  for (let x = 0; x < pixelCountX; x++) {
+    const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
+    const topPixelOn = isPixelOn(offsetX, 0, pixelGrid);
+    const bottomPixelOn = isPixelOn(offsetX, pixelCountY - 1, pixelGrid);
+    const position = calcGlowPosition(x, signWidth, pixelSize, pixelCountX);
+
+    const topGlowHue = multiColor
+      ? calcMultiColorHue(x, 0, animationFrame)
+      : hueDegrees;
+    const bottomGlowHue = multiColor
+      ? calcMultiColorHue(x, pixelCountY - 1, animationFrame)
+      : hueDegrees;
+
+    const topGlowOpacity = topPixelOn ? GLOW_OPACITY : 0;
+    const bottomGlowOpacity = bottomPixelOn ? GLOW_OPACITY : 0;
+
+    topGlow.addColorStop(
+      position,
+      hslValuesToCss(
+        topGlowHue,
+        COLOR_VALUES.GLOW.saturation,
+        COLOR_VALUES.GLOW.lightness,
+        topGlowOpacity
+      )
+    );
+    bottomGlow.addColorStop(
+      position,
+      hslValuesToCss(
+        bottomGlowHue,
+        COLOR_VALUES.GLOW.saturation,
+        COLOR_VALUES.GLOW.lightness,
+        bottomGlowOpacity
+      )
+    );
+  }
+
+  // Vertical frame glow
+  const leftGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
+  leftGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
+  leftGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  const rightGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
+  rightGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
+  rightGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+
+  for (let y = 0; y < pixelCountY; y++) {
+    const leftOffsetX = calcTotalOffset(0, animationOffset, pixelGrid);
+    const rightOffsetX = calcTotalOffset(
+      pixelCountX - 1,
+      animationOffset,
+      pixelGrid
+    );
+    const leftPixelOn = isPixelOn(leftOffsetX, y, pixelGrid);
+    const rightPixelOn = isPixelOn(rightOffsetX, y, pixelGrid);
+    const position = calcGlowPosition(y, signHeight, pixelSize, pixelCountY);
+
+    const leftGlowHue = multiColor
+      ? calcMultiColorHue(0, y, animationFrame)
+      : hueDegrees;
+    const rightGlowHue = multiColor
+      ? calcMultiColorHue(pixelCountX - 1, y, animationFrame)
+      : hueDegrees;
+
+    const leftGlowOpacity = leftPixelOn ? GLOW_OPACITY : 0;
+    const rightGlowOpacity = rightPixelOn ? GLOW_OPACITY : 0;
+
+    leftGlow.addColorStop(
+      position,
+      hslValuesToCss(
+        leftGlowHue,
+        COLOR_VALUES.GLOW.saturation,
+        COLOR_VALUES.GLOW.lightness,
+        leftGlowOpacity
+      )
+    );
+    rightGlow.addColorStop(
+      position,
+      hslValuesToCss(
+        rightGlowHue,
+        COLOR_VALUES.GLOW.saturation,
+        COLOR_VALUES.GLOW.lightness,
+        rightGlowOpacity
+      )
+    );
+  }
+
+  // TODO: Make a softer glow. Calculate glow amount (combined light from current and surrounding pixels)?
+  drawFrameTopBorder(topGlow);
+  drawFrameRightBorder(rightGlow);
+  drawFrameBottomBorder(bottomGlow);
+  drawFrameLeftBorder(leftGlow);
 };
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
@@ -142,7 +273,7 @@ export const drawDisplay = (
 
     for (let y = 0; y < pixelCountY; y++) {
       const pixelHue = multiColor
-        ? calcMultiColorValue(x, y, animationFrame)
+        ? calcMultiColorHue(x, y, animationFrame)
         : hueDegrees;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelY = displayPaddingY + y * pixelSize;
