@@ -6,6 +6,7 @@ import {
   calcMultiColorHue,
   isPixelOn,
   calcGlowPosition,
+  calcPixelGlow,
 } from "../utils";
 import { SignComputedValues, Tuple, SignConfig } from "../types";
 
@@ -28,7 +29,7 @@ const VERTICAL_SHADE_COLOR = hslValuesToCss(
 );
 const HORIZONTAL_SHADE_SIZE = 0.3;
 const VERTICAL_SHADE_SIZE = 0.4;
-const GLOW_OPACITY = 0.2;
+const GLOW_OPACITY = 0.15;
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
@@ -147,8 +148,6 @@ export const drawFrame = (
 
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
-    const topPixelOn = isPixelOn(offsetX, 0, pixelGrid);
-    const bottomPixelOn = isPixelOn(offsetX, pixelCountY - 1, pixelGrid);
     const position = calcGlowPosition(x, signWidth, pixelSize, pixelCountX);
 
     const topGlowHue = multiColor
@@ -158,8 +157,9 @@ export const drawFrame = (
       ? calcMultiColorHue(x, pixelCountY - 1, animationFrame)
       : hueDegrees;
 
-    const topGlowOpacity = topPixelOn ? GLOW_OPACITY : 0;
-    const bottomGlowOpacity = bottomPixelOn ? GLOW_OPACITY : 0;
+    const topGlowOpacity = calcPixelGlow(offsetX, 0, pixelGrid) * GLOW_OPACITY;
+    const bottomGlowOpacity =
+      calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid) * GLOW_OPACITY;
 
     topGlow.addColorStop(
       position,
@@ -196,8 +196,6 @@ export const drawFrame = (
       animationOffset,
       pixelGrid
     );
-    const leftPixelOn = isPixelOn(leftOffsetX, y, pixelGrid);
-    const rightPixelOn = isPixelOn(rightOffsetX, y, pixelGrid);
     const position = calcGlowPosition(y, signHeight, pixelSize, pixelCountY);
 
     const leftGlowHue = multiColor
@@ -207,8 +205,10 @@ export const drawFrame = (
       ? calcMultiColorHue(pixelCountX - 1, y, animationFrame)
       : hueDegrees;
 
-    const leftGlowOpacity = leftPixelOn ? GLOW_OPACITY : 0;
-    const rightGlowOpacity = rightPixelOn ? GLOW_OPACITY : 0;
+    const leftGlowOpacity =
+      calcPixelGlow(leftOffsetX, y, pixelGrid, true) * GLOW_OPACITY;
+    const rightGlowOpacity =
+      calcPixelGlow(rightOffsetX, y, pixelGrid, true) * GLOW_OPACITY;
 
     leftGlow.addColorStop(
       position,

@@ -136,31 +136,39 @@ export const calcGlowPosition = (
   );
 };
 
-// TODO: Delete if unused
-export const calcOffPixelGlowX = (
+const GLOW_CURRENT_PIXEL = 1;
+const GLOW_DISTANCE_1 = 0.5;
+const GLOW_DISTANCE_2 = 0.25;
+
+export const calcPixelGlow = (
   x: number,
   y: number,
-  pixelCountX: number,
   pixelGrid: number[][],
-  glowOpacity: number
+  vertical: boolean = false
 ) => {
-  // To prevent glow from appearing before lights
-  if (x === pixelCountX - 1 || x === pixelCountX - 2) {
-    return 0;
+  if (isPixelOn(x, y, pixelGrid)) {
+    return GLOW_CURRENT_PIXEL;
   }
 
-  const prevOn = isPixelOn(x - 1, y, pixelGrid);
-  const nextOn = isPixelOn(x + 1, y, pixelGrid);
+  const pixelOnAtDistance = (distance: number) => {
+    const prevCoords: [number, number] = vertical
+      ? [x, y - distance]
+      : [x - distance, y];
+    const nextCoords: [number, number] = vertical
+      ? [x, y + distance]
+      : [x + distance, y];
+    const prevPixelOn = isPixelOn(...prevCoords, pixelGrid);
+    const nextPixelOn = isPixelOn(...nextCoords, pixelGrid);
 
-  if (prevOn || nextOn) {
-    return glowOpacity * (2 / 3);
+    return prevPixelOn || nextPixelOn;
+  };
+
+  if (pixelOnAtDistance(1)) {
+    return GLOW_DISTANCE_1;
   }
 
-  const prevOn2 = isPixelOn(x - 2, y, pixelGrid);
-  const nextOn2 = isPixelOn(x + 2, y, pixelGrid);
-
-  if (prevOn2 || nextOn2) {
-    return glowOpacity * (1 / 3);
+  if (pixelOnAtDistance(2)) {
+    return GLOW_DISTANCE_2;
   }
 
   return 0;

@@ -3,6 +3,9 @@ import styled from "styled-components";
 
 import LEDMessageSign from "./components/LEDMessageSign";
 
+// TODO: Remove glow before light appear and add glow after last letter
+// TODO: Try to put some gradient over glow
+
 const App: FC = () => {
   return (
     <Container>
@@ -12,9 +15,9 @@ const App: FC = () => {
         // width={500}
         fullWidth
         // hueDegrees={100}
-        multiColor
+        // multiColor
         // frameProportion={0.15}
-        // animationFramesPerUpdate={60}
+        animationFramesPerUpdate={60}
       />
     </Container>
   );
