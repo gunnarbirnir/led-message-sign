@@ -1,7 +1,7 @@
 export interface LEDMessageSignProps {
   /** Message text. Max 1000 characters. */
   text: string;
-  /** Sign height. Default is 200. */
+  /** Sign height. Default is 150. */
   height?: number;
   /** Sign width. Default is 800. */
   width?: number;
@@ -32,7 +32,7 @@ export interface SignComputedValues {
   pixelSize: number;
   pixelCountX: number;
   pixelCountY: number;
-  pixelGrid: number[][];
+  pixelGrid: PixelGrid;
 }
 
 export type Tuple = [number, number];
@@ -41,8 +41,11 @@ export interface HSLColorValues {
   hue: number;
   saturation: number;
   lightness: number;
+  opacity?: number;
 }
 
 export type Letter = number[][];
 
 export type Alphabet = { [letter: string]: Letter };
+
+export type PixelGrid = number[][];
