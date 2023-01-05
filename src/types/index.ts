@@ -41,6 +41,7 @@ export interface HSLColorValues {
   hue: number;
   saturation: number;
   lightness: number;
+  opacity?: number;
 }
 
 export type Letter = number[][];

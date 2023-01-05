@@ -51,7 +51,8 @@ export const COLORS = Object.fromEntries(
       hslValuesToCss(
         COLOR_VALUES[colorKey].hue,
         COLOR_VALUES[colorKey].saturation,
-        COLOR_VALUES[colorKey].lightness
+        COLOR_VALUES[colorKey].lightness,
+        COLOR_VALUES[colorKey].opacity
       ),
     ];
   })

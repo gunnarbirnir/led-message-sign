@@ -3,20 +3,20 @@ import styled from "styled-components";
 
 import LEDMessageSign from "./components/LEDMessageSign";
 
-// TODO: Try to put some gradient over glow
+// TODO: Refactor props
 
 const App: FC = () => {
   return (
     <Container>
       <LEDMessageSign
-        text="Bilbo Birnir Gunnarsson Toftum"
-        // height={250}
+        text="LED Message Sign"
+        // height={50}
         // width={500}
         // fullWidth
         // hueDegrees={100}
-        // multiColor
+        multiColor
         // frameProportion={0.15}
-        // animationFramesPerUpdate={30}
+        // animationFramesPerUpdate={2}
       />
     </Container>
   );
@@ -24,6 +24,7 @@ const App: FC = () => {
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;

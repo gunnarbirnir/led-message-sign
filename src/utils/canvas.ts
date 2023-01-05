@@ -18,19 +18,29 @@ export const getCanvasContext = (id: string) => {
   return ctx;
 };
 
+const GLOW_OPACITY = 1;
+const MASKING_GRADIENT_POSITION = 0.2;
+const FRAME_SHADING_OPACITY = 0.8;
+const FRAME_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness,
+  FRAME_SHADING_OPACITY
+);
 const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.hue,
   COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness + 5
+  COLOR_VALUES.FRAME.lightness + 5,
+  FRAME_SHADING_OPACITY
 );
 const VERTICAL_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.hue,
   COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness - 10
+  COLOR_VALUES.FRAME.lightness - 10,
+  FRAME_SHADING_OPACITY
 );
 const HORIZONTAL_SHADE_SIZE = 0.3;
 const VERTICAL_SHADE_SIZE = 0.4;
-const GLOW_OPACITY = 0.1;
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
@@ -120,24 +130,6 @@ export const drawFrame = (
     ctx.fillStyle = fillStyle;
     ctx.fill();
   };
-
-  // Frame shading
-  const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
-  shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
-  shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
-  shadingX.addColorStop(1 - HORIZONTAL_SHADE_SIZE, COLORS.FRAME);
-  shadingX.addColorStop(1, HORIZONTAL_SHADE_COLOR);
-
-  const shadingY = ctx.createLinearGradient(0, 0, 0, signHeight);
-  shadingY.addColorStop(0, VERTICAL_SHADE_COLOR);
-  shadingY.addColorStop(VERTICAL_SHADE_SIZE, COLORS.FRAME);
-  shadingY.addColorStop(1 - VERTICAL_SHADE_SIZE, COLORS.FRAME);
-  shadingY.addColorStop(1, VERTICAL_SHADE_COLOR);
-
-  drawFrameTopBorder(shadingX);
-  drawFrameRightBorder(shadingY);
-  drawFrameBottomBorder(shadingX);
-  drawFrameLeftBorder(shadingY);
 
   // Horizontal frame glow
   const topGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
@@ -234,11 +226,60 @@ export const drawFrame = (
     );
   }
 
-  // TODO: Make a softer glow. Calculate glow amount (combined light from current and surrounding pixels)?
   drawFrameTopBorder(topGlow);
   drawFrameRightBorder(rightGlow);
   drawFrameBottomBorder(bottomGlow);
   drawFrameLeftBorder(leftGlow);
+
+  // Glow masking
+  const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
+  maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
+  maskingTop.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+
+  const maskingRight = ctx.createLinearGradient(
+    signWidth,
+    0,
+    signWidth - frameSize,
+    0
+  );
+  maskingRight.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
+  maskingRight.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+
+  const maskingBottom = ctx.createLinearGradient(
+    signWidth,
+    signHeight,
+    signWidth,
+    signHeight - frameSize
+  );
+  maskingBottom.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
+  maskingBottom.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+
+  const maskingLeft = ctx.createLinearGradient(0, 0, frameSize, 0);
+  maskingLeft.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
+  maskingLeft.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+
+  drawFrameTopBorder(maskingTop);
+  drawFrameRightBorder(maskingRight);
+  drawFrameBottomBorder(maskingBottom);
+  drawFrameLeftBorder(maskingLeft);
+
+  // Frame shading
+  const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
+  shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
+  shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);
+  shadingX.addColorStop(1 - HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);
+  shadingX.addColorStop(1, HORIZONTAL_SHADE_COLOR);
+
+  const shadingY = ctx.createLinearGradient(0, 0, 0, signHeight);
+  shadingY.addColorStop(0, VERTICAL_SHADE_COLOR);
+  shadingY.addColorStop(VERTICAL_SHADE_SIZE, FRAME_SHADE_COLOR);
+  shadingY.addColorStop(1 - VERTICAL_SHADE_SIZE, FRAME_SHADE_COLOR);
+  shadingY.addColorStop(1, VERTICAL_SHADE_COLOR);
+
+  drawFrameTopBorder(shadingX);
+  drawFrameRightBorder(shadingY);
+  drawFrameBottomBorder(shadingX);
+  drawFrameLeftBorder(shadingY);
 };
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
