@@ -9,7 +9,6 @@ interface CanvasProps {
   className?: string;
 }
 
-// TODO: Maybe not needed?
 const Canvas: FC<CanvasProps> = ({ id, height, width, className }) => {
   return (
     <canvas

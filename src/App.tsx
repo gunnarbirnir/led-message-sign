@@ -4,19 +4,20 @@ import styled from "styled-components";
 import LEDMessageSign from "./components/LEDMessageSign";
 
 // TODO: Refactor props
+// TODO: UI to change props. Add to URL.
 
 const App: FC = () => {
   return (
     <Container>
       <LEDMessageSign
         text="LED Message Sign"
-        // height={50}
-        // width={500}
+        // height={200}
+        // width={1500}
         // fullWidth
-        // hueDegrees={100}
-        multiColor
-        // frameProportion={0.15}
-        // animationFramesPerUpdate={2}
+        // colorHue={180}
+        // multiColor
+        frameProportion={0}
+        // animationFramesPerUpdate={30}
       />
     </Container>
   );

@@ -8,7 +8,7 @@ const SignConfigContext = createContext<SignConfig>({
   height: 0,
   width: 0,
   fullWidth: false,
-  hueDegrees: 0,
+  colorHue: 0,
   multiColor: false,
   frameProportion: 0,
   animationFramesPerUpdate: 0,

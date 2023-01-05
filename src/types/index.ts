@@ -8,9 +8,9 @@ export interface LEDMessageSignProps {
   /** Make sign fill available space. If true width prop will be ignored. Default is false.  */
   fullWidth?: boolean;
   /** Hue value for HSL color. Default is 0. */
-  hueDegrees?: number;
-  /** Cycle between all available color values. If true hueDegrees prop will be ignored. Default is false.  */
-  multiColor?: boolean; // TODO: Remove if doesn't work with glow animation.
+  colorHue?: number;
+  /** Cycle between all available color values. If true colorHue prop will be ignored. Default is false.  */
+  multiColor?: boolean;
   /** Proportion of the frame compared to the height. Maximum value is 0.5. Default is 0.2. */
   frameProportion?: number;
   /** How many animation frames pass between sign updates. Default is 3. */

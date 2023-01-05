@@ -13,7 +13,7 @@ export const sanitizeProps = ({
   height = DEFAULT_VALUE.HEIGHT,
   width = DEFAULT_VALUE.WIDTH,
   fullWidth = DEFAULT_VALUE.FULL_WIDTH,
-  hueDegrees = DEFAULT_VALUE.HUE_DEGREES,
+  colorHue = DEFAULT_VALUE.COLOR_HUE,
   multiColor = DEFAULT_VALUE.MULTI_COLOR,
   frameProportion = DEFAULT_VALUE.FRAME_PROPORTION,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
@@ -24,10 +24,10 @@ export const sanitizeProps = ({
     height: sanitizeMinValue(height, MIN_VALUE.HEIGHT),
     width: sanitizeMinValue(width, MIN_VALUE.WIDTH),
     fullWidth,
-    hueDegrees: sanitizeMinMaxValue(
-      hueDegrees,
-      MIN_VALUE.HUE_DEGREES,
-      MAX_VALUE.HUE_DEGREES
+    colorHue: sanitizeMinMaxValue(
+      colorHue,
+      MIN_VALUE.COLOR_HUE,
+      MAX_VALUE.COLOR_HUE
     ),
     multiColor,
     frameProportion: sanitizeMinMaxValue(
