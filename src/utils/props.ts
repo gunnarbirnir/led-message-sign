@@ -32,7 +32,7 @@ export const sanitizeProps = ({
     multiColor,
     hideFrame,
     animationFramesPerUpdate: sanitizeMinValue(
-      animationFramesPerUpdate,
+      Math.round(animationFramesPerUpdate),
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
   };

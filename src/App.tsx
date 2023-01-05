@@ -3,8 +3,6 @@ import styled from "styled-components";
 
 import LEDMessageSign from "./components/LEDMessageSign";
 
-// TODO: Refactor props
-// TODO: Refactor and clean up code
 // TODO: UI to change props. Add to URL.
 
 const App: FC = () => {
@@ -13,7 +11,7 @@ const App: FC = () => {
       <LEDMessageSign
         text="LED Message Sign"
         // height={200}
-        // width={1500}
+        // width={500}
         // fullWidth
         // colorHue={180}
         // multiColor
