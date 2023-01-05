@@ -1,5 +1,6 @@
 import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
+import { PixelGrid } from "../types";
 
 // TODO: Test
 
@@ -97,7 +98,7 @@ export const calcAnimationOffset = (
 export const calcTotalOffset = (
   x: number,
   animationOffset: number,
-  pixelGrid: number[][]
+  pixelGrid: PixelGrid
 ) => {
   return (x + animationOffset) % pixelGrid.length;
 };
@@ -110,7 +111,7 @@ export const calcMultiColorHue = (
   return (animationFrame + x + y) % 360;
 };
 
-export const isPixelOn = (x: number, y: number, pixelGrid: number[][]) => {
+export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
   if (x < 0 || x >= pixelGrid.length) {
     return false;
   }
@@ -136,27 +137,62 @@ export const calcGlowPosition = (
   );
 };
 
+// To prevent glow when no light is visible
+export const calcDisableGlow = (
+  x: number,
+  offsetX: number,
+  pixelCountX: number
+) => {
+  // For distance = 1
+  const startingPos = offsetX === x;
+  // For distance = 2
+  const beforeStart = offsetX === x - 1;
+  const afterStart = offsetX === x + 1;
+
+  if (startingPos) {
+    return 0;
+  }
+
+  if (beforeStart && x === pixelCountX - 1) {
+    return 0;
+  }
+
+  if (afterStart && x === 0) {
+    return 0;
+  }
+
+  return undefined;
+};
+
 const GLOW_CURRENT_PIXEL = 1;
-const GLOW_DISTANCE_1 = 0.5;
-const GLOW_DISTANCE_2 = 0.25;
+const GLOW_DISTANCE_1 = 0.75;
+const GLOW_DISTANCE_2 = 0.5;
 
 export const calcPixelGlow = (
   x: number,
   y: number,
-  pixelGrid: number[][],
+  pixelGrid: PixelGrid,
   vertical: boolean = false
 ) => {
   if (isPixelOn(x, y, pixelGrid)) {
     return GLOW_CURRENT_PIXEL;
   }
 
+  const calcXCoord = (x: number) => {
+    return x < 0
+      ? x + pixelGrid.length
+      : x >= pixelGrid.length
+      ? x - pixelGrid.length
+      : x;
+  };
+
   const pixelOnAtDistance = (distance: number) => {
     const prevCoords: [number, number] = vertical
       ? [x, y - distance]
-      : [x - distance, y];
+      : [calcXCoord(x - distance), y];
     const nextCoords: [number, number] = vertical
       ? [x, y + distance]
-      : [x + distance, y];
+      : [calcXCoord(x + distance), y];
     const prevPixelOn = isPixelOn(...prevCoords, pixelGrid);
     const nextPixelOn = isPixelOn(...nextCoords, pixelGrid);
 

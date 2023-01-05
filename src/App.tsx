@@ -3,21 +3,20 @@ import styled from "styled-components";
 
 import LEDMessageSign from "./components/LEDMessageSign";
 
-// TODO: Remove glow before light appear and add glow after last letter
 // TODO: Try to put some gradient over glow
 
 const App: FC = () => {
   return (
     <Container>
       <LEDMessageSign
-        text="LED Message Sign"
-        // height={100}
+        text="Bilbo Birnir Gunnarsson Toftum"
+        // height={250}
         // width={500}
-        fullWidth
+        // fullWidth
         // hueDegrees={100}
         // multiColor
         // frameProportion={0.15}
-        animationFramesPerUpdate={60}
+        // animationFramesPerUpdate={30}
       />
     </Container>
   );

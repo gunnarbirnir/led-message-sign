@@ -6,6 +6,7 @@ import {
   calcMultiColorHue,
   isPixelOn,
   calcGlowPosition,
+  calcDisableGlow,
   calcPixelGlow,
 } from "../utils";
 import { SignComputedValues, Tuple, SignConfig } from "../types";
@@ -29,7 +30,7 @@ const VERTICAL_SHADE_COLOR = hslValuesToCss(
 );
 const HORIZONTAL_SHADE_SIZE = 0.3;
 const VERTICAL_SHADE_SIZE = 0.4;
-const GLOW_OPACITY = 0.15;
+const GLOW_OPACITY = 0.1;
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
@@ -149,6 +150,7 @@ export const drawFrame = (
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
     const position = calcGlowPosition(x, signWidth, pixelSize, pixelCountX);
+    const disableGlow = calcDisableGlow(x, offsetX, pixelCountX);
 
     const topGlowHue = multiColor
       ? calcMultiColorHue(x, 0, animationFrame)
@@ -157,8 +159,10 @@ export const drawFrame = (
       ? calcMultiColorHue(x, pixelCountY - 1, animationFrame)
       : hueDegrees;
 
-    const topGlowOpacity = calcPixelGlow(offsetX, 0, pixelGrid) * GLOW_OPACITY;
+    const topGlowOpacity =
+      disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid) * GLOW_OPACITY;
     const bottomGlowOpacity =
+      disableGlow ??
       calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid) * GLOW_OPACITY;
 
     topGlow.addColorStop(
