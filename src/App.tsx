@@ -4,6 +4,7 @@ import styled from "styled-components";
 import LEDMessageSign from "./components/LEDMessageSign";
 
 // TODO: Refactor props
+// TODO: Refactor and clean up code
 // TODO: UI to change props. Add to URL.
 
 const App: FC = () => {
@@ -16,7 +17,7 @@ const App: FC = () => {
         // fullWidth
         // colorHue={180}
         // multiColor
-        frameProportion={0}
+        // hideFrame
         // animationFramesPerUpdate={30}
       />
     </Container>

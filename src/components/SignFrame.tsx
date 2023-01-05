@@ -16,7 +16,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <StyledSignFrame style={{ height, width, padding: frameSize }}>
-      <FrameCanvas id={frameId} height={height} width={width} />
+      {!!frameSize && (
+        <FrameCanvas id={frameId} height={height} width={width} />
+      )}
       {children}
     </StyledSignFrame>
   );

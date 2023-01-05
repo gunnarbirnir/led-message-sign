@@ -15,7 +15,7 @@ export const sanitizeProps = ({
   fullWidth = DEFAULT_VALUE.FULL_WIDTH,
   colorHue = DEFAULT_VALUE.COLOR_HUE,
   multiColor = DEFAULT_VALUE.MULTI_COLOR,
-  frameProportion = DEFAULT_VALUE.FRAME_PROPORTION,
+  hideFrame = DEFAULT_VALUE.HIDE_FRAME,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
 }: LEDMessageSignProps) => {
   return {
@@ -30,11 +30,7 @@ export const sanitizeProps = ({
       MAX_VALUE.COLOR_HUE
     ),
     multiColor,
-    frameProportion: sanitizeMinMaxValue(
-      frameProportion,
-      MIN_VALUE.FRAME_PROPORTION,
-      MAX_VALUE.FRAME_PROPORTION
-    ),
+    hideFrame,
     animationFramesPerUpdate: sanitizeMinValue(
       animationFramesPerUpdate,
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE

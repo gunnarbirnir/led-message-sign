@@ -4,6 +4,7 @@ import { LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
 import { useObjectSize, useRenderCanvas } from "../hooks";
 import { SignConfigContext } from "../context";
+import { FRAME_PROPORTION } from "../constants";
 import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
 
@@ -19,6 +20,7 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
       ...sanitizedProps,
       id: signId,
       width: sanitizedProps.fullWidth ? containerWidth : sanitizedProps.width,
+      frameProportion: sanitizedProps.hideFrame ? 0 : FRAME_PROPORTION,
     }),
     [signId, sanitizedProps, containerWidth]
   );

@@ -11,14 +11,15 @@ export interface LEDMessageSignProps {
   colorHue?: number;
   /** Cycle between all available color values. If true colorHue prop will be ignored. Default is false.  */
   multiColor?: boolean;
-  /** Proportion of the frame compared to the height. Maximum value is 0.5. Default is 0.2. */
-  frameProportion?: number;
+  /** Hide sign frame. Default is false.  */
+  hideFrame?: boolean;
   /** How many animation frames pass between sign updates. Default is 3. */
   animationFramesPerUpdate?: number;
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
   id: string;
+  frameProportion: number;
 }
 
 export interface SignComputedValues {
