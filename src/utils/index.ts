@@ -2,8 +2,6 @@ import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
 import { PixelGrid } from "../types";
 
-// TODO: Test
-
 export const hslValuesToCss = (
   hue: number,
   saturation: number = 100,
@@ -20,12 +18,12 @@ export const calcFrameId = (id: string) => {
   return `sign-frame-${id}`;
 };
 
-export const calcFrameSize = (signHeight: number, frameProportion: number) => {
-  return (signHeight * frameProportion) / 2;
-};
-
 export const calcDisplayId = (id: string) => {
   return `sign-display-${id}`;
+};
+
+export const calcFrameSize = (signHeight: number, frameProportion: number) => {
+  return (signHeight * frameProportion) / 2;
 };
 
 export const calcDisplayHeight = (signHeight: number, frameSize: number) => {
@@ -106,9 +104,16 @@ export const calcTotalOffset = (
 export const calcMultiColorHue = (
   x: number,
   y: number,
-  animationFrame: number
+  animationFrame: number,
+  animationFramesPerUpdate: number
 ) => {
-  return (animationFrame + x + y) % 360;
+  const colorHueOffset =
+    // So animation and colors are not in sync
+    animationFramesPerUpdate === 1
+      ? Math.floor(animationFrame / 2)
+      : animationFrame;
+
+  return (colorHueOffset + x + y) % 360;
 };
 
 export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {

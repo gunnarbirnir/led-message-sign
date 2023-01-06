@@ -6,8 +6,6 @@ import {
   MAX_VALUE,
 } from "../constants/props";
 
-// TODO: Test
-
 export const sanitizeProps = ({
   text,
   height = DEFAULT_VALUE.HEIGHT,
