@@ -8,6 +8,7 @@ enum COLOR {
   BULB_ON = "BULB_ON",
   BULB_OFF = "BULB_OFF",
   GLOW = "GLOW",
+  TRANSPARENT = "TRANSPARENT",
 }
 
 export const COLOR_VALUES: Record<COLOR, HSLColorValues> = {
@@ -40,6 +41,12 @@ export const COLOR_VALUES: Record<COLOR, HSLColorValues> = {
     hue: 0,
     saturation: 100,
     lightness: 50,
+  },
+  TRANSPARENT: {
+    hue: 0,
+    saturation: 0,
+    lightness: 0,
+    opacity: 0,
   },
 };
 

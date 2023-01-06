@@ -45,8 +45,10 @@ export interface HSLColorValues {
   opacity?: number;
 }
 
+export type PixelGrid = number[][];
+
 export type Letter = number[][];
 
 export type Alphabet = { [letter: string]: Letter };
 
-export type PixelGrid = number[][];
+export type FillStyle = string | CanvasGradient | CanvasPattern;

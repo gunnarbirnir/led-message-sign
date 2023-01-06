@@ -118,6 +118,30 @@ export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
   return !!pixelGrid[x][y];
 };
 
+export const calcPixelXPos = (
+  x: number,
+  pixelSize: number,
+  displayPaddingX: number
+) => {
+  return x * pixelSize + displayPaddingX;
+};
+
+export const calcPixelXCenterPos = (pixelXPos: number, pixelSize: number) => {
+  return pixelXPos + pixelSize / 2;
+};
+
+export const calcPixelYPos = (
+  y: number,
+  pixelSize: number,
+  displayPaddingY: number
+) => {
+  return y * pixelSize + displayPaddingY;
+};
+
+export const calcPixelYCenterPos = (pixelYPos: number, pixelSize: number) => {
+  return pixelYPos + pixelSize / 2;
+};
+
 export const calcGlowPosition = (
   // x or y
   idx: number,

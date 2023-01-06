@@ -6,11 +6,15 @@ import {
   calcTotalOffset,
   calcMultiColorHue,
   isPixelOn,
+  calcPixelXPos,
+  calcPixelXCenterPos,
+  calcPixelYPos,
+  calcPixelYCenterPos,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
 } from "../utils";
-import { SignComputedValues, Tuple, SignConfig } from "../types";
+import { SignComputedValues, Tuple, SignConfig, FillStyle } from "../types";
 
 export const getCanvasContext = (id: string) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -19,7 +23,6 @@ export const getCanvasContext = (id: string) => {
   return ctx;
 };
 
-const GLOW_OPACITY = 1;
 const MASKING_GRADIENT_POSITION = 0.2;
 const FRAME_SHADING_OPACITY = 0.8;
 const FRAME_SHADE_COLOR = hslValuesToCss(
@@ -78,11 +81,7 @@ export const drawFrame = (
   ];
   const bottomLeftInner: Tuple = [frameSize, signHeight - frameSize];
 
-  ctx.clearRect(0, 0, signWidth, signHeight);
-
-  const drawFrameTopBorder = (
-    fillStyle: string | CanvasGradient | CanvasPattern
-  ) => {
+  const drawFrameTopBorder = (fillStyle: FillStyle) => {
     ctx.moveTo(...topLeftCorner);
     ctx.beginPath();
     ctx.lineTo(...topLeftInner);
@@ -93,9 +92,7 @@ export const drawFrame = (
     ctx.fill();
   };
 
-  const drawFrameRightBorder = (
-    fillStyle: string | CanvasGradient | CanvasPattern
-  ) => {
+  const drawFrameRightBorder = (fillStyle: FillStyle) => {
     ctx.moveTo(...topRightCorner);
     ctx.beginPath();
     ctx.lineTo(...topRightInner);
@@ -106,9 +103,7 @@ export const drawFrame = (
     ctx.fill();
   };
 
-  const drawFrameBottomBorder = (
-    fillStyle: string | CanvasGradient | CanvasPattern
-  ) => {
+  const drawFrameBottomBorder = (fillStyle: FillStyle) => {
     ctx.moveTo(...bottomRightCorner);
     ctx.beginPath();
     ctx.lineTo(...bottomRightInner);
@@ -119,9 +114,7 @@ export const drawFrame = (
     ctx.fill();
   };
 
-  const drawFrameLeftBorder = (
-    fillStyle: string | CanvasGradient | CanvasPattern
-  ) => {
+  const drawFrameLeftBorder = (fillStyle: FillStyle) => {
     ctx.moveTo(...bottomLeftCorner);
     ctx.beginPath();
     ctx.lineTo(...bottomLeftInner);
@@ -132,13 +125,15 @@ export const drawFrame = (
     ctx.fill();
   };
 
+  ctx.clearRect(0, 0, signWidth, signHeight);
+
   // Horizontal frame glow
   const topGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
-  topGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
-  topGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  topGlow.addColorStop(0, COLORS.TRANSPARENT);
+  topGlow.addColorStop(1, COLORS.TRANSPARENT);
   const bottomGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
-  bottomGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
-  bottomGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  bottomGlow.addColorStop(0, COLORS.TRANSPARENT);
+  bottomGlow.addColorStop(1, COLORS.TRANSPARENT);
 
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
@@ -152,11 +147,9 @@ export const drawFrame = (
       ? calcMultiColorHue(x, pixelCountY - 1, animationFrame)
       : colorHue;
 
-    const topGlowOpacity =
-      disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid) * GLOW_OPACITY;
+    const topGlowOpacity = disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid);
     const bottomGlowOpacity =
-      disableGlow ??
-      calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid) * GLOW_OPACITY;
+      disableGlow ?? calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid);
 
     topGlow.addColorStop(
       position,
@@ -180,11 +173,11 @@ export const drawFrame = (
 
   // Vertical frame glow
   const leftGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
-  leftGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
-  leftGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  leftGlow.addColorStop(0, COLORS.TRANSPARENT);
+  leftGlow.addColorStop(1, COLORS.TRANSPARENT);
   const rightGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
-  rightGlow.addColorStop(0, hslValuesToCss(0, 0, 0, 0));
-  rightGlow.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  rightGlow.addColorStop(0, COLORS.TRANSPARENT);
+  rightGlow.addColorStop(1, COLORS.TRANSPARENT);
 
   for (let y = 0; y < pixelCountY; y++) {
     const leftOffsetX = calcTotalOffset(0, animationOffset, pixelGrid);
@@ -202,10 +195,8 @@ export const drawFrame = (
       ? calcMultiColorHue(pixelCountX - 1, y, animationFrame)
       : colorHue;
 
-    const leftGlowOpacity =
-      calcPixelGlow(leftOffsetX, y, pixelGrid, true) * GLOW_OPACITY;
-    const rightGlowOpacity =
-      calcPixelGlow(rightOffsetX, y, pixelGrid, true) * GLOW_OPACITY;
+    const leftGlowOpacity = calcPixelGlow(leftOffsetX, y, pixelGrid, true);
+    const rightGlowOpacity = calcPixelGlow(rightOffsetX, y, pixelGrid, true);
 
     leftGlow.addColorStop(
       position,
@@ -235,7 +226,7 @@ export const drawFrame = (
   // Glow masking
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
   maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingTop.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  maskingTop.addColorStop(1, COLORS.TRANSPARENT);
 
   const maskingRight = ctx.createLinearGradient(
     signWidth,
@@ -244,7 +235,7 @@ export const drawFrame = (
     0
   );
   maskingRight.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingRight.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  maskingRight.addColorStop(1, COLORS.TRANSPARENT);
 
   const maskingBottom = ctx.createLinearGradient(
     signWidth,
@@ -253,11 +244,11 @@ export const drawFrame = (
     signHeight - frameSize
   );
   maskingBottom.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingBottom.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  maskingBottom.addColorStop(1, COLORS.TRANSPARENT);
 
   const maskingLeft = ctx.createLinearGradient(0, 0, frameSize, 0);
   maskingLeft.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingLeft.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+  maskingLeft.addColorStop(1, COLORS.TRANSPARENT);
 
   drawFrameTopBorder(maskingTop);
   drawFrameRightBorder(maskingRight);
@@ -314,26 +305,26 @@ export const drawDisplay = (
 
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
-    const pixelX = displayPaddingX + x * pixelSize;
-    const pixelCenterX = pixelX + pixelSize / 2;
+    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
+    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
     for (let y = 0; y < pixelCountY; y++) {
       const pixelHue = multiColor
         ? calcMultiColorHue(x, y, animationFrame)
         : colorHue;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
-      const pixelY = displayPaddingY + y * pixelSize;
-      const pixelCenterY = pixelY + pixelSize / 2;
+      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
       const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : COLOR_VALUES.BULB_OFF;
 
       // Light gradient
       if (pixelOn) {
         const grd = ctx.createRadialGradient(
-          pixelCenterX,
-          pixelCenterY,
+          pixelXCenterPos,
+          pixelYCenterPos,
           pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
-          pixelCenterX,
-          pixelCenterY,
+          pixelXCenterPos,
+          pixelYCenterPos,
           pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
         );
         grd.addColorStop(
@@ -344,9 +335,9 @@ export const drawDisplay = (
             COLOR_VALUES.LIGHT.lightness
           )
         );
-        grd.addColorStop(1, hslValuesToCss(0, 0, 0, 0));
+        grd.addColorStop(1, COLORS.TRANSPARENT);
         ctx.fillStyle = grd;
-        ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
+        ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
       }
 
       // Light bulb
@@ -357,8 +348,8 @@ export const drawDisplay = (
       );
       ctx.beginPath();
       ctx.arc(
-        pixelCenterX,
-        pixelCenterY,
+        pixelXCenterPos,
+        pixelYCenterPos,
         pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
         0,
         2 * Math.PI
