@@ -32,7 +32,6 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
         <SignFrame>
           <SignDisplay />
         </SignFrame>
-        {/* TODO: Transform sign to create reflection? Or other CSS effects like perspective? */}
       </div>
     </SignConfigContext.Provider>
   );
