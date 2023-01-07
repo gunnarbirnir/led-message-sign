@@ -18,6 +18,9 @@ import {
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
+  calcGlowPosition,
+  calcDisableGlow,
+  calcPixelGlow,
 } from "../utils";
 import { ALPHABET, EMPTY_COLUMN } from "../constants/alphabet";
 
@@ -64,7 +67,7 @@ const TEST_Y = 3;
 const TEST_ANIMATION_FRAME = 100;
 const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
-const TEST_MULTI_COLOR_HUE = 161;
+const TEST_MULTI_COLOR_HUE = 128;
 const TEST_PIXEL_X_POS = 770;
 const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
@@ -205,7 +208,7 @@ describe("Utils", () => {
   describe("calcMultiColorHue", () => {
     test("Should return multi color hue", () => {
       const color = calcMultiColorHue(
-        TEST_OFFSET_X,
+        TEST_X,
         TEST_Y,
         TEST_ANIMATION_FRAME,
         TEST_CONFIG.animationFramesPerUpdate
@@ -215,7 +218,7 @@ describe("Utils", () => {
 
     test("Should not go outside available hue values", () => {
       const color = calcMultiColorHue(
-        TEST_OFFSET_X,
+        TEST_X,
         TEST_Y,
         TEST_ANIMATION_FRAME + 360,
         TEST_CONFIG.animationFramesPerUpdate
@@ -224,12 +227,7 @@ describe("Utils", () => {
     });
 
     test("Should change color every other frame if frames per update is 1", () => {
-      const color = calcMultiColorHue(
-        TEST_OFFSET_X,
-        TEST_Y,
-        TEST_ANIMATION_FRAME,
-        1
-      );
+      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_FRAME, 1);
       expect(color).toBe(TEST_MULTI_COLOR_HUE - TEST_ANIMATION_FRAME / 2);
     });
   });
@@ -294,11 +292,99 @@ describe("Utils", () => {
       expect(position).toBe(TEST_PIXEL_Y_CENTER_POS);
     });
   });
-});
 
-/* describe("", () => {
-  test("", () => {
-    const  = calcDisplayPaddingX();
-    expect().toBe();
+  describe("calcGlowPosition", () => {
+    test("Should return horizontal glow position", () => {
+      const position = calcGlowPosition(
+        TEST_X,
+        TEST_COMPUTED_VALUES.signWidth,
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelCountX
+      );
+      // Has a lot of decimals
+      const rounded = Math.round(position * 10) / 10;
+
+      expect(rounded).toBe(0.5);
+    });
+
+    test("Should return vertical glow position", () => {
+      const position = calcGlowPosition(
+        TEST_Y,
+        TEST_COMPUTED_VALUES.signHeight,
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelCountY
+      );
+      const rounded = Math.round(position * 10) / 10;
+
+      expect(rounded).toBe(0.5);
+    });
   });
-}); */
+
+  describe("calcDisableGlow", () => {
+    test("Should return 0 for starting position", () => {
+      const disableGlow = calcDisableGlow(
+        TEST_X,
+        TEST_X,
+        TEST_COMPUTED_VALUES.pixelCountX
+      );
+      expect(disableGlow).toBe(0);
+    });
+
+    test("Should return 0 for position before start", () => {
+      const disableGlow = calcDisableGlow(49, 48, 50);
+      expect(disableGlow).toBe(0);
+    });
+
+    test("Should return 0 for position after start", () => {
+      const disableGlow = calcDisableGlow(0, 1, 50);
+      expect(disableGlow).toBe(0);
+    });
+
+    test("Should return undefined for other position", () => {
+      const disableGlow = calcDisableGlow(
+        TEST_X,
+        TEST_OFFSET_X,
+        TEST_COMPUTED_VALUES.pixelCountX
+      );
+      expect(disableGlow).toBe(undefined);
+    });
+  });
+
+  describe("calcPixelGlow", () => {
+    test("Should return 1 since pixel is on", () => {
+      const glow = calcPixelGlow(
+        TEST_OFFSET_X,
+        TEST_Y,
+        TEST_COMPUTED_VALUES.pixelGrid
+      );
+      expect(glow).toBe(1);
+    });
+
+    test("Should return 0.75 for pixel at distance 1", () => {
+      const glow = calcPixelGlow(
+        TEST_OFFSET_X + 2,
+        TEST_Y,
+        TEST_COMPUTED_VALUES.pixelGrid
+      );
+      expect(glow).toBe(0.75);
+    });
+
+    test("Should return 0.5 for pixel at distance 2", () => {
+      const glow = calcPixelGlow(
+        TEST_OFFSET_X + 3,
+        TEST_Y,
+        TEST_COMPUTED_VALUES.pixelGrid
+      );
+      expect(glow).toBe(0.5);
+    });
+
+    test("Should return 0 for pixel with longer distance", () => {
+      const glow = calcPixelGlow(
+        TEST_X,
+        TEST_Y,
+        TEST_COMPUTED_VALUES.pixelGrid
+      );
+      expect(glow).toBe(0);
+    });
+  });
+});
