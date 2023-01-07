@@ -104,16 +104,9 @@ export const calcTotalOffset = (
 export const calcMultiColorHue = (
   x: number,
   y: number,
-  animationFrame: number,
-  animationFramesPerUpdate: number
+  animationOffset: number
 ) => {
-  const colorHueOffset =
-    // So animation and colors are not in sync
-    animationFramesPerUpdate === 1
-      ? Math.floor(animationFrame / 2)
-      : animationFrame;
-
-  return (colorHueOffset + x + y) % 360;
+  return (animationOffset - x - y) % 360;
 };
 
 export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {

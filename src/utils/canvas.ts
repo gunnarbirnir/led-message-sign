@@ -141,15 +141,10 @@ export const drawFrame = (
     const disableGlow = calcDisableGlow(x, offsetX, pixelCountX);
 
     const topGlowHue = multiColor
-      ? calcMultiColorHue(x, 0, animationFrame, animationFramesPerUpdate)
+      ? calcMultiColorHue(x, 0, animationOffset)
       : colorHue;
     const bottomGlowHue = multiColor
-      ? calcMultiColorHue(
-          x,
-          pixelCountY - 1,
-          animationFrame,
-          animationFramesPerUpdate
-        )
+      ? calcMultiColorHue(x, pixelCountY - 1, animationOffset)
       : colorHue;
 
     const topGlowOpacity = disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid);
@@ -194,15 +189,10 @@ export const drawFrame = (
     const position = calcGlowPosition(y, signHeight, pixelSize, pixelCountY);
 
     const leftGlowHue = multiColor
-      ? calcMultiColorHue(0, y, animationFrame, animationFramesPerUpdate)
+      ? calcMultiColorHue(0, y, animationOffset)
       : colorHue;
     const rightGlowHue = multiColor
-      ? calcMultiColorHue(
-          pixelCountX - 1,
-          y,
-          animationFrame,
-          animationFramesPerUpdate
-        )
+      ? calcMultiColorHue(pixelCountX - 1, y, animationOffset)
       : colorHue;
 
     const leftGlowOpacity = calcPixelGlow(leftOffsetX, y, pixelGrid, true);
@@ -320,7 +310,7 @@ export const drawDisplay = (
 
     for (let y = 0; y < pixelCountY; y++) {
       const pixelHue = multiColor
-        ? calcMultiColorHue(x, y, animationFrame, animationFramesPerUpdate)
+        ? calcMultiColorHue(x, y, animationOffset)
         : colorHue;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);

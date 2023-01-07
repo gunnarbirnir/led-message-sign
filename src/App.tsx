@@ -16,7 +16,7 @@ const App: FC = () => {
         // colorHue={180}
         multiColor
         // hideFrame
-        // animationFramesPerUpdate={30}
+        // animationFramesPerUpdate={20}
       />
     </Container>
   );

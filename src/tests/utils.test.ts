@@ -67,7 +67,7 @@ const TEST_Y = 3;
 const TEST_ANIMATION_FRAME = 100;
 const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
-const TEST_MULTI_COLOR_HUE = 128;
+const TEST_MULTI_COLOR_HUE = 5;
 const TEST_PIXEL_X_POS = 770;
 const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
@@ -207,28 +207,13 @@ describe("Utils", () => {
 
   describe("calcMultiColorHue", () => {
     test("Should return multi color hue", () => {
-      const color = calcMultiColorHue(
-        TEST_X,
-        TEST_Y,
-        TEST_ANIMATION_FRAME,
-        TEST_CONFIG.animationFramesPerUpdate
-      );
+      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_OFFSET);
       expect(color).toBe(TEST_MULTI_COLOR_HUE);
     });
 
     test("Should not go outside available hue values", () => {
-      const color = calcMultiColorHue(
-        TEST_X,
-        TEST_Y,
-        TEST_ANIMATION_FRAME + 360,
-        TEST_CONFIG.animationFramesPerUpdate
-      );
+      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_OFFSET);
       expect(color).toBe(TEST_MULTI_COLOR_HUE);
-    });
-
-    test("Should change color every other frame if frames per update is 1", () => {
-      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_FRAME, 1);
-      expect(color).toBe(TEST_MULTI_COLOR_HUE - TEST_ANIMATION_FRAME / 2);
     });
   });
 
