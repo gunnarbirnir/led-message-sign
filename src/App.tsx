@@ -10,8 +10,8 @@ const App: FC = () => {
     <Container>
       <LEDMessageSign
         text="LED Message Sign"
-        // height={50}
-        // width={500}
+        // height={250}
+        // width={1500}
         // fullWidth
         // colorHue={180}
         multiColor

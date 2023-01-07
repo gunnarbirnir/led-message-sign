@@ -106,7 +106,7 @@ export const calcMultiColorHue = (
   y: number,
   animationOffset: number
 ) => {
-  return (animationOffset - x - y) % 360;
+  return (animationOffset + x + y) % 360;
 };
 
 export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
