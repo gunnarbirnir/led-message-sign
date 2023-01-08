@@ -90,7 +90,11 @@ export const calcAnimationOffset = (
   animationFrame: number,
   animationFramesPerUpdate: number
 ) => {
-  return Math.floor(animationFrame / animationFramesPerUpdate);
+  return animationFrame / animationFramesPerUpdate;
+};
+
+export const isWholeNumber = (num: number) => {
+  return num % 1 === 0;
 };
 
 export const calcTotalOffset = (

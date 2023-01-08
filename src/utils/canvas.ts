@@ -2,7 +2,6 @@ import { IS_SAFARI } from "../constants";
 import { COLORS, COLOR_VALUES } from "../constants/colors";
 import {
   hslValuesToCss,
-  calcAnimationOffset,
   calcTotalOffset,
   calcMultiColorHue,
   isPixelOn,
@@ -50,7 +49,7 @@ export const drawFrame = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   config: SignConfig,
-  animationFrame: number = 0
+  animationOffset: number = 0
 ) => {
   const {
     signHeight,
@@ -61,12 +60,7 @@ export const drawFrame = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { animationFramesPerUpdate, colorHue, multiColor } = config;
-
-  const animationOffset = calcAnimationOffset(
-    animationFrame,
-    animationFramesPerUpdate
-  );
+  const { colorHue, multiColor } = config;
 
   const topLeftCorner: Tuple = [0, 0];
   const topRightCorner: Tuple = [signWidth, 0];
@@ -282,7 +276,7 @@ export const drawDisplay = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   config: SignConfig,
-  animationFrame: number = 0
+  animationOffset: number = 0
 ) => {
   const {
     displayHeight,
@@ -294,12 +288,7 @@ export const drawDisplay = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { colorHue, multiColor, animationFramesPerUpdate } = config;
-
-  const animationOffset = calcAnimationOffset(
-    animationFrame,
-    animationFramesPerUpdate
-  );
+  const { colorHue, multiColor } = config;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 

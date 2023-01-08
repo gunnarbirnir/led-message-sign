@@ -12,6 +12,8 @@ import {
   calcPixelCountX,
   calcDisplayPaddingX,
   calcPixelGrid,
+  calcAnimationOffset,
+  isWholeNumber,
 } from "../utils";
 import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
 import { CANVAS_SCALING, VERTICAL_PIXEL_COUNT } from "../constants";
@@ -58,12 +60,20 @@ const useRenderCanvas = (config: SignConfig) => {
     const computedValues = getComputedValues(config);
 
     const renderCanvas = () => {
-      if (frameCtx) {
-        drawFrame(frameCtx, computedValues, config, animationFrame);
+      const animationOffset = calcAnimationOffset(
+        animationFrame,
+        config.animationFramesPerUpdate
+      );
+
+      if (isWholeNumber(animationOffset)) {
+        if (frameCtx) {
+          drawFrame(frameCtx, computedValues, config, animationOffset);
+        }
+        if (displayCtx) {
+          drawDisplay(displayCtx, computedValues, config, animationOffset);
+        }
       }
-      if (displayCtx) {
-        drawDisplay(displayCtx, computedValues, config, animationFrame);
-      }
+
       animationFrame = requestAnimationFrame(renderCanvas);
     };
     renderCanvas();

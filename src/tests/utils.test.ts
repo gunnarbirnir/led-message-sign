@@ -11,6 +11,7 @@ import {
   calcDisplayPaddingX,
   calcPixelGrid,
   calcAnimationOffset,
+  isWholeNumber,
   calcTotalOffset,
   calcMultiColorHue,
   isPixelOn,
@@ -64,7 +65,7 @@ const TEST_COMPUTED_VALUES = {
 
 const TEST_X = 25;
 const TEST_Y = 3;
-const TEST_ANIMATION_FRAME = 100;
+const TEST_ANIMATION_FRAME = 99;
 const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
 const TEST_MULTI_COLOR_HUE = 61;
@@ -191,6 +192,18 @@ describe("Utils", () => {
         TEST_CONFIG.animationFramesPerUpdate
       );
       expect(offset).toBe(TEST_ANIMATION_OFFSET);
+    });
+  });
+
+  describe("isWholeNumber", () => {
+    test("Should return true for whole number", () => {
+      const isWhole = isWholeNumber(5);
+      expect(isWhole).toBe(true);
+    });
+
+    test("Should return false for decimal number", () => {
+      const isWhole = isWholeNumber(5.5);
+      expect(isWhole).toBe(false);
     });
   });
 

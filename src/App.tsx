@@ -4,6 +4,7 @@ import styled from "styled-components";
 import LEDMessageSign from "./components/LEDMessageSign";
 
 // TODO: UI to change props. Add to URL.
+// TODO: Link in another project?
 
 const App: FC = () => {
   return (
@@ -27,6 +28,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
   height: 100vh;
   width: 100vw;
   background-color: hsl(0deg 0% 0%);
