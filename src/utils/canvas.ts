@@ -288,7 +288,7 @@ export const drawDisplay = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { colorHue, multiColor } = config;
+  const { colorHue, multiColor, coloredOffLights } = config;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
@@ -304,7 +304,11 @@ export const drawDisplay = (
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
       const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
       const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
-      const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : COLOR_VALUES.BULB_OFF;
+      const bulbOffColor = {
+        ...COLOR_VALUES.BULB_OFF,
+        saturation: coloredOffLights ? COLOR_VALUES.BULB_OFF.saturation : 0,
+      };
+      const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
 
       // Light gradient
       if (pixelOn) {

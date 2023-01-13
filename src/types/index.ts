@@ -13,6 +13,8 @@ export interface LEDMessageSignProps {
   multiColor?: boolean;
   /** Hide sign frame. Default is false.  */
   hideFrame?: boolean;
+  /** Should the off lights be colored. Default is true.  */
+  coloredOffLights?: boolean;
   /** How many animation frames pass between sign updates. Default is 3. */
   animationFramesPerUpdate?: number;
 }
