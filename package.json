@@ -1,6 +1,6 @@
 {
   "name": "@gunnarbirnir/led-message-sign",
-  "version": "0.1.2",
+  "version": "0.1.1",
   "license": "MIT",
   "author": "Gunnar Olafsson",
   "main": "dist/index.cjs.js",
@@ -14,7 +14,10 @@
     "test": "jest",
     "deploy": "npm run build && npm deploy",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "update-version": "npm version patch",
+    "update-version-minor": "npm version minor",
+    "update-version-major": "npm version major"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
