@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import styled from "styled-components";
 
 import { useSignConfigContext } from "../hooks";

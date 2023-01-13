@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
-const useObjectSize = (myRef: React.RefObject<any>) => {
+const useObjectSize = (
+  myRef: React.RefObject<any>,
+  dependencies: any[] = []
+) => {
   const [objectSize, setObjectSize] = useState<{
     width: number;
     height: number;
@@ -18,7 +21,7 @@ const useObjectSize = (myRef: React.RefObject<any>) => {
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [myRef]);
+  }, [myRef, ...dependencies]);
 
   return objectSize;
 };

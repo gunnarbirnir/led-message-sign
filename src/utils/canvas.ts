@@ -23,7 +23,7 @@ export const getCanvasContext = (id: string) => {
 };
 
 const MASKING_GRADIENT_POSITION = 0.2;
-const FRAME_SHADING_OPACITY = 0.8;
+const FRAME_SHADING_OPACITY = 0.7;
 const FRAME_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.hue,
   COLOR_VALUES.FRAME.saturation,
