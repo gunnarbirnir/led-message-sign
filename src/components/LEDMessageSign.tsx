@@ -1,4 +1,5 @@
-import { FC, memo, useRef, useMemo, useId } from "react";
+import React, { FC, memo, useRef, useMemo, useId } from "react";
+import styled from "styled-components";
 
 import { LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
@@ -11,7 +12,9 @@ import SignDisplay from "./SignDisplay";
 const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
   const signId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { width: containerWidth } = useObjectSize(containerRef);
+  const { width: containerWidth } = useObjectSize(containerRef, [
+    props.fullWidth,
+  ]);
   const sanitizedProps = useMemo(() => sanitizeProps(props), [props]);
   const { fullWidth } = sanitizedProps;
 
@@ -28,13 +31,22 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
 
   return (
     <SignConfigContext.Provider value={config}>
-      <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
+      <StyledLEDMessageSign
+        ref={containerRef}
+        style={fullWidth ? { width: "100%" } : undefined}
+      >
         <SignFrame>
           <SignDisplay />
         </SignFrame>
-      </div>
+      </StyledLEDMessageSign>
     </SignConfigContext.Provider>
   );
 };
+
+const StyledLEDMessageSign = styled.div`
+  & > * {
+    box-sizing: border-box;
+  }
+`;
 
 export default memo(LEDMessageSign);
