@@ -269,7 +269,7 @@ export const drawFrame = (
 };
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
-const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = IS_SAFARI ? 2 : 1.8;
+const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 
 export const drawDisplay = (
