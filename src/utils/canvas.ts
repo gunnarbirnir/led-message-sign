@@ -1,4 +1,3 @@
-import { IS_SAFARI } from "../constants";
 import { COLORS, COLOR_VALUES } from "../constants/colors";
 import {
   hslValuesToCss,
