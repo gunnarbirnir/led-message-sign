@@ -61,6 +61,7 @@ const getComputedValues = (config: SignConfig) => {
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
     let animationFrame = 0;
+    const prevPixelState: Record<string, boolean> = {};
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
     );
@@ -92,7 +93,8 @@ const useRenderCanvas = (config: SignConfig) => {
             displayBulbsCtx,
             computedValues,
             config,
-            animationOffset
+            animationOffset,
+            prevPixelState
           );
         }
       }

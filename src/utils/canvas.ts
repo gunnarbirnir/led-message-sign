@@ -388,12 +388,10 @@ export const drawDisplayBulbs = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   config: SignConfig,
-  animationOffset: number = 0
+  animationOffset: number = 0,
+  prevPixelState: Record<string, boolean> = {}
 ) => {
-  // TODO: Check if have to redraw pixel?
   const {
-    displayHeight,
-    displayWidth,
     displayPaddingX,
     displayPaddingY,
     pixelSize,
@@ -403,45 +401,52 @@ export const drawDisplayBulbs = (
   } = computedValues;
   const { colorHue, multiColor, coloredOffLights } = config;
 
-  ctx.clearRect(0, 0, displayWidth, displayHeight);
-
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
     const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
     const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelHue = multiColor
-        ? calcMultiColorHue(x, y, animationOffset)
-        : colorHue;
       const pixelOn = isPixelOn(offsetX, y, pixelGrid);
-      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
-      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
-      const bulbOffColor = {
-        ...COLOR_VALUES.BULB_OFF,
-        saturation: coloredOffLights ? COLOR_VALUES.BULB_OFF.saturation : 0,
-      };
-      const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
+      const prevStateKey = `${x}-${y}`;
+      const prevPixelOn = prevPixelState[prevStateKey];
 
-      if (!pixelOn) {
-        ctx.fillStyle = COLORS.BACKGROUND;
-        ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+      if (prevPixelOn === undefined || pixelOn !== prevPixelOn) {
+        prevPixelState[prevStateKey] = pixelOn;
+
+        const pixelHue = multiColor
+          ? calcMultiColorHue(x, y, animationOffset)
+          : colorHue;
+        const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+        const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+        const bulbOffColor = {
+          ...COLOR_VALUES.BULB_OFF,
+          saturation: coloredOffLights ? COLOR_VALUES.BULB_OFF.saturation : 0,
+        };
+        const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
+
+        ctx.clearRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+
+        if (!pixelOn) {
+          ctx.fillStyle = COLORS.BACKGROUND;
+          ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+        }
+
+        ctx.fillStyle = hslValuesToCss(
+          pixelHue,
+          bulbColor.saturation,
+          bulbColor.lightness
+        );
+        ctx.beginPath();
+        ctx.arc(
+          pixelXCenterPos,
+          pixelYCenterPos,
+          pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
       }
-
-      ctx.fillStyle = hslValuesToCss(
-        pixelHue,
-        bulbColor.saturation,
-        bulbColor.lightness
-      );
-      ctx.beginPath();
-      ctx.arc(
-        pixelXCenterPos,
-        pixelYCenterPos,
-        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
-        0,
-        2 * Math.PI
-      );
-      ctx.fill();
     }
   }
 };
