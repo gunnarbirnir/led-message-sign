@@ -16,7 +16,7 @@ import { SignComputedValues, Tuple, SignConfig, FillStyle } from "../types";
 
 export const getCanvasContext = (id: string) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
-  const ctx = canvas ? canvas.getContext("2d") : null;
+  const ctx = canvas ? canvas.getContext("2d", { alpha: false }) : null;
 
   return ctx;
 };
