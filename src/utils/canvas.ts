@@ -14,52 +14,18 @@ import {
 } from "../utils";
 import { SignComputedValues, Tuple, SignConfig, FillStyle } from "../types";
 
-export const getCanvasContext = (id: string) => {
+export const getCanvasContext = (id: string, alpha: boolean = false) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
-  const ctx = canvas ? canvas.getContext("2d", { alpha: false }) : null;
+  const ctx = canvas ? canvas.getContext("2d", { alpha }) : null;
 
   return ctx;
 };
 
-const MASKING_GRADIENT_POSITION = 0.2;
-const FRAME_SHADING_OPACITY = 0.7;
-const FRAME_SHADE_COLOR = hslValuesToCss(
-  COLOR_VALUES.FRAME.hue,
-  COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness,
-  FRAME_SHADING_OPACITY
-);
-const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
-  COLOR_VALUES.FRAME.hue,
-  COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness + 5,
-  FRAME_SHADING_OPACITY
-);
-const VERTICAL_SHADE_COLOR = hslValuesToCss(
-  COLOR_VALUES.FRAME.hue,
-  COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness - 10,
-  FRAME_SHADING_OPACITY
-);
-const HORIZONTAL_SHADE_SIZE = 0.3;
-const VERTICAL_SHADE_SIZE = 0.4;
-
-export const drawFrame = (
+const getFrameUtils = (
   ctx: CanvasRenderingContext2D,
-  computedValues: SignComputedValues,
-  config: SignConfig,
-  animationOffset: number = 0
+  computedValues: SignComputedValues
 ) => {
-  const {
-    signHeight,
-    signWidth,
-    frameSize,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-    pixelGrid,
-  } = computedValues;
-  const { colorHue, multiColor } = config;
+  const { signHeight, signWidth, frameSize } = computedValues;
 
   const topLeftCorner: Tuple = [0, 0];
   const topRightCorner: Tuple = [signWidth, 0];
@@ -117,6 +83,36 @@ export const drawFrame = (
     ctx.fillStyle = fillStyle;
     ctx.fill();
   };
+
+  return {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  };
+};
+
+export const drawFrameGlow = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig,
+  animationOffset: number = 0
+) => {
+  const {
+    signHeight,
+    signWidth,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+    pixelGrid,
+  } = computedValues;
+  const { colorHue, multiColor } = config;
+  const {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  } = getFrameUtils(ctx, computedValues);
 
   ctx.clearRect(0, 0, signWidth, signHeight);
 
@@ -215,8 +211,22 @@ export const drawFrame = (
   drawFrameRightBorder(rightGlow);
   drawFrameBottomBorder(bottomGlow);
   drawFrameLeftBorder(leftGlow);
+};
 
-  // Glow masking
+const MASKING_GRADIENT_POSITION = 0.2;
+
+export const drawFrameMasking = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues
+) => {
+  const { signHeight, signWidth, frameSize } = computedValues;
+  const {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  } = getFrameUtils(ctx, computedValues);
+
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
   maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
   maskingTop.addColorStop(1, COLORS.TRANSPARENT);
@@ -247,8 +257,42 @@ export const drawFrame = (
   drawFrameRightBorder(maskingRight);
   drawFrameBottomBorder(maskingBottom);
   drawFrameLeftBorder(maskingLeft);
+};
 
-  // Frame shading
+const FRAME_SHADING_OPACITY = 0.7;
+const FRAME_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness,
+  FRAME_SHADING_OPACITY
+);
+const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness + 5,
+  FRAME_SHADING_OPACITY
+);
+const VERTICAL_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness - 10,
+  FRAME_SHADING_OPACITY
+);
+const HORIZONTAL_SHADE_SIZE = 0.3;
+const VERTICAL_SHADE_SIZE = 0.4;
+
+export const drawFrameShading = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues
+) => {
+  const { signHeight, signWidth } = computedValues;
+  const {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  } = getFrameUtils(ctx, computedValues);
+
   const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
   shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
   shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);

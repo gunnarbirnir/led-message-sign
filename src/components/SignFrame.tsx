@@ -3,12 +3,15 @@ import styled from "styled-components";
 
 import { useSignConfigContext } from "../hooks";
 import { COLORS } from "../constants/colors";
-import { calcFrameId, calcFrameSize } from "../utils";
+import { calcFrameIds, calcFrameSize } from "../utils";
 import Canvas from "./Canvas";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { id, height, width, frameProportion } = useSignConfigContext();
-  const frameId = useMemo(() => calcFrameId(id), [id]);
+  const { frameGlowId, frameMaskingId, frameShadingId } = useMemo(
+    () => calcFrameIds(id),
+    [id]
+  );
   const frameSize = useMemo(
     () => calcFrameSize(height, frameProportion),
     [height, frameProportion]
@@ -17,7 +20,11 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   return (
     <StyledSignFrame style={{ height, width, padding: frameSize }}>
       {!!frameSize && (
-        <FrameCanvas id={frameId} height={height} width={width} />
+        <>
+          <FrameCanvas id={frameGlowId} height={height} width={width} />
+          <FrameCanvas id={frameMaskingId} height={height} width={width} />
+          <FrameCanvas id={frameShadingId} height={height} width={width} />
+        </>
       )}
       {children}
     </StyledSignFrame>

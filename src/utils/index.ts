@@ -14,8 +14,12 @@ export const hslValuesToCss = (
   return `hsl(${hue}deg ${saturation}% ${lightness}% / ${opacity})`;
 };
 
-export const calcFrameId = (id: string) => {
-  return `sign-frame-${id}`;
+export const calcFrameIds = (id: string) => {
+  return {
+    frameGlowId: `sign-frame-glow-${id}`,
+    frameMaskingId: `sign-frame-masking-${id}`,
+    frameShadingId: `sign-frame-shading-${id}`,
+  };
 };
 
 export const calcDisplayId = (id: string) => {

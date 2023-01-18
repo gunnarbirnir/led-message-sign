@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { SignConfig } from "../types";
 import {
-  calcFrameId,
+  calcFrameIds,
   calcDisplayId,
   calcFrameSize,
   calcDisplayHeight,
@@ -15,7 +15,13 @@ import {
   calcAnimationOffset,
   isWholeNumber,
 } from "../utils";
-import { getCanvasContext, drawFrame, drawDisplay } from "../utils/canvas";
+import {
+  getCanvasContext,
+  drawDisplay,
+  drawFrameGlow,
+  drawFrameMasking,
+  drawFrameShading,
+} from "../utils/canvas";
 import { CANVAS_SCALING, VERTICAL_PIXEL_COUNT } from "../constants";
 
 const getComputedValues = (config: SignConfig) => {
@@ -53,30 +59,42 @@ const getComputedValues = (config: SignConfig) => {
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
     let animationFrame = 0;
-    const frameId = calcFrameId(config.id);
-    const frameCtx = getCanvasContext(frameId);
+    const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
+      config.id
+    );
+    const frameGlowCtx = getCanvasContext(frameGlowId);
+    const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
+    const frameShadingCtx = getCanvasContext(frameShadingId, true);
+
     const displayId = calcDisplayId(config.id);
     const displayCtx = getCanvasContext(displayId);
     const computedValues = getComputedValues(config);
 
-    const renderCanvas = () => {
+    const animateCanvas = () => {
       const animationOffset = calcAnimationOffset(
         animationFrame,
         config.animationFramesPerUpdate
       );
 
       if (isWholeNumber(animationOffset)) {
-        if (frameCtx) {
-          drawFrame(frameCtx, computedValues, config, animationOffset);
+        if (frameGlowCtx) {
+          drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
         if (displayCtx) {
           drawDisplay(displayCtx, computedValues, config, animationOffset);
         }
       }
 
-      animationFrame = requestAnimationFrame(renderCanvas);
+      animationFrame = requestAnimationFrame(animateCanvas);
     };
-    renderCanvas();
+    animateCanvas();
+
+    if (frameMaskingCtx) {
+      drawFrameMasking(frameMaskingCtx, computedValues);
+    }
+    if (frameShadingCtx) {
+      drawFrameShading(frameShadingCtx, computedValues);
+    }
 
     return () => {
       cancelAnimationFrame(animationFrame);
