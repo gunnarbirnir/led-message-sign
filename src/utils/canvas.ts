@@ -227,6 +227,8 @@ export const drawFrameMasking = (
     drawFrameLeftBorder,
   } = getFrameUtils(ctx, computedValues);
 
+  ctx.clearRect(0, 0, signWidth, signHeight);
+
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
   maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
   maskingTop.addColorStop(1, COLORS.TRANSPARENT);
@@ -293,6 +295,8 @@ export const drawFrameShading = (
     drawFrameLeftBorder,
   } = getFrameUtils(ctx, computedValues);
 
+  ctx.clearRect(0, 0, signWidth, signHeight);
+
   const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
   shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
   shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);
@@ -311,16 +315,82 @@ export const drawFrameShading = (
   drawFrameLeftBorder(shadingY);
 };
 
+export const drawDisplayColors = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig
+) => {
+  // TODO: Implement multiColor or move to component
+  const { displayHeight, displayWidth, displayPaddingX, displayPaddingY } =
+    computedValues;
+  const { colorHue } = config;
+
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+  const colorWidth = displayWidth - displayPaddingX * 2;
+  const colorHeight = displayHeight - displayPaddingY * 2;
+
+  ctx.fillStyle = hslValuesToCss(
+    colorHue,
+    COLOR_VALUES.LIGHT.saturation,
+    COLOR_VALUES.LIGHT.lightness
+  );
+  ctx.fillRect(displayPaddingX, displayPaddingY, colorWidth, colorHeight);
+};
+
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
+
+export const drawDisplayGlow = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues
+) => {
+  const {
+    displayHeight,
+    displayWidth,
+    displayPaddingX,
+    displayPaddingY,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+  } = computedValues;
+
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+  for (let x = 0; x < pixelCountX; x++) {
+    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
+    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
+
+    for (let y = 0; y < pixelCountY; y++) {
+      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+
+      const grd = ctx.createRadialGradient(
+        pixelXCenterPos,
+        pixelYCenterPos,
+        pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
+        pixelXCenterPos,
+        pixelYCenterPos,
+        pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
+      );
+      grd.addColorStop(0, COLORS.TRANSPARENT);
+      grd.addColorStop(1, COLORS.BACKGROUND);
+
+      ctx.fillStyle = grd;
+      ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+    }
+  }
+};
+
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 
-export const drawDisplay = (
+export const drawDisplayBulbs = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   config: SignConfig,
   animationOffset: number = 0
 ) => {
+  // TODO: Check if have to redraw pixel?
   const {
     displayHeight,
     displayWidth,
@@ -353,30 +423,11 @@ export const drawDisplay = (
       };
       const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
 
-      // Light gradient
-      if (pixelOn) {
-        const grd = ctx.createRadialGradient(
-          pixelXCenterPos,
-          pixelYCenterPos,
-          pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
-          pixelXCenterPos,
-          pixelYCenterPos,
-          pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
-        );
-        grd.addColorStop(
-          0,
-          hslValuesToCss(
-            pixelHue,
-            COLOR_VALUES.LIGHT.saturation,
-            COLOR_VALUES.LIGHT.lightness
-          )
-        );
-        grd.addColorStop(1, COLORS.TRANSPARENT);
-        ctx.fillStyle = grd;
+      if (!pixelOn) {
+        ctx.fillStyle = COLORS.BACKGROUND;
         ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
       }
 
-      // Light bulb
       ctx.fillStyle = hslValuesToCss(
         pixelHue,
         bulbColor.saturation,

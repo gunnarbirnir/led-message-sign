@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { SignConfig } from "../types";
 import {
   calcFrameIds,
-  calcDisplayId,
+  calcDisplayIds,
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
@@ -17,7 +17,9 @@ import {
 } from "../utils";
 import {
   getCanvasContext,
-  drawDisplay,
+  drawDisplayColors,
+  drawDisplayGlow,
+  drawDisplayBulbs,
   drawFrameGlow,
   drawFrameMasking,
   drawFrameShading,
@@ -62,13 +64,18 @@ const useRenderCanvas = (config: SignConfig) => {
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
     );
+    const computedValues = getComputedValues(config);
+
     const frameGlowCtx = getCanvasContext(frameGlowId);
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
     const frameShadingCtx = getCanvasContext(frameShadingId, true);
 
-    const displayId = calcDisplayId(config.id);
-    const displayCtx = getCanvasContext(displayId);
-    const computedValues = getComputedValues(config);
+    const { displayColorsId, displayGlowId, displayBulbsId } = calcDisplayIds(
+      config.id
+    );
+    const displayColorsCtx = getCanvasContext(displayColorsId);
+    const displayGlowCtx = getCanvasContext(displayGlowId, true);
+    const displayBulbsCtx = getCanvasContext(displayBulbsId, true);
 
     const animateCanvas = () => {
       const animationOffset = calcAnimationOffset(
@@ -80,8 +87,13 @@ const useRenderCanvas = (config: SignConfig) => {
         if (frameGlowCtx) {
           drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
-        if (displayCtx) {
-          drawDisplay(displayCtx, computedValues, config, animationOffset);
+        if (displayBulbsCtx) {
+          drawDisplayBulbs(
+            displayBulbsCtx,
+            computedValues,
+            config,
+            animationOffset
+          );
         }
       }
 
@@ -94,6 +106,12 @@ const useRenderCanvas = (config: SignConfig) => {
     }
     if (frameShadingCtx) {
       drawFrameShading(frameShadingCtx, computedValues);
+    }
+    if (displayColorsCtx) {
+      drawDisplayColors(displayColorsCtx, computedValues, config);
+    }
+    if (displayGlowCtx) {
+      drawDisplayGlow(displayGlowCtx, computedValues);
     }
 
     return () => {

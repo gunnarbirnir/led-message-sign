@@ -22,8 +22,12 @@ export const calcFrameIds = (id: string) => {
   };
 };
 
-export const calcDisplayId = (id: string) => {
-  return `sign-display-${id}`;
+export const calcDisplayIds = (id: string) => {
+  return {
+    displayColorsId: `sign-display-colors-${id}`,
+    displayGlowId: `sign-display-glow-${id}`,
+    displayBulbsId: `sign-display-bulbs-${id}`,
+  };
 };
 
 export const calcFrameSize = (signHeight: number, frameProportion: number) => {
