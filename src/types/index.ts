@@ -9,8 +9,6 @@ export interface LEDMessageSignProps {
   fullWidth?: boolean;
   /** Hue value for HSL color. Default is 0. */
   colorHue?: number;
-  /** Cycle between all available color values. If true colorHue prop will be ignored. Default is false.  */
-  multiColor?: boolean;
   /** Hide sign frame. Default is false.  */
   hideFrame?: boolean;
   /** Should the off lights be colored. Default is true.  */

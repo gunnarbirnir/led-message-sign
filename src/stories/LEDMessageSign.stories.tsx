@@ -33,7 +33,6 @@ export default {
         max: MAX_VALUE.COLOR_HUE,
       },
     },
-    multiColor: { defaultValue: DEFAULT_VALUE.MULTI_COLOR },
     hideFrame: { defaultValue: DEFAULT_VALUE.HIDE_FRAME },
     coloredOffLights: { defaultValue: DEFAULT_VALUE.COLORED_OFF_LIGHTS },
     animationFramesPerUpdate: {

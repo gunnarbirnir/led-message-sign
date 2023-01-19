@@ -1,7 +1,7 @@
 import {
   hslValuesToCss,
-  calcFrameId,
-  calcDisplayId,
+  calcFrameIds,
+  calcDisplayIds,
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
@@ -13,7 +13,6 @@ import {
   calcAnimationOffset,
   isWholeNumber,
   calcTotalOffset,
-  calcMultiColorHue,
   isPixelOn,
   calcPixelXPos,
   calcPixelXCenterPos,
@@ -35,7 +34,7 @@ const TEST_CONFIG = {
   frameProportions: 0.2,
 };
 
-const pixelGridPadding = [];
+const pixelGridPadding: number[][] = [];
 for (let i = 0; i < 50; i++) {
   pixelGridPadding.push(EMPTY_COLUMN);
 }
@@ -93,16 +92,24 @@ describe("Utils", () => {
   });
 
   describe("calcFrameId", () => {
-    test("Should return frame id", () => {
-      const id = calcFrameId(TEST_CONFIG.id);
-      expect(id).toBe("sign-frame-123");
+    test("Should return frame ids", () => {
+      const id = calcFrameIds(TEST_CONFIG.id);
+      expect(id).toStrictEqual({
+        frameGlowId: "sign-frame-glow-123",
+        frameMaskingId: "sign-frame-masking-123",
+        frameShadingId: "sign-frame-shading-123",
+      });
     });
   });
 
   describe("calcDisplayId", () => {
-    test("Should return display id", () => {
-      const id = calcDisplayId(TEST_CONFIG.id);
-      expect(id).toBe("sign-display-123");
+    test("Should return display ids", () => {
+      const id = calcDisplayIds(TEST_CONFIG.id);
+      expect(id).toStrictEqual({
+        displayColorsId: "sign-display-colors-123",
+        displayOnLightsId: "sign-display-on-lights-123",
+        displayOffLightsId: "sign-display-off-lights-123",
+      });
     });
   });
 
@@ -215,18 +222,6 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelGrid
       );
       expect(offset).toBe(TEST_OFFSET_X);
-    });
-  });
-
-  describe("calcMultiColorHue", () => {
-    test("Should return multi color hue", () => {
-      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_OFFSET);
-      expect(color).toBe(TEST_MULTI_COLOR_HUE);
-    });
-
-    test("Should not go outside available hue values", () => {
-      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_OFFSET);
-      expect(color).toBe(TEST_MULTI_COLOR_HUE);
     });
   });
 

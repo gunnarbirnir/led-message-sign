@@ -15,7 +15,6 @@ describe("Props", () => {
         height: 0,
         width: 0,
         colorHue: 1000,
-        multiColor: true,
         hideFrame: false,
         animationFramesPerUpdate: 0,
       });
@@ -26,8 +25,8 @@ describe("Props", () => {
         width: 100,
         fullWidth: false,
         colorHue: 360,
-        multiColor: true,
         hideFrame: false,
+        coloredOffLights: true,
         animationFramesPerUpdate: 1,
       });
     });

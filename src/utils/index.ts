@@ -113,14 +113,6 @@ export const calcTotalOffset = (
   return (x + animationOffset) % pixelGrid.length;
 };
 
-export const calcMultiColorHue = (
-  x: number,
-  y: number,
-  animationOffset: number
-) => {
-  return (animationOffset + x + y) % 360;
-};
-
 export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
   if (x < 0 || x >= pixelGrid.length) {
     return false;

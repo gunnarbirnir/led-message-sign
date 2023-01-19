@@ -2,7 +2,6 @@ import { COLORS, COLOR_VALUES } from "../constants/colors";
 import {
   hslValuesToCss,
   calcTotalOffset,
-  calcMultiColorHue,
   isPixelOn,
   calcPixelXPos,
   calcPixelXCenterPos,
@@ -106,7 +105,7 @@ export const drawFrameGlow = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { colorHue, multiColor } = config;
+  const { colorHue } = config;
   const {
     drawFrameTopBorder,
     drawFrameRightBorder,
@@ -128,14 +127,6 @@ export const drawFrameGlow = (
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
     const position = calcGlowPosition(x, signWidth, pixelSize, pixelCountX);
     const disableGlow = calcDisableGlow(x, offsetX, pixelCountX);
-
-    const topGlowHue = multiColor
-      ? calcMultiColorHue(x, 0, animationOffset)
-      : colorHue;
-    const bottomGlowHue = multiColor
-      ? calcMultiColorHue(x, pixelCountY - 1, animationOffset)
-      : colorHue;
-
     const topGlowOpacity = disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid);
     const bottomGlowOpacity =
       disableGlow ?? calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid);
@@ -143,7 +134,7 @@ export const drawFrameGlow = (
     topGlow.addColorStop(
       position,
       hslValuesToCss(
-        topGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         topGlowOpacity
@@ -152,7 +143,7 @@ export const drawFrameGlow = (
     bottomGlow.addColorStop(
       position,
       hslValuesToCss(
-        bottomGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         bottomGlowOpacity
@@ -176,21 +167,13 @@ export const drawFrameGlow = (
       pixelGrid
     );
     const position = calcGlowPosition(y, signHeight, pixelSize, pixelCountY);
-
-    const leftGlowHue = multiColor
-      ? calcMultiColorHue(0, y, animationOffset)
-      : colorHue;
-    const rightGlowHue = multiColor
-      ? calcMultiColorHue(pixelCountX - 1, y, animationOffset)
-      : colorHue;
-
     const leftGlowOpacity = calcPixelGlow(leftOffsetX, y, pixelGrid, true);
     const rightGlowOpacity = calcPixelGlow(rightOffsetX, y, pixelGrid, true);
 
     leftGlow.addColorStop(
       position,
       hslValuesToCss(
-        leftGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         leftGlowOpacity
@@ -199,7 +182,7 @@ export const drawFrameGlow = (
     rightGlow.addColorStop(
       position,
       hslValuesToCss(
-        rightGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         rightGlowOpacity
@@ -320,7 +303,6 @@ export const drawDisplayColors = (
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
-  // TODO: Implement multiColor or move to component
   const { displayHeight, displayWidth, displayPaddingX, displayPaddingY } =
     computedValues;
   const { colorHue } = config;
@@ -410,7 +392,7 @@ export const drawDisplayOffLights = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { colorHue, multiColor, coloredOffLights } = config;
+  const { colorHue, coloredOffLights } = config;
 
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
