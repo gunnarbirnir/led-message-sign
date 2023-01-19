@@ -298,6 +298,9 @@ export const drawFrameShading = (
   drawFrameLeftBorder(shadingY);
 };
 
+// To remove unwanted border
+const COLOR_PADDING = 1;
+
 export const drawDisplayColors = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
@@ -309,15 +312,17 @@ export const drawDisplayColors = (
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-  const colorWidth = displayWidth - displayPaddingX * 2;
-  const colorHeight = displayHeight - displayPaddingY * 2;
+  const totalPaddingX = displayPaddingX + COLOR_PADDING;
+  const totalPaddingY = displayPaddingY + COLOR_PADDING;
+  const colorWidth = displayWidth - totalPaddingX * 2;
+  const colorHeight = displayHeight - totalPaddingY * 2;
 
   ctx.fillStyle = hslValuesToCss(
     colorHue,
     COLOR_VALUES.LIGHT.saturation,
     COLOR_VALUES.LIGHT.lightness
   );
-  ctx.fillRect(displayPaddingX, displayPaddingY, colorWidth, colorHeight);
+  ctx.fillRect(totalPaddingX, totalPaddingY, colorWidth, colorHeight);
 };
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
