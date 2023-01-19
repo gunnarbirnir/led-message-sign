@@ -341,7 +341,7 @@ export const drawDisplayColors = (
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
 
-export const drawDisplayGlow = (
+export const drawDisplayOnLights = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues
 ) => {
@@ -378,13 +378,24 @@ export const drawDisplayGlow = (
 
       ctx.fillStyle = grd;
       ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+
+      ctx.fillStyle = COLORS.BULB_ON;
+      ctx.beginPath();
+      ctx.arc(
+        pixelXCenterPos,
+        pixelYCenterPos,
+        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+        0,
+        2 * Math.PI
+      );
+      ctx.fill();
     }
   }
 };
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 
-export const drawDisplayBulbs = (
+export const drawDisplayOffLights = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   config: SignConfig,
@@ -412,11 +423,6 @@ export const drawDisplayBulbs = (
       const prevPixelOn = prevPixelState[prevStateKey];
 
       if (prevPixelOn === undefined || pixelOn !== prevPixelOn) {
-        prevPixelState[prevStateKey] = pixelOn;
-
-        const pixelHue = multiColor
-          ? calcMultiColorHue(x, y, animationOffset)
-          : colorHue;
         const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
         const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
         const bulbOffColor = {
@@ -425,27 +431,28 @@ export const drawDisplayBulbs = (
         };
         const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
 
+        prevPixelState[prevStateKey] = pixelOn;
         ctx.clearRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
 
         if (!pixelOn) {
           ctx.fillStyle = COLORS.BACKGROUND;
           ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
-        }
 
-        ctx.fillStyle = hslValuesToCss(
-          pixelHue,
-          bulbColor.saturation,
-          bulbColor.lightness
-        );
-        ctx.beginPath();
-        ctx.arc(
-          pixelXCenterPos,
-          pixelYCenterPos,
-          pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
-          0,
-          2 * Math.PI
-        );
-        ctx.fill();
+          ctx.fillStyle = hslValuesToCss(
+            colorHue,
+            bulbColor.saturation,
+            bulbColor.lightness
+          );
+          ctx.beginPath();
+          ctx.arc(
+            pixelXCenterPos,
+            pixelYCenterPos,
+            pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+        }
       }
     }
   }

@@ -2,19 +2,18 @@ import React, { FC, useMemo } from "react";
 import styled from "styled-components";
 
 import { useSignConfigContext } from "../hooks";
-import { COLORS, COLOR_VALUES } from "../constants/colors";
+import { COLORS } from "../constants/colors";
 import {
   calcDisplayIds,
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
-  hslValuesToCss,
 } from "../utils";
 import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
   const { id, height, width, frameProportion } = useSignConfigContext();
-  const { displayColorsId, displayGlowId, displayBulbsId } = useMemo(
+  const { displayColorsId, displayOnLightsId, displayOffLightsId } = useMemo(
     () => calcDisplayIds(id),
     [id]
   );
@@ -39,12 +38,12 @@ const SignDisplay: FC = () => {
         width={displayWidth}
       />
       <DisplayCanvas
-        id={displayGlowId}
+        id={displayOnLightsId}
         height={displayHeight}
         width={displayWidth}
       />
       <DisplayCanvas
-        id={displayBulbsId}
+        id={displayOffLightsId}
         height={displayHeight}
         width={displayWidth}
       />

@@ -30,7 +30,8 @@ export const COLOR_VALUES: Record<COLOR, HSLColorValues> = {
   BULB_ON: {
     hue: 0,
     saturation: 100,
-    lightness: 95,
+    lightness: 100,
+    opacity: 0.85,
   },
   BULB_OFF: {
     hue: 0,
