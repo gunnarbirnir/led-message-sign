@@ -353,11 +353,14 @@ export const drawDisplayOnLights = (
             )
           );
           grd.addColorStop(1, COLORS.BACKGROUND);
-
           ctx.fillStyle = grd;
           ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
 
-          ctx.fillStyle = COLORS.BULB_ON;
+          ctx.fillStyle = hslValuesToCss(
+            colorHue,
+            COLOR_VALUES.BULB_ON.saturation,
+            COLOR_VALUES.BULB_ON.lightness
+          );
           ctx.beginPath();
           ctx.arc(
             pixelXCenterPos,
