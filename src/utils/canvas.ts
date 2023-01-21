@@ -305,34 +305,25 @@ export const getOnLightsImage = (
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
-  const {
-    displayHeight,
-    displayWidth,
-    displayPaddingX,
-    displayPaddingY,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-    pixelGrid,
-  } = computedValues;
+  const { pixelSize, pixelCountX, pixelCountY, pixelGrid } = computedValues;
   const { colorHue } = config;
 
   const canvas = document.createElement("canvas");
-  canvas.height = displayHeight;
-  canvas.width = displayWidth;
+  canvas.height = pixelSize * pixelCountY;
+  canvas.width = pixelSize * pixelGrid.length;
   const ctx = canvas.getContext("2d", { alpha: true });
 
   if (!ctx) {
     return null;
   }
 
-  for (let x = 0; x < pixelCountX; x++) {
-    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
+  for (let x = 0; x < pixelGrid.length; x++) {
+    const pixelXPos = calcPixelXPos(x, pixelSize, 0);
     const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
     for (let y = 0; y < pixelCountY; y++) {
       const pixelOn = isPixelOn(x + pixelCountX, y, pixelGrid);
-      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelYPos = calcPixelYPos(y, pixelSize, 0);
       const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
 
       if (pixelOn) {
@@ -380,29 +371,38 @@ export const getOnLightsImage = (
 export const drawDisplayOnLights = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
-  config: SignConfig,
   animationOffset: number = 0,
   onLightsImage: HTMLCanvasElement | null = null
 ) => {
-  const { displayHeight, displayWidth, pixelSize, displayPaddingX, pixelGrid } =
-    computedValues;
+  const {
+    displayHeight,
+    displayWidth,
+    pixelSize,
+    pixelAreaHeight,
+    pixelAreaWidth,
+    displayPaddingX,
+    displayPaddingY,
+    pixelGrid,
+  } = computedValues;
   // TODO: Create utils
-  const pixelsWidth = pixelSize * (animationOffset % pixelGrid.length);
-  const startX = displayWidth - pixelsWidth - displayPaddingX;
+  const progress = pixelSize * (animationOffset % pixelGrid.length);
+  const imgWidth = Math.min(pixelAreaWidth, progress);
+  const startX = displayPaddingX + pixelAreaWidth - imgWidth;
+  const clippingX = Math.max(0, progress - pixelAreaWidth);
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
   if (onLightsImage) {
     ctx.drawImage(
       onLightsImage,
-      displayPaddingX,
+      clippingX,
       0,
-      pixelsWidth,
-      displayHeight,
+      imgWidth,
+      pixelAreaHeight,
       startX,
-      0,
-      pixelsWidth,
-      displayHeight
+      displayPaddingY,
+      imgWidth,
+      pixelAreaHeight
     );
   }
 };

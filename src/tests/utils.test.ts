@@ -6,8 +6,10 @@ import {
   calcDisplayHeight,
   calcDisplayWidth,
   calcDisplayPaddingY,
+  calcPixelAreaHeight,
   calcPixelSize,
   calcPixelCountX,
+  calcPixelAreaWidth,
   calcDisplayPaddingX,
   calcPixelGrid,
   calcAnimationOffset,
@@ -45,6 +47,8 @@ const TEST_COMPUTED_VALUES = {
   frameSize: 30,
   displayHeight: 240,
   displayWidth: 1540,
+  pixelAreaHeight: 210,
+  pixelAreaWidth: 1500,
   displayPaddingX: 20,
   displayPaddingY: 15,
   pixelSize: 30,
@@ -67,7 +71,6 @@ const TEST_Y = 3;
 const TEST_ANIMATION_FRAME = 99;
 const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
-const TEST_MULTI_COLOR_HUE = 61;
 const TEST_PIXEL_X_POS = 770;
 const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
@@ -106,7 +109,6 @@ describe("Utils", () => {
     test("Should return display ids", () => {
       const id = calcDisplayIds(TEST_CONFIG.id);
       expect(id).toStrictEqual({
-        displayColorsId: "sign-display-colors-123",
         displayOnLightsId: "sign-display-on-lights-123",
         displayOffLightsId: "sign-display-off-lights-123",
       });
@@ -150,12 +152,19 @@ describe("Utils", () => {
     });
   });
 
-  describe("calcPixelSize", () => {
-    test("Should return pixel size", () => {
-      const size = calcPixelSize(
+  describe("calcPixelAreaHeight", () => {
+    test("Should return pixel area height", () => {
+      const height = calcPixelAreaHeight(
         TEST_COMPUTED_VALUES.displayHeight,
         TEST_COMPUTED_VALUES.displayPaddingY
       );
+      expect(height).toBe(TEST_COMPUTED_VALUES.pixelAreaHeight);
+    });
+  });
+
+  describe("calcPixelSize", () => {
+    test("Should return pixel size", () => {
+      const size = calcPixelSize(TEST_COMPUTED_VALUES.pixelAreaHeight);
       expect(size).toBe(TEST_COMPUTED_VALUES.pixelSize);
     });
   });
@@ -171,12 +180,21 @@ describe("Utils", () => {
     });
   });
 
+  describe("calcPixelAreaWidth", () => {
+    test("Should return pixel area width", () => {
+      const width = calcPixelAreaWidth(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelCountX
+      );
+      expect(width).toBe(TEST_COMPUTED_VALUES.pixelAreaWidth);
+    });
+  });
+
   describe("calcDisplayPaddingX", () => {
     test("Should return display horizontal padding", () => {
       const padding = calcDisplayPaddingX(
         TEST_COMPUTED_VALUES.displayWidth,
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelCountX
+        TEST_COMPUTED_VALUES.pixelAreaWidth
       );
       expect(padding).toBe(TEST_COMPUTED_VALUES.displayPaddingX);
     });

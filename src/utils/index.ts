@@ -45,11 +45,14 @@ export const calcDisplayPaddingY = (signHeight: number) => {
   return Math.floor(signHeight * PADDING_TO_HEIGHT_RATIO);
 };
 
-export const calcPixelSize = (
+export const calcPixelAreaHeight = (
   displayHeight: number,
   displayPaddingY: number
 ) => {
-  const pixelAreaHeight = displayHeight - displayPaddingY * 2;
+  return displayHeight - displayPaddingY * 2;
+};
+
+export const calcPixelSize = (pixelAreaHeight: number) => {
   return pixelAreaHeight / VERTICAL_PIXEL_COUNT;
 };
 
@@ -62,12 +65,14 @@ export const calcPixelCountX = (
   return Math.floor(widthWithoutPadding / pixelSize);
 };
 
+export const calcPixelAreaWidth = (pixelSize: number, pixelCountX: number) => {
+  return pixelSize * pixelCountX;
+};
+
 export const calcDisplayPaddingX = (
   displayWidth: number,
-  pixelSize: number,
-  pixelCountX: number
+  pixelAreaWidth: number
 ) => {
-  const pixelAreaWidth = pixelSize * pixelCountX;
   return (displayWidth - pixelAreaWidth) / 2;
 };
 

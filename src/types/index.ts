@@ -28,6 +28,8 @@ export interface SignComputedValues {
   frameSize: number;
   displayHeight: number;
   displayWidth: number;
+  pixelAreaHeight: number;
+  pixelAreaWidth: number;
   displayPaddingX: number;
   displayPaddingY: number;
   pixelSize: number;

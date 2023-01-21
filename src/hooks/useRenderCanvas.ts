@@ -7,6 +7,8 @@ import {
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
+  calcPixelAreaHeight,
+  calcPixelAreaWidth,
   calcDisplayPaddingY,
   calcPixelSize,
   calcPixelCountX,
@@ -33,13 +35,11 @@ const getComputedValues = (config: SignConfig) => {
   const displayHeight = calcDisplayHeight(signHeight, frameSize);
   const displayWidth = calcDisplayWidth(signWidth, frameSize);
   const displayPaddingY = calcDisplayPaddingY(signHeight);
-  const pixelSize = calcPixelSize(displayHeight, displayPaddingY);
+  const pixelAreaHeight = calcPixelAreaHeight(displayHeight, displayPaddingY);
+  const pixelSize = calcPixelSize(pixelAreaHeight);
   const pixelCountX = calcPixelCountX(displayWidth, displayPaddingY, pixelSize);
-  const displayPaddingX = calcDisplayPaddingX(
-    displayWidth,
-    pixelSize,
-    pixelCountX
-  );
+  const pixelAreaWidth = calcPixelAreaWidth(pixelSize, pixelCountX);
+  const displayPaddingX = calcDisplayPaddingX(displayWidth, pixelAreaWidth);
   const pixelCountY = VERTICAL_PIXEL_COUNT;
   const pixelGrid = calcPixelGrid(config.text, pixelCountX);
 
@@ -49,6 +49,8 @@ const getComputedValues = (config: SignConfig) => {
     frameSize,
     displayHeight,
     displayWidth,
+    pixelAreaHeight,
+    pixelAreaWidth,
     displayPaddingY,
     displayPaddingX,
     pixelSize,
@@ -89,7 +91,6 @@ const useRenderCanvas = (config: SignConfig) => {
           drawDisplayOnLights(
             displayOnLightsCtx,
             computedValues,
-            config,
             animationOffset,
             onLightsImage
           );
