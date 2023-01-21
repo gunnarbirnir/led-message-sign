@@ -298,91 +298,10 @@ export const drawFrameShading = (
   drawFrameLeftBorder(shadingY);
 };
 
-// To remove unwanted border
-const COLOR_PADDING = 1;
-
-export const drawDisplayColors = (
-  ctx: CanvasRenderingContext2D,
-  computedValues: SignComputedValues,
-  config: SignConfig
-) => {
-  const { displayHeight, displayWidth, displayPaddingX, displayPaddingY } =
-    computedValues;
-  const { colorHue } = config;
-
-  ctx.clearRect(0, 0, displayWidth, displayHeight);
-
-  const totalPaddingX = displayPaddingX + COLOR_PADDING;
-  const totalPaddingY = displayPaddingY + COLOR_PADDING;
-  const colorWidth = displayWidth - totalPaddingX * 2;
-  const colorHeight = displayHeight - totalPaddingY * 2;
-
-  ctx.fillStyle = hslValuesToCss(
-    colorHue,
-    COLOR_VALUES.LIGHT.saturation,
-    COLOR_VALUES.LIGHT.lightness
-  );
-  ctx.fillRect(totalPaddingX, totalPaddingY, colorWidth, colorHeight);
-};
-
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
 
 export const drawDisplayOnLights = (
-  ctx: CanvasRenderingContext2D,
-  computedValues: SignComputedValues
-) => {
-  const {
-    displayHeight,
-    displayWidth,
-    displayPaddingX,
-    displayPaddingY,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-  } = computedValues;
-
-  ctx.clearRect(0, 0, displayWidth, displayHeight);
-
-  for (let x = 0; x < pixelCountX; x++) {
-    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
-    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
-
-    for (let y = 0; y < pixelCountY; y++) {
-      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
-      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
-
-      const grd = ctx.createRadialGradient(
-        pixelXCenterPos,
-        pixelYCenterPos,
-        pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
-        pixelXCenterPos,
-        pixelYCenterPos,
-        pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
-      );
-      grd.addColorStop(0, COLORS.TRANSPARENT);
-      grd.addColorStop(1, COLORS.BACKGROUND);
-
-      ctx.fillStyle = grd;
-      ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
-
-      ctx.fillStyle = COLORS.BULB_ON;
-      ctx.beginPath();
-      ctx.arc(
-        pixelXCenterPos,
-        pixelYCenterPos,
-        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
-        0,
-        2 * Math.PI
-      );
-      ctx.fill();
-    }
-  }
-};
-
-const PIXEL_TO_BULB_RADIUS_RATIO = 6;
-
-export const drawDisplayOffLights = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   config: SignConfig,
@@ -397,7 +316,7 @@ export const drawDisplayOffLights = (
     pixelCountY,
     pixelGrid,
   } = computedValues;
-  const { colorHue, coloredOffLights } = config;
+  const { colorHue } = config;
 
   for (let x = 0; x < pixelCountX; x++) {
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
@@ -409,27 +328,36 @@ export const drawDisplayOffLights = (
       const prevStateKey = `${x}-${y}`;
       const prevPixelOn = prevPixelState[prevStateKey];
 
-      if (prevPixelOn === undefined || pixelOn !== prevPixelOn) {
+      if (pixelOn !== prevPixelOn) {
+        prevPixelState[prevStateKey] = pixelOn;
         const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
         const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
-        const bulbOffColor = {
-          ...COLOR_VALUES.BULB_OFF,
-          saturation: coloredOffLights ? COLOR_VALUES.BULB_OFF.saturation : 0,
-        };
-        const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
-
-        prevPixelState[prevStateKey] = pixelOn;
-        ctx.clearRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
 
         if (!pixelOn) {
-          ctx.fillStyle = COLORS.BACKGROUND;
+          ctx.clearRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+        } else {
+          const grd = ctx.createRadialGradient(
+            pixelXCenterPos,
+            pixelYCenterPos,
+            pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
+            pixelXCenterPos,
+            pixelYCenterPos,
+            pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
+          );
+          grd.addColorStop(
+            0,
+            hslValuesToCss(
+              colorHue,
+              COLOR_VALUES.LIGHT.saturation,
+              COLOR_VALUES.LIGHT.lightness
+            )
+          );
+          grd.addColorStop(1, COLORS.BACKGROUND);
+
+          ctx.fillStyle = grd;
           ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
 
-          ctx.fillStyle = hslValuesToCss(
-            colorHue,
-            bulbColor.saturation,
-            bulbColor.lightness
-          );
+          ctx.fillStyle = COLORS.BULB_ON;
           ctx.beginPath();
           ctx.arc(
             pixelXCenterPos,
@@ -441,6 +369,58 @@ export const drawDisplayOffLights = (
           ctx.fill();
         }
       }
+    }
+  }
+};
+
+const PIXEL_TO_BULB_RADIUS_RATIO = 6;
+
+export const drawDisplayOffLights = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig
+) => {
+  const {
+    displayWidth,
+    displayHeight,
+    displayPaddingX,
+    displayPaddingY,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+  } = computedValues;
+  const { colorHue, coloredOffLights } = config;
+
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+  ctx.fillStyle = COLORS.BACKGROUND;
+  ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+  const bulbOffColorSaturation = coloredOffLights
+    ? COLOR_VALUES.BULB_OFF.saturation
+    : 0;
+
+  for (let x = 0; x < pixelCountX; x++) {
+    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
+    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
+
+    for (let y = 0; y < pixelCountY; y++) {
+      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+
+      ctx.fillStyle = hslValuesToCss(
+        colorHue,
+        bulbOffColorSaturation,
+        COLOR_VALUES.BULB_OFF.lightness
+      );
+      ctx.beginPath();
+      ctx.arc(
+        pixelXCenterPos,
+        pixelYCenterPos,
+        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+        0,
+        2 * Math.PI
+      );
+      ctx.fill();
     }
   }
 };

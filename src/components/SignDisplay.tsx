@@ -13,7 +13,7 @@ import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
   const { id, height, width, frameProportion } = useSignConfigContext();
-  const { displayColorsId, displayOnLightsId, displayOffLightsId } = useMemo(
+  const { displayOnLightsId, displayOffLightsId } = useMemo(
     () => calcDisplayIds(id),
     [id]
   );
@@ -33,17 +33,12 @@ const SignDisplay: FC = () => {
   return (
     <StyledSignDisplay>
       <DisplayCanvas
-        id={displayColorsId}
+        id={displayOffLightsId}
         height={displayHeight}
         width={displayWidth}
       />
       <DisplayCanvas
         id={displayOnLightsId}
-        height={displayHeight}
-        width={displayWidth}
-      />
-      <DisplayCanvas
-        id={displayOffLightsId}
         height={displayHeight}
         width={displayWidth}
       />

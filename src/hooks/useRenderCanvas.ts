@@ -17,7 +17,6 @@ import {
 } from "../utils";
 import {
   getCanvasContext,
-  drawDisplayColors,
   drawDisplayOnLights,
   drawDisplayOffLights,
   drawFrameGlow,
@@ -71,11 +70,9 @@ const useRenderCanvas = (config: SignConfig) => {
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
     const frameShadingCtx = getCanvasContext(frameShadingId, true);
 
-    const { displayColorsId, displayOnLightsId, displayOffLightsId } =
-      calcDisplayIds(config.id);
-    const displayColorsCtx = getCanvasContext(displayColorsId);
+    const { displayOnLightsId, displayOffLightsId } = calcDisplayIds(config.id);
     const displayOnLightsCtx = getCanvasContext(displayOnLightsId, true);
-    const displayOffLightsCtx = getCanvasContext(displayOffLightsId, true);
+    const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
 
     const animateCanvas = () => {
       const animationOffset = calcAnimationOffset(
@@ -87,9 +84,9 @@ const useRenderCanvas = (config: SignConfig) => {
         if (frameGlowCtx) {
           drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
-        if (displayOffLightsCtx) {
-          drawDisplayOffLights(
-            displayOffLightsCtx,
+        if (displayOnLightsCtx) {
+          drawDisplayOnLights(
+            displayOnLightsCtx,
             computedValues,
             config,
             animationOffset,
@@ -108,11 +105,8 @@ const useRenderCanvas = (config: SignConfig) => {
     if (frameShadingCtx) {
       drawFrameShading(frameShadingCtx, computedValues);
     }
-    if (displayColorsCtx) {
-      drawDisplayColors(displayColorsCtx, computedValues, config);
-    }
-    if (displayOnLightsCtx) {
-      drawDisplayOnLights(displayOnLightsCtx, computedValues);
+    if (displayOffLightsCtx) {
+      drawDisplayOffLights(displayOffLightsCtx, computedValues, config);
     }
 
     return () => {

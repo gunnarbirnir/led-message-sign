@@ -24,7 +24,6 @@ export const calcFrameIds = (id: string) => {
 
 export const calcDisplayIds = (id: string) => {
   return {
-    displayColorsId: `sign-display-colors-${id}`,
     displayOnLightsId: `sign-display-on-lights-${id}`,
     displayOffLightsId: `sign-display-off-lights-${id}`,
   };
