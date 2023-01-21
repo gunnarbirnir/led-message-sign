@@ -17,6 +17,7 @@ import {
 } from "../utils";
 import {
   getCanvasContext,
+  getOnLightsImage,
   drawDisplayOnLights,
   drawDisplayOffLights,
   drawFrameGlow,
@@ -60,11 +61,11 @@ const getComputedValues = (config: SignConfig) => {
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
     let animationFrame = 0;
-    const prevPixelState: Record<string, boolean> = {};
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
     );
     const computedValues = getComputedValues(config);
+    const onLightsImage = getOnLightsImage(computedValues, config);
 
     const frameGlowCtx = getCanvasContext(frameGlowId);
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
@@ -90,7 +91,7 @@ const useRenderCanvas = (config: SignConfig) => {
             computedValues,
             config,
             animationOffset,
-            prevPixelState
+            onLightsImage
           );
         }
       }

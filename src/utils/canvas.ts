@@ -301,14 +301,13 @@ export const drawFrameShading = (
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
 
-export const drawDisplayOnLights = (
-  ctx: CanvasRenderingContext2D,
+export const getOnLightsImage = (
   computedValues: SignComputedValues,
-  config: SignConfig,
-  animationOffset: number = 0,
-  prevPixelState: Record<string, boolean> = {}
+  config: SignConfig
 ) => {
   const {
+    displayHeight,
+    displayWidth,
     displayPaddingX,
     displayPaddingY,
     pixelSize,
@@ -318,61 +317,93 @@ export const drawDisplayOnLights = (
   } = computedValues;
   const { colorHue } = config;
 
+  const canvas = document.createElement("canvas");
+  canvas.height = displayHeight;
+  canvas.width = displayWidth;
+  const ctx = canvas.getContext("2d", { alpha: true });
+
+  if (!ctx) {
+    return null;
+  }
+
   for (let x = 0; x < pixelCountX; x++) {
-    const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
     const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
     const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelOn = isPixelOn(offsetX, y, pixelGrid);
-      const prevStateKey = `${x}-${y}`;
-      const prevPixelOn = prevPixelState[prevStateKey];
+      const pixelOn = isPixelOn(x + pixelCountX, y, pixelGrid);
+      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
 
-      if (pixelOn !== prevPixelOn) {
-        prevPixelState[prevStateKey] = pixelOn;
-        const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
-        const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
-
-        if (!pixelOn) {
-          ctx.clearRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
-        } else {
-          const grd = ctx.createRadialGradient(
-            pixelXCenterPos,
-            pixelYCenterPos,
-            pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
-            pixelXCenterPos,
-            pixelYCenterPos,
-            pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
-          );
-          grd.addColorStop(
-            0,
-            hslValuesToCss(
-              colorHue,
-              COLOR_VALUES.LIGHT.saturation,
-              COLOR_VALUES.LIGHT.lightness
-            )
-          );
-          grd.addColorStop(1, COLORS.BACKGROUND);
-          ctx.fillStyle = grd;
-          ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
-
-          ctx.fillStyle = hslValuesToCss(
+      if (pixelOn) {
+        const grd = ctx.createRadialGradient(
+          pixelXCenterPos,
+          pixelYCenterPos,
+          pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
+          pixelXCenterPos,
+          pixelYCenterPos,
+          pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
+        );
+        grd.addColorStop(
+          0,
+          hslValuesToCss(
             colorHue,
-            COLOR_VALUES.BULB_ON.saturation,
-            COLOR_VALUES.BULB_ON.lightness
-          );
-          ctx.beginPath();
-          ctx.arc(
-            pixelXCenterPos,
-            pixelYCenterPos,
-            pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
-            0,
-            2 * Math.PI
-          );
-          ctx.fill();
-        }
+            COLOR_VALUES.LIGHT.saturation,
+            COLOR_VALUES.LIGHT.lightness
+          )
+        );
+        grd.addColorStop(1, COLORS.BACKGROUND);
+        ctx.fillStyle = grd;
+        ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
+
+        ctx.fillStyle = hslValuesToCss(
+          colorHue,
+          COLOR_VALUES.BULB_ON.saturation,
+          COLOR_VALUES.BULB_ON.lightness
+        );
+        ctx.beginPath();
+        ctx.arc(
+          pixelXCenterPos,
+          pixelYCenterPos,
+          pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
       }
     }
+  }
+
+  return canvas;
+};
+
+export const drawDisplayOnLights = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig,
+  animationOffset: number = 0,
+  onLightsImage: HTMLCanvasElement | null = null
+) => {
+  const { displayHeight, displayWidth, pixelSize, displayPaddingX, pixelGrid } =
+    computedValues;
+  // TODO: Create utils
+  const pixelsWidth = pixelSize * (animationOffset % pixelGrid.length);
+  const startX = displayWidth - pixelsWidth - displayPaddingX;
+
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+  if (onLightsImage) {
+    ctx.drawImage(
+      onLightsImage,
+      displayPaddingX,
+      0,
+      pixelsWidth,
+      displayHeight,
+      startX,
+      0,
+      pixelsWidth,
+      displayHeight
+    );
   }
 };
 
