@@ -392,7 +392,7 @@ export const drawDisplayOnLights = (
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-  if (onLightsImage) {
+  if (onLightsImage && imgWidth) {
     ctx.drawImage(
       onLightsImage,
       clippingX,
