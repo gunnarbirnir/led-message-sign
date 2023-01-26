@@ -14,6 +14,7 @@ import {
   calcPixelCountX,
   calcDisplayPaddingX,
   calcPixelGrid,
+  calcImageWidth,
   calcAnimationOffset,
   isWholeNumber,
 } from "../utils";
@@ -42,6 +43,7 @@ const getComputedValues = (config: SignConfig) => {
   const displayPaddingX = calcDisplayPaddingX(displayWidth, pixelAreaWidth);
   const pixelCountY = VERTICAL_PIXEL_COUNT;
   const pixelGrid = calcPixelGrid(config.text, pixelCountX);
+  const imageWidth = calcImageWidth(pixelSize, pixelGrid);
 
   return {
     signHeight,
@@ -57,6 +59,7 @@ const getComputedValues = (config: SignConfig) => {
     pixelCountX,
     pixelCountY,
     pixelGrid,
+    imageWidth,
   };
 };
 

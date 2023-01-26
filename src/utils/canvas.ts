@@ -8,6 +8,7 @@ import {
   calcPixelYPos,
   calcPixelYCenterPos,
   calcImageOffset,
+  calcImageSliceWidth,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -306,12 +307,13 @@ export const getOnLightsImage = (
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
-  const { pixelSize, pixelCountX, pixelCountY, pixelGrid } = computedValues;
+  const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight, imageWidth } =
+    computedValues;
   const { colorHue } = config;
 
   const canvas = document.createElement("canvas");
-  canvas.height = pixelSize * pixelCountY;
-  canvas.width = pixelSize * pixelGrid.length;
+  canvas.height = pixelAreaHeight;
+  canvas.width = imageWidth;
   const ctx = canvas.getContext("2d", { alpha: true });
 
   if (!ctx) {
@@ -384,8 +386,15 @@ export const drawDisplayOnLights = (
     displayPaddingX,
     displayPaddingY,
     pixelGrid,
+    imageWidth,
   } = computedValues;
+
   const imageOffset = calcImageOffset(pixelSize, pixelGrid, animationOffset);
+  const imageSliceWidth = calcImageSliceWidth(
+    pixelAreaWidth,
+    imageWidth,
+    imageOffset
+  );
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
@@ -394,11 +403,11 @@ export const drawDisplayOnLights = (
       onLightsImage,
       imageOffset,
       0,
-      pixelAreaWidth,
+      imageSliceWidth,
       pixelAreaHeight,
       displayPaddingX,
       displayPaddingY,
-      pixelAreaWidth,
+      imageSliceWidth,
       pixelAreaHeight
     );
   }

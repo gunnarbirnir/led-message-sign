@@ -20,7 +20,9 @@ import {
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
+  calcImageWidth,
   calcImageOffset,
+  calcImageSliceWidth,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -55,6 +57,7 @@ const TEST_COMPUTED_VALUES = {
   pixelSize: 30,
   pixelCountX: 50,
   pixelCountY: 7,
+  imageWidth: 2190,
   pixelGrid: [
     ...pixelGridPadding,
     ...ALPHABET.T,
@@ -77,6 +80,7 @@ const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
 const TEST_PIXEL_Y_CENTER_POS = 120;
 const TEST_IMAGE_OFFSET = 990;
+const TEST_IMAGE_SLICE_WIDTH = 1200;
 
 describe("Utils", () => {
   describe("hslValuesToCss", () => {
@@ -306,6 +310,16 @@ describe("Utils", () => {
     });
   });
 
+  describe("calcImageWidth", () => {
+    test("Should return image width", () => {
+      const width = calcImageWidth(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelGrid
+      );
+      expect(width).toBe(TEST_COMPUTED_VALUES.imageWidth);
+    });
+  });
+
   describe("calcImageOffset", () => {
     test("Should return image offset", () => {
       const offset = calcImageOffset(
@@ -323,6 +337,17 @@ describe("Utils", () => {
         TEST_ANIMATION_OFFSET + TEST_COMPUTED_VALUES.pixelGrid.length
       );
       expect(offset).toBe(TEST_IMAGE_OFFSET);
+    });
+  });
+
+  describe("calcImageSliceWidth", () => {
+    test("Should return image slice width", () => {
+      const width = calcImageSliceWidth(
+        TEST_COMPUTED_VALUES.pixelAreaWidth,
+        TEST_COMPUTED_VALUES.imageWidth,
+        TEST_IMAGE_OFFSET
+      );
+      expect(width).toBe(TEST_IMAGE_SLICE_WIDTH);
     });
   });
 

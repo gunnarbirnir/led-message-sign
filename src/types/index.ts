@@ -36,6 +36,7 @@ export interface SignComputedValues {
   pixelCountX: number;
   pixelCountY: number;
   pixelGrid: PixelGrid;
+  imageWidth: number;
 }
 
 export type Tuple = [number, number];
