@@ -7,6 +7,7 @@ import {
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
+  calcImageOffset,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -322,7 +323,7 @@ export const getOnLightsImage = (
     const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelOn = isPixelOn(x + pixelCountX, y, pixelGrid);
+      const pixelOn = isPixelOn(x, y, pixelGrid);
       const pixelYPos = calcPixelYPos(y, pixelSize, 0);
       const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
 
@@ -384,24 +385,20 @@ export const drawDisplayOnLights = (
     displayPaddingY,
     pixelGrid,
   } = computedValues;
-  // TODO: Create utils
-  const progress = pixelSize * (animationOffset % pixelGrid.length);
-  const imgWidth = Math.min(pixelAreaWidth, progress);
-  const startX = displayPaddingX + pixelAreaWidth - imgWidth;
-  const clippingX = Math.max(0, progress - pixelAreaWidth);
+  const imageOffset = calcImageOffset(pixelSize, pixelGrid, animationOffset);
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-  if (onLightsImage && imgWidth) {
+  if (onLightsImage) {
     ctx.drawImage(
       onLightsImage,
-      clippingX,
+      imageOffset,
       0,
-      imgWidth,
+      pixelAreaWidth,
       pixelAreaHeight,
-      startX,
+      displayPaddingX,
       displayPaddingY,
-      imgWidth,
+      pixelAreaWidth,
       pixelAreaHeight
     );
   }

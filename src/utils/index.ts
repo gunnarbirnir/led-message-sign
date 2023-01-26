@@ -148,6 +148,14 @@ export const calcPixelYCenterPos = (pixelYPos: number, pixelSize: number) => {
   return pixelYPos + pixelSize / 2;
 };
 
+export const calcImageOffset = (
+  pixelSize: number,
+  pixelGrid: PixelGrid,
+  animationOffset: number
+) => {
+  return pixelSize * (animationOffset % pixelGrid.length);
+};
+
 export const calcGlowPosition = (
   // x or y
   idx: number,

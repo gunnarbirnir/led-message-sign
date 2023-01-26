@@ -20,6 +20,7 @@ import {
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
+  calcImageOffset,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -75,6 +76,7 @@ const TEST_PIXEL_X_POS = 770;
 const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
 const TEST_PIXEL_Y_CENTER_POS = 120;
+const TEST_IMAGE_OFFSET = 990;
 
 describe("Utils", () => {
   describe("hslValuesToCss", () => {
@@ -301,6 +303,26 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelSize
       );
       expect(position).toBe(TEST_PIXEL_Y_CENTER_POS);
+    });
+  });
+
+  describe("calcImageOffset", () => {
+    test("Should return image offset", () => {
+      const offset = calcImageOffset(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelGrid,
+        TEST_ANIMATION_OFFSET
+      );
+      expect(offset).toBe(TEST_IMAGE_OFFSET);
+    });
+
+    test("Should return same image offset after one lap", () => {
+      const offset = calcImageOffset(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelGrid,
+        TEST_ANIMATION_OFFSET + TEST_COMPUTED_VALUES.pixelGrid.length
+      );
+      expect(offset).toBe(TEST_IMAGE_OFFSET);
     });
   });
 
