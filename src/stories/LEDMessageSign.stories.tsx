@@ -5,6 +5,10 @@ import LEDMessageSign from "../components/LEDMessageSign";
 import { LEDMessageSignProps } from "../types";
 import { DEFAULT_VALUE, MIN_VALUE, MAX_VALUE } from "../constants/props";
 
+// Doesn't work for now, link in other project instead
+// Or move add peerDependencies to devDependencies
+// TODO: Delete?
+
 export default {
   title: "LEDMessageSign",
   component: LEDMessageSign,
