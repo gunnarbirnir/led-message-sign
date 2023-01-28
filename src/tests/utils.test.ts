@@ -13,7 +13,6 @@ import {
   calcDisplayPaddingX,
   calcPixelGrid,
   calcAnimationOffset,
-  isWholeNumber,
   calcTotalOffset,
   isPixelOn,
   calcPixelXPos,
@@ -223,18 +222,6 @@ describe("Utils", () => {
         TEST_CONFIG.animationFramesPerUpdate
       );
       expect(offset).toBe(TEST_ANIMATION_OFFSET);
-    });
-  });
-
-  describe("isWholeNumber", () => {
-    test("Should return true for whole number", () => {
-      const isWhole = isWholeNumber(5);
-      expect(isWhole).toBe(true);
-    });
-
-    test("Should return false for decimal number", () => {
-      const isWhole = isWholeNumber(5.5);
-      expect(isWhole).toBe(false);
     });
   });
 

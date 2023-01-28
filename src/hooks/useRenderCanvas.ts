@@ -16,7 +16,6 @@ import {
   calcPixelGrid,
   calcImageWidth,
   calcAnimationOffset,
-  isWholeNumber,
 } from "../utils";
 import {
   getCanvasContext,
@@ -66,6 +65,8 @@ const getComputedValues = (config: SignConfig) => {
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
     let animationFrame = 0;
+    let lastUpdate = 0;
+
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
     );
@@ -86,7 +87,7 @@ const useRenderCanvas = (config: SignConfig) => {
         config.animationFramesPerUpdate
       );
 
-      if (isWholeNumber(animationOffset)) {
+      if (animationOffset !== lastUpdate) {
         if (frameGlowCtx) {
           drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
@@ -98,6 +99,7 @@ const useRenderCanvas = (config: SignConfig) => {
             onLightsImage
           );
         }
+        lastUpdate = animationOffset;
       }
 
       animationFrame = requestAnimationFrame(animateCanvas);
