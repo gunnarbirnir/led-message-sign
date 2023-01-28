@@ -1,24 +1,28 @@
 import {
   hslValuesToCss,
-  calcFrameId,
-  calcDisplayId,
+  calcFrameIds,
+  calcDisplayIds,
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
   calcDisplayPaddingY,
+  calcPixelAreaHeight,
   calcPixelSize,
   calcPixelCountX,
+  calcPixelAreaWidth,
   calcDisplayPaddingX,
   calcPixelGrid,
   calcAnimationOffset,
   isWholeNumber,
   calcTotalOffset,
-  calcMultiColorHue,
   isPixelOn,
   calcPixelXPos,
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
+  calcImageWidth,
+  calcImageOffset,
+  calcImageSliceWidth,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -35,7 +39,7 @@ const TEST_CONFIG = {
   frameProportions: 0.2,
 };
 
-const pixelGridPadding = [];
+const pixelGridPadding: number[][] = [];
 for (let i = 0; i < 50; i++) {
   pixelGridPadding.push(EMPTY_COLUMN);
 }
@@ -46,11 +50,14 @@ const TEST_COMPUTED_VALUES = {
   frameSize: 30,
   displayHeight: 240,
   displayWidth: 1540,
+  pixelAreaHeight: 210,
+  pixelAreaWidth: 1500,
   displayPaddingX: 20,
   displayPaddingY: 15,
   pixelSize: 30,
   pixelCountX: 50,
   pixelCountY: 7,
+  imageWidth: 2190,
   pixelGrid: [
     ...pixelGridPadding,
     ...ALPHABET.T,
@@ -68,11 +75,12 @@ const TEST_Y = 3;
 const TEST_ANIMATION_FRAME = 99;
 const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
-const TEST_MULTI_COLOR_HUE = 61;
 const TEST_PIXEL_X_POS = 770;
 const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
 const TEST_PIXEL_Y_CENTER_POS = 120;
+const TEST_IMAGE_OFFSET = 990;
+const TEST_IMAGE_SLICE_WIDTH = 1200;
 
 describe("Utils", () => {
   describe("hslValuesToCss", () => {
@@ -93,16 +101,23 @@ describe("Utils", () => {
   });
 
   describe("calcFrameId", () => {
-    test("Should return frame id", () => {
-      const id = calcFrameId(TEST_CONFIG.id);
-      expect(id).toBe("sign-frame-123");
+    test("Should return frame ids", () => {
+      const id = calcFrameIds(TEST_CONFIG.id);
+      expect(id).toStrictEqual({
+        frameGlowId: "sign-frame-glow-123",
+        frameMaskingId: "sign-frame-masking-123",
+        frameShadingId: "sign-frame-shading-123",
+      });
     });
   });
 
   describe("calcDisplayId", () => {
-    test("Should return display id", () => {
-      const id = calcDisplayId(TEST_CONFIG.id);
-      expect(id).toBe("sign-display-123");
+    test("Should return display ids", () => {
+      const id = calcDisplayIds(TEST_CONFIG.id);
+      expect(id).toStrictEqual({
+        displayOnLightsId: "sign-display-on-lights-123",
+        displayOffLightsId: "sign-display-off-lights-123",
+      });
     });
   });
 
@@ -143,12 +158,19 @@ describe("Utils", () => {
     });
   });
 
-  describe("calcPixelSize", () => {
-    test("Should return pixel size", () => {
-      const size = calcPixelSize(
+  describe("calcPixelAreaHeight", () => {
+    test("Should return pixel area height", () => {
+      const height = calcPixelAreaHeight(
         TEST_COMPUTED_VALUES.displayHeight,
         TEST_COMPUTED_VALUES.displayPaddingY
       );
+      expect(height).toBe(TEST_COMPUTED_VALUES.pixelAreaHeight);
+    });
+  });
+
+  describe("calcPixelSize", () => {
+    test("Should return pixel size", () => {
+      const size = calcPixelSize(TEST_COMPUTED_VALUES.pixelAreaHeight);
       expect(size).toBe(TEST_COMPUTED_VALUES.pixelSize);
     });
   });
@@ -164,12 +186,21 @@ describe("Utils", () => {
     });
   });
 
+  describe("calcPixelAreaWidth", () => {
+    test("Should return pixel area width", () => {
+      const width = calcPixelAreaWidth(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelCountX
+      );
+      expect(width).toBe(TEST_COMPUTED_VALUES.pixelAreaWidth);
+    });
+  });
+
   describe("calcDisplayPaddingX", () => {
     test("Should return display horizontal padding", () => {
       const padding = calcDisplayPaddingX(
         TEST_COMPUTED_VALUES.displayWidth,
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelCountX
+        TEST_COMPUTED_VALUES.pixelAreaWidth
       );
       expect(padding).toBe(TEST_COMPUTED_VALUES.displayPaddingX);
     });
@@ -215,18 +246,6 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelGrid
       );
       expect(offset).toBe(TEST_OFFSET_X);
-    });
-  });
-
-  describe("calcMultiColorHue", () => {
-    test("Should return multi color hue", () => {
-      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_OFFSET);
-      expect(color).toBe(TEST_MULTI_COLOR_HUE);
-    });
-
-    test("Should not go outside available hue values", () => {
-      const color = calcMultiColorHue(TEST_X, TEST_Y, TEST_ANIMATION_OFFSET);
-      expect(color).toBe(TEST_MULTI_COLOR_HUE);
     });
   });
 
@@ -288,6 +307,47 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelSize
       );
       expect(position).toBe(TEST_PIXEL_Y_CENTER_POS);
+    });
+  });
+
+  describe("calcImageWidth", () => {
+    test("Should return image width", () => {
+      const width = calcImageWidth(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelGrid
+      );
+      expect(width).toBe(TEST_COMPUTED_VALUES.imageWidth);
+    });
+  });
+
+  describe("calcImageOffset", () => {
+    test("Should return image offset", () => {
+      const offset = calcImageOffset(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelGrid,
+        TEST_ANIMATION_OFFSET
+      );
+      expect(offset).toBe(TEST_IMAGE_OFFSET);
+    });
+
+    test("Should return same image offset after one lap", () => {
+      const offset = calcImageOffset(
+        TEST_COMPUTED_VALUES.pixelSize,
+        TEST_COMPUTED_VALUES.pixelGrid,
+        TEST_ANIMATION_OFFSET + TEST_COMPUTED_VALUES.pixelGrid.length
+      );
+      expect(offset).toBe(TEST_IMAGE_OFFSET);
+    });
+  });
+
+  describe("calcImageSliceWidth", () => {
+    test("Should return image slice width", () => {
+      const width = calcImageSliceWidth(
+        TEST_COMPUTED_VALUES.pixelAreaWidth,
+        TEST_COMPUTED_VALUES.imageWidth,
+        TEST_IMAGE_OFFSET
+      );
+      expect(width).toBe(TEST_IMAGE_SLICE_WIDTH);
     });
   });
 

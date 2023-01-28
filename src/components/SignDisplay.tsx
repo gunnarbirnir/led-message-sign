@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useSignConfigContext } from "../hooks";
 import { COLORS } from "../constants/colors";
 import {
-  calcDisplayId,
+  calcDisplayIds,
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
@@ -13,7 +13,10 @@ import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
   const { id, height, width, frameProportion } = useSignConfigContext();
-  const displayId = useMemo(() => calcDisplayId(id), [id]);
+  const { displayOnLightsId, displayOffLightsId } = useMemo(
+    () => calcDisplayIds(id),
+    [id]
+  );
   const frameSize = useMemo(
     () => calcFrameSize(height, frameProportion),
     [height, frameProportion]
@@ -29,7 +32,16 @@ const SignDisplay: FC = () => {
 
   return (
     <StyledSignDisplay>
-      <Canvas id={displayId} height={displayHeight} width={displayWidth} />
+      <DisplayCanvas
+        id={displayOffLightsId}
+        height={displayHeight}
+        width={displayWidth}
+      />
+      <DisplayCanvas
+        id={displayOnLightsId}
+        height={displayHeight}
+        width={displayWidth}
+      />
     </StyledSignDisplay>
   );
 };
@@ -39,6 +51,12 @@ const StyledSignDisplay = styled.div`
   width: 100%;
   position: relative;
   background-color: ${COLORS.BACKGROUND};
+`;
+
+const DisplayCanvas = styled(Canvas)`
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 export default SignDisplay;

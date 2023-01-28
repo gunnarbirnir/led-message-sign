@@ -2,64 +2,31 @@ import { COLORS, COLOR_VALUES } from "../constants/colors";
 import {
   hslValuesToCss,
   calcTotalOffset,
-  calcMultiColorHue,
   isPixelOn,
   calcPixelXPos,
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
+  calcImageOffset,
+  calcImageSliceWidth,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
 } from "../utils";
 import { SignComputedValues, Tuple, SignConfig, FillStyle } from "../types";
 
-export const getCanvasContext = (id: string) => {
+export const getCanvasContext = (id: string, alpha: boolean = false) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
-  const ctx = canvas ? canvas.getContext("2d", { alpha: false }) : null;
+  const ctx = canvas ? canvas.getContext("2d", { alpha }) : null;
 
   return ctx;
 };
 
-const MASKING_GRADIENT_POSITION = 0.2;
-const FRAME_SHADING_OPACITY = 0.7;
-const FRAME_SHADE_COLOR = hslValuesToCss(
-  COLOR_VALUES.FRAME.hue,
-  COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness,
-  FRAME_SHADING_OPACITY
-);
-const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
-  COLOR_VALUES.FRAME.hue,
-  COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness + 5,
-  FRAME_SHADING_OPACITY
-);
-const VERTICAL_SHADE_COLOR = hslValuesToCss(
-  COLOR_VALUES.FRAME.hue,
-  COLOR_VALUES.FRAME.saturation,
-  COLOR_VALUES.FRAME.lightness - 10,
-  FRAME_SHADING_OPACITY
-);
-const HORIZONTAL_SHADE_SIZE = 0.3;
-const VERTICAL_SHADE_SIZE = 0.4;
-
-export const drawFrame = (
+const getFrameUtils = (
   ctx: CanvasRenderingContext2D,
-  computedValues: SignComputedValues,
-  config: SignConfig,
-  animationOffset: number = 0
+  computedValues: SignComputedValues
 ) => {
-  const {
-    signHeight,
-    signWidth,
-    frameSize,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-    pixelGrid,
-  } = computedValues;
-  const { colorHue, multiColor } = config;
+  const { signHeight, signWidth, frameSize } = computedValues;
 
   const topLeftCorner: Tuple = [0, 0];
   const topRightCorner: Tuple = [signWidth, 0];
@@ -118,6 +85,36 @@ export const drawFrame = (
     ctx.fill();
   };
 
+  return {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  };
+};
+
+export const drawFrameGlow = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig,
+  animationOffset: number = 0
+) => {
+  const {
+    signHeight,
+    signWidth,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+    pixelGrid,
+  } = computedValues;
+  const { colorHue } = config;
+  const {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  } = getFrameUtils(ctx, computedValues);
+
   ctx.clearRect(0, 0, signWidth, signHeight);
 
   // Horizontal frame glow
@@ -132,14 +129,6 @@ export const drawFrame = (
     const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
     const position = calcGlowPosition(x, signWidth, pixelSize, pixelCountX);
     const disableGlow = calcDisableGlow(x, offsetX, pixelCountX);
-
-    const topGlowHue = multiColor
-      ? calcMultiColorHue(x, 0, animationOffset)
-      : colorHue;
-    const bottomGlowHue = multiColor
-      ? calcMultiColorHue(x, pixelCountY - 1, animationOffset)
-      : colorHue;
-
     const topGlowOpacity = disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid);
     const bottomGlowOpacity =
       disableGlow ?? calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid);
@@ -147,7 +136,7 @@ export const drawFrame = (
     topGlow.addColorStop(
       position,
       hslValuesToCss(
-        topGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         topGlowOpacity
@@ -156,7 +145,7 @@ export const drawFrame = (
     bottomGlow.addColorStop(
       position,
       hslValuesToCss(
-        bottomGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         bottomGlowOpacity
@@ -180,21 +169,13 @@ export const drawFrame = (
       pixelGrid
     );
     const position = calcGlowPosition(y, signHeight, pixelSize, pixelCountY);
-
-    const leftGlowHue = multiColor
-      ? calcMultiColorHue(0, y, animationOffset)
-      : colorHue;
-    const rightGlowHue = multiColor
-      ? calcMultiColorHue(pixelCountX - 1, y, animationOffset)
-      : colorHue;
-
     const leftGlowOpacity = calcPixelGlow(leftOffsetX, y, pixelGrid, true);
     const rightGlowOpacity = calcPixelGlow(rightOffsetX, y, pixelGrid, true);
 
     leftGlow.addColorStop(
       position,
       hslValuesToCss(
-        leftGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         leftGlowOpacity
@@ -203,7 +184,7 @@ export const drawFrame = (
     rightGlow.addColorStop(
       position,
       hslValuesToCss(
-        rightGlowHue,
+        colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
         rightGlowOpacity
@@ -215,8 +196,24 @@ export const drawFrame = (
   drawFrameRightBorder(rightGlow);
   drawFrameBottomBorder(bottomGlow);
   drawFrameLeftBorder(leftGlow);
+};
 
-  // Glow masking
+const MASKING_GRADIENT_POSITION = 0.2;
+
+export const drawFrameMasking = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues
+) => {
+  const { signHeight, signWidth, frameSize } = computedValues;
+  const {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  } = getFrameUtils(ctx, computedValues);
+
+  ctx.clearRect(0, 0, signWidth, signHeight);
+
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
   maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
   maskingTop.addColorStop(1, COLORS.TRANSPARENT);
@@ -247,8 +244,44 @@ export const drawFrame = (
   drawFrameRightBorder(maskingRight);
   drawFrameBottomBorder(maskingBottom);
   drawFrameLeftBorder(maskingLeft);
+};
 
-  // Frame shading
+const FRAME_SHADING_OPACITY = 0.7;
+const FRAME_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness,
+  FRAME_SHADING_OPACITY
+);
+const HORIZONTAL_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness + 5,
+  FRAME_SHADING_OPACITY
+);
+const VERTICAL_SHADE_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness - 10,
+  FRAME_SHADING_OPACITY
+);
+const HORIZONTAL_SHADE_SIZE = 0.3;
+const VERTICAL_SHADE_SIZE = 0.4;
+
+export const drawFrameShading = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues
+) => {
+  const { signHeight, signWidth } = computedValues;
+  const {
+    drawFrameTopBorder,
+    drawFrameRightBorder,
+    drawFrameBottomBorder,
+    drawFrameLeftBorder,
+  } = getFrameUtils(ctx, computedValues);
+
+  ctx.clearRect(0, 0, signWidth, signHeight);
+
   const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
   shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
   shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);
@@ -269,47 +302,33 @@ export const drawFrame = (
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
-const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 
-export const drawDisplay = (
-  ctx: CanvasRenderingContext2D,
+export const getOnLightsImage = (
   computedValues: SignComputedValues,
-  config: SignConfig,
-  animationOffset: number = 0
+  config: SignConfig
 ) => {
-  const {
-    displayHeight,
-    displayWidth,
-    displayPaddingX,
-    displayPaddingY,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-    pixelGrid,
-  } = computedValues;
-  const { colorHue, multiColor, coloredOffLights } = config;
+  const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight, imageWidth } =
+    computedValues;
+  const { colorHue } = config;
 
-  ctx.clearRect(0, 0, displayWidth, displayHeight);
+  const canvas = document.createElement("canvas");
+  canvas.height = pixelAreaHeight;
+  canvas.width = imageWidth;
+  const ctx = canvas.getContext("2d", { alpha: true });
 
-  for (let x = 0; x < pixelCountX; x++) {
-    const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
-    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
+  if (!ctx) {
+    return null;
+  }
+
+  for (let x = 0; x < pixelGrid.length; x++) {
+    const pixelXPos = calcPixelXPos(x, pixelSize, 0);
     const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelHue = multiColor
-        ? calcMultiColorHue(x, y, animationOffset)
-        : colorHue;
-      const pixelOn = isPixelOn(offsetX, y, pixelGrid);
-      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelOn = isPixelOn(x, y, pixelGrid);
+      const pixelYPos = calcPixelYPos(y, pixelSize, 0);
       const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
-      const bulbOffColor = {
-        ...COLOR_VALUES.BULB_OFF,
-        saturation: coloredOffLights ? COLOR_VALUES.BULB_OFF.saturation : 0,
-      };
-      const bulbColor = pixelOn ? COLOR_VALUES.BULB_ON : bulbOffColor;
 
-      // Light gradient
       if (pixelOn) {
         const grd = ctx.createRadialGradient(
           pixelXCenterPos,
@@ -322,21 +341,116 @@ export const drawDisplay = (
         grd.addColorStop(
           0,
           hslValuesToCss(
-            pixelHue,
+            colorHue,
             COLOR_VALUES.LIGHT.saturation,
             COLOR_VALUES.LIGHT.lightness
           )
         );
-        grd.addColorStop(1, COLORS.TRANSPARENT);
+        grd.addColorStop(1, COLORS.BACKGROUND);
         ctx.fillStyle = grd;
         ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
-      }
 
-      // Light bulb
+        ctx.fillStyle = hslValuesToCss(
+          colorHue,
+          COLOR_VALUES.BULB_ON.saturation,
+          COLOR_VALUES.BULB_ON.lightness
+        );
+        ctx.beginPath();
+        ctx.arc(
+          pixelXCenterPos,
+          pixelYCenterPos,
+          pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
+      }
+    }
+  }
+
+  return canvas;
+};
+
+export const drawDisplayOnLights = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  animationOffset: number = 0,
+  onLightsImage: HTMLCanvasElement | null = null
+) => {
+  const {
+    displayHeight,
+    displayWidth,
+    pixelSize,
+    pixelAreaHeight,
+    pixelAreaWidth,
+    displayPaddingX,
+    displayPaddingY,
+    pixelGrid,
+    imageWidth,
+  } = computedValues;
+
+  const imageOffset = calcImageOffset(pixelSize, pixelGrid, animationOffset);
+  const imageSliceWidth = calcImageSliceWidth(
+    pixelAreaWidth,
+    imageWidth,
+    imageOffset
+  );
+
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+  if (onLightsImage) {
+    ctx.drawImage(
+      onLightsImage,
+      imageOffset,
+      0,
+      imageSliceWidth,
+      pixelAreaHeight,
+      displayPaddingX,
+      displayPaddingY,
+      imageSliceWidth,
+      pixelAreaHeight
+    );
+  }
+};
+
+const PIXEL_TO_BULB_RADIUS_RATIO = 6;
+
+export const drawDisplayOffLights = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig
+) => {
+  const {
+    displayWidth,
+    displayHeight,
+    displayPaddingX,
+    displayPaddingY,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+  } = computedValues;
+  const { colorHue, coloredOffLights } = config;
+
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+  ctx.fillStyle = COLORS.BACKGROUND;
+  ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+  const bulbOffColorSaturation = coloredOffLights
+    ? COLOR_VALUES.BULB_OFF.saturation
+    : 0;
+
+  for (let x = 0; x < pixelCountX; x++) {
+    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
+    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
+
+    for (let y = 0; y < pixelCountY; y++) {
+      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
+      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+
       ctx.fillStyle = hslValuesToCss(
-        pixelHue,
-        bulbColor.saturation,
-        bulbColor.lightness
+        colorHue,
+        bulbOffColorSaturation,
+        COLOR_VALUES.BULB_OFF.lightness
       );
       ctx.beginPath();
       ctx.arc(

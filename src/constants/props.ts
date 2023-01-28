@@ -3,7 +3,6 @@ export const DEFAULT_VALUE = {
   WIDTH: 800,
   FULL_WIDTH: false,
   COLOR_HUE: 0,
-  MULTI_COLOR: false,
   HIDE_FRAME: false,
   COLORED_OFF_LIGHTS: true,
   ANIMATION_FRAMES_PER_UPDATE: 3,

@@ -14,12 +14,19 @@ export const hslValuesToCss = (
   return `hsl(${hue}deg ${saturation}% ${lightness}% / ${opacity})`;
 };
 
-export const calcFrameId = (id: string) => {
-  return `sign-frame-${id}`;
+export const calcFrameIds = (id: string) => {
+  return {
+    frameGlowId: `sign-frame-glow-${id}`,
+    frameMaskingId: `sign-frame-masking-${id}`,
+    frameShadingId: `sign-frame-shading-${id}`,
+  };
 };
 
-export const calcDisplayId = (id: string) => {
-  return `sign-display-${id}`;
+export const calcDisplayIds = (id: string) => {
+  return {
+    displayOnLightsId: `sign-display-on-lights-${id}`,
+    displayOffLightsId: `sign-display-off-lights-${id}`,
+  };
 };
 
 export const calcFrameSize = (signHeight: number, frameProportion: number) => {
@@ -38,11 +45,14 @@ export const calcDisplayPaddingY = (signHeight: number) => {
   return Math.floor(signHeight * PADDING_TO_HEIGHT_RATIO);
 };
 
-export const calcPixelSize = (
+export const calcPixelAreaHeight = (
   displayHeight: number,
   displayPaddingY: number
 ) => {
-  const pixelAreaHeight = displayHeight - displayPaddingY * 2;
+  return displayHeight - displayPaddingY * 2;
+};
+
+export const calcPixelSize = (pixelAreaHeight: number) => {
   return pixelAreaHeight / VERTICAL_PIXEL_COUNT;
 };
 
@@ -55,12 +65,14 @@ export const calcPixelCountX = (
   return Math.floor(widthWithoutPadding / pixelSize);
 };
 
+export const calcPixelAreaWidth = (pixelSize: number, pixelCountX: number) => {
+  return pixelSize * pixelCountX;
+};
+
 export const calcDisplayPaddingX = (
   displayWidth: number,
-  pixelSize: number,
-  pixelCountX: number
+  pixelAreaWidth: number
 ) => {
-  const pixelAreaWidth = pixelSize * pixelCountX;
   return (displayWidth - pixelAreaWidth) / 2;
 };
 
@@ -105,14 +117,6 @@ export const calcTotalOffset = (
   return (x + animationOffset) % pixelGrid.length;
 };
 
-export const calcMultiColorHue = (
-  x: number,
-  y: number,
-  animationOffset: number
-) => {
-  return (animationOffset + x + y) % 360;
-};
-
 export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
   if (x < 0 || x >= pixelGrid.length) {
     return false;
@@ -142,6 +146,26 @@ export const calcPixelYPos = (
 
 export const calcPixelYCenterPos = (pixelYPos: number, pixelSize: number) => {
   return pixelYPos + pixelSize / 2;
+};
+
+export const calcImageWidth = (pixelSize: number, pixelGrid: PixelGrid) => {
+  return pixelSize * pixelGrid.length;
+};
+
+export const calcImageOffset = (
+  pixelSize: number,
+  pixelGrid: PixelGrid,
+  animationOffset: number
+) => {
+  return pixelSize * (animationOffset % pixelGrid.length);
+};
+
+export const calcImageSliceWidth = (
+  pixelAreaWidth: number,
+  imageWidth: number,
+  imageOffset: number
+) => {
+  return Math.min(pixelAreaWidth, imageWidth - imageOffset);
 };
 
 export const calcGlowPosition = (

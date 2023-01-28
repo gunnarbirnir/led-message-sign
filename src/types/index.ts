@@ -9,8 +9,6 @@ export interface LEDMessageSignProps {
   fullWidth?: boolean;
   /** Hue value for HSL color. Default is 0. */
   colorHue?: number;
-  /** Cycle between all available color values. If true colorHue prop will be ignored. Default is false.  */
-  multiColor?: boolean;
   /** Hide sign frame. Default is false.  */
   hideFrame?: boolean;
   /** Should the off lights be colored. Default is true.  */
@@ -30,12 +28,15 @@ export interface SignComputedValues {
   frameSize: number;
   displayHeight: number;
   displayWidth: number;
+  pixelAreaHeight: number;
+  pixelAreaWidth: number;
   displayPaddingX: number;
   displayPaddingY: number;
   pixelSize: number;
   pixelCountX: number;
   pixelCountY: number;
   pixelGrid: PixelGrid;
+  imageWidth: number;
 }
 
 export type Tuple = [number, number];

@@ -12,7 +12,6 @@ export const sanitizeProps = ({
   width = DEFAULT_VALUE.WIDTH,
   fullWidth = DEFAULT_VALUE.FULL_WIDTH,
   colorHue = DEFAULT_VALUE.COLOR_HUE,
-  multiColor = DEFAULT_VALUE.MULTI_COLOR,
   hideFrame = DEFAULT_VALUE.HIDE_FRAME,
   coloredOffLights = DEFAULT_VALUE.COLORED_OFF_LIGHTS,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
@@ -28,7 +27,6 @@ export const sanitizeProps = ({
       MIN_VALUE.COLOR_HUE,
       MAX_VALUE.COLOR_HUE
     ),
-    multiColor,
     hideFrame,
     coloredOffLights,
     animationFramesPerUpdate: sanitizeMinValue(
