@@ -17,6 +17,10 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     [height, frameProportion]
   );
 
+  if (!width) {
+    return null;
+  }
+
   return (
     <StyledSignFrame style={{ height, width, padding: frameSize }}>
       {!!frameSize && (
