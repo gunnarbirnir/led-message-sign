@@ -20,7 +20,7 @@ describe("Props", () => {
       });
 
       expect(props).toStrictEqual({
-        text: TEST_MESSAGE.substring(0, 1000),
+        text: TEST_MESSAGE.substring(0, 100),
         height: 50,
         width: 100,
         fullWidth: false,
