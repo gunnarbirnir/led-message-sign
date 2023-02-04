@@ -1,6 +1,6 @@
 import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
-import { PixelGrid } from "../types";
+import { PixelGrid, CanvasImageChunk } from "../types";
 
 export const hslValuesToCss = (
   hue: number,
@@ -162,6 +162,62 @@ export const calcImageSliceWidth = (
   imageOffset: number
 ) => {
   return Math.min(pixelAreaWidth, imageWidth - imageOffset);
+};
+
+// TODO: Test image chunk utils
+export const calcPixelsPerImageChunk = (
+  pixelSize: number,
+  imageChunkSize: number
+) => {
+  return Math.floor(imageChunkSize / pixelSize);
+};
+
+export const calcImageChunkWidth = (
+  pixelSize: number,
+  pixelsPerChunk: number
+) => {
+  return pixelsPerChunk * pixelSize;
+};
+
+export const calcImageChunkCount = (imageWidth: number, chunkWidth: number) => {
+  return Math.ceil(imageWidth / chunkWidth);
+};
+
+export const calcImageChunkStartAndEnd = (
+  index: number,
+  pixelSize: number,
+  pixelGrid: PixelGrid,
+  pixelsPerChunk: number
+) => {
+  const xStart = index * pixelsPerChunk;
+  const xEnd = Math.min(xStart + pixelsPerChunk, pixelGrid.length);
+  const start = xStart * pixelSize;
+  const end = xEnd * pixelSize;
+
+  return { start, end };
+};
+
+export const calcImageChunkSliceWidth = (
+  chunk: CanvasImageChunk,
+  imageOffset: number,
+  sliceEnd: number
+) => {
+  return Math.min(chunk.end, sliceEnd) - Math.max(chunk.start, imageOffset);
+};
+
+export const calcImageChunkSliceOffset = (
+  chunk: CanvasImageChunk,
+  imageOffset: number
+) => {
+  return Math.max(0, imageOffset - chunk.start);
+};
+
+export const calcImageChunkSliceXPos = (
+  chunk: CanvasImageChunk,
+  imageOffset: number,
+  displayPaddingX: number
+) => {
+  return displayPaddingX + Math.max(0, chunk.start - imageOffset);
 };
 
 export const calcGlowPosition = (

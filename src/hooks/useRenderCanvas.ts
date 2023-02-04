@@ -19,7 +19,7 @@ import {
 } from "../utils";
 import {
   getCanvasContext,
-  getOnLightsImage,
+  getOnLightsImageChunks,
   drawDisplayOnLights,
   drawDisplayOffLights,
   drawFrameGlow,
@@ -71,7 +71,7 @@ const useRenderCanvas = (config: SignConfig) => {
       config.id
     );
     const computedValues = getComputedValues(config);
-    const onLightsImage = getOnLightsImage(computedValues, config);
+    const onLightsImageChunks = getOnLightsImageChunks(computedValues, config);
 
     const frameGlowCtx = getCanvasContext(frameGlowId);
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
@@ -96,7 +96,7 @@ const useRenderCanvas = (config: SignConfig) => {
             displayOnLightsCtx,
             computedValues,
             animationOffset,
-            onLightsImage
+            onLightsImageChunks
           );
         }
         lastUpdate = animationOffset;

@@ -9,6 +9,7 @@ import { DEFAULT_VALUE, MIN_VALUE, MAX_VALUE } from "../constants/props";
 // Or move add peerDependencies to devDependencies
 // TODO: Delete?
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: "LEDMessageSign",
   component: LEDMessageSign,

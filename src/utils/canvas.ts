@@ -9,11 +9,24 @@ import {
   calcPixelYCenterPos,
   calcImageOffset,
   calcImageSliceWidth,
+  calcPixelsPerImageChunk,
+  calcImageChunkWidth,
+  calcImageChunkCount,
+  calcImageChunkStartAndEnd,
+  calcImageChunkSliceWidth,
+  calcImageChunkSliceOffset,
+  calcImageChunkSliceXPos,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
 } from "../utils";
-import { SignComputedValues, Tuple, SignConfig, FillStyle } from "../types";
+import {
+  SignComputedValues,
+  Tuple,
+  SignConfig,
+  FillStyle,
+  CanvasImageChunk,
+} from "../types";
 
 export const getCanvasContext = (id: string, alpha: boolean = false) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -302,80 +315,105 @@ export const drawFrameShading = (
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
+const IMAGE_CHUNK_SIZE = 4000;
 
-export const getOnLightsImage = (
+export const getOnLightsImageChunks = (
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
   const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight, imageWidth } =
     computedValues;
   const { colorHue } = config;
+  const imageChunks: CanvasImageChunk[] = [];
 
-  const canvas = document.createElement("canvas");
-  canvas.height = pixelAreaHeight;
-  canvas.width = imageWidth;
-  const ctx = canvas.getContext("2d", { alpha: true });
+  const pixelsPerChunk = calcPixelsPerImageChunk(pixelSize, IMAGE_CHUNK_SIZE);
+  const chunkWidth = calcImageChunkWidth(pixelSize, pixelsPerChunk);
+  const chunkCount = calcImageChunkCount(imageWidth, chunkWidth);
 
-  if (!ctx) {
-    return null;
+  if (!chunkCount) {
+    return [];
   }
+
+  for (let i = 0; i < chunkCount; i++) {
+    const { start, end } = calcImageChunkStartAndEnd(
+      i,
+      pixelSize,
+      pixelGrid,
+      pixelsPerChunk
+    );
+    const canvas = document.createElement("canvas");
+    canvas.height = pixelAreaHeight;
+    canvas.width = end - start;
+    imageChunks.push({ canvas, start, end });
+  }
+
+  let chunkIdx = 0;
+  let ctx = imageChunks[0].canvas.getContext("2d", { alpha: true });
 
   for (let x = 0; x < pixelGrid.length; x++) {
     const pixelXPos = calcPixelXPos(x, pixelSize, 0);
-    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
 
-    for (let y = 0; y < pixelCountY; y++) {
-      const pixelOn = isPixelOn(x, y, pixelGrid);
-      const pixelYPos = calcPixelYPos(y, pixelSize, 0);
-      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+    if (pixelXPos >= imageChunks[chunkIdx].end) {
+      ctx = imageChunks[++chunkIdx].canvas.getContext("2d", { alpha: true });
+    }
 
-      if (pixelOn) {
-        const grd = ctx.createRadialGradient(
-          pixelXCenterPos,
-          pixelYCenterPos,
-          pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
-          pixelXCenterPos,
-          pixelYCenterPos,
-          pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
-        );
-        grd.addColorStop(
-          0,
-          hslValuesToCss(
+    if (ctx) {
+      const chunkPixelXPos = pixelXPos - imageChunks[chunkIdx].start;
+      const pixelXCenterPos = calcPixelXCenterPos(chunkPixelXPos, pixelSize);
+
+      for (let y = 0; y < pixelCountY; y++) {
+        const pixelOn = isPixelOn(x, y, pixelGrid);
+        const pixelYPos = calcPixelYPos(y, pixelSize, 0);
+        const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+
+        if (pixelOn) {
+          const grd = ctx.createRadialGradient(
+            pixelXCenterPos,
+            pixelYCenterPos,
+            pixelSize / PIXEL_TO_LIGHT_INNER_RADIUS_RATIO,
+            pixelXCenterPos,
+            pixelYCenterPos,
+            pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
+          );
+          grd.addColorStop(
+            0,
+            hslValuesToCss(
+              colorHue,
+              COLOR_VALUES.LIGHT.saturation,
+              COLOR_VALUES.LIGHT.lightness
+            )
+          );
+          grd.addColorStop(1, COLORS.BACKGROUND);
+          ctx.fillStyle = grd;
+          ctx.fillRect(chunkPixelXPos, pixelYPos, pixelSize, pixelSize);
+
+          ctx.fillStyle = hslValuesToCss(
             colorHue,
-            COLOR_VALUES.LIGHT.saturation,
-            COLOR_VALUES.LIGHT.lightness
-          )
-        );
-        grd.addColorStop(1, COLORS.BACKGROUND);
-        ctx.fillStyle = grd;
-        ctx.fillRect(pixelXPos, pixelYPos, pixelSize, pixelSize);
-
-        ctx.fillStyle = hslValuesToCss(
-          colorHue,
-          COLOR_VALUES.BULB_ON.saturation,
-          COLOR_VALUES.BULB_ON.lightness
-        );
-        ctx.beginPath();
-        ctx.arc(
-          pixelXCenterPos,
-          pixelYCenterPos,
-          pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
-          0,
-          2 * Math.PI
-        );
-        ctx.fill();
+            COLOR_VALUES.BULB_ON.saturation,
+            COLOR_VALUES.BULB_ON.lightness
+          );
+          ctx.beginPath();
+          ctx.arc(
+            pixelXCenterPos,
+            pixelYCenterPos,
+            pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+        }
       }
     }
   }
 
-  return canvas;
+  return imageChunks;
 };
 
 export const drawDisplayOnLights = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
   animationOffset: number = 0,
-  onLightsImage: HTMLCanvasElement | null = null
+  onLightsImageChunks: CanvasImageChunk[]
 ) => {
   const {
     displayHeight,
@@ -395,22 +433,38 @@ export const drawDisplayOnLights = (
     imageWidth,
     imageOffset
   );
+  const sliceEnd = imageOffset + imageSliceWidth;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-  if (onLightsImage) {
-    ctx.drawImage(
-      onLightsImage,
+  onLightsImageChunks.forEach((chunk) => {
+    const chunkSliceWidth = calcImageChunkSliceWidth(
+      chunk,
       imageOffset,
-      0,
-      imageSliceWidth,
-      pixelAreaHeight,
-      displayPaddingX,
-      displayPaddingY,
-      imageSliceWidth,
-      pixelAreaHeight
+      sliceEnd
     );
-  }
+
+    if (chunkSliceWidth > 0) {
+      const chunkOffset = calcImageChunkSliceOffset(chunk, imageOffset);
+      const chunkXPos = calcImageChunkSliceXPos(
+        chunk,
+        imageOffset,
+        displayPaddingX
+      );
+
+      ctx.drawImage(
+        chunk.canvas,
+        chunkOffset,
+        0,
+        chunkSliceWidth,
+        pixelAreaHeight,
+        chunkXPos,
+        displayPaddingY,
+        chunkSliceWidth,
+        pixelAreaHeight
+      );
+    }
+  });
 };
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;

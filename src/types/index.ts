@@ -55,3 +55,9 @@ export type Letter = number[][];
 export type Alphabet = { [letter: string]: Letter };
 
 export type FillStyle = string | CanvasGradient | CanvasPattern;
+
+export interface CanvasImageChunk {
+  canvas: HTMLCanvasElement;
+  start: number;
+  end: number;
+}
