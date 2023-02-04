@@ -8,7 +8,7 @@ export const DEFAULT_VALUE = {
   ANIMATION_FRAMES_PER_UPDATE: 3,
 };
 
-export const MAX_CHARACTERS = 100;
+export const MAX_CHARACTERS = 1000;
 
 export const MIN_VALUE = {
   HEIGHT: 50,
