@@ -12,7 +12,7 @@ const SignConfigContext = createContext<SignConfig>({
   hideFrame: false,
   frameProportion: 0,
   coloredOffLights: false,
-  animationFramesPerUpdate: 0,
+  updatesPerSecond: 0,
 });
 
 export default SignConfigContext;

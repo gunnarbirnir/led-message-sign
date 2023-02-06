@@ -15,7 +15,6 @@ import {
   calcDisplayPaddingX,
   calcPixelGrid,
   calcImageWidth,
-  calcAnimationOffset,
 } from "../utils";
 import {
   getCanvasContext,
@@ -66,6 +65,8 @@ const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
     let animationFrame = 0;
     let lastUpdate = 0;
+    let animationOffset = 0;
+    const updateInterval = 1000 / config.updatesPerSecond;
 
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
@@ -81,13 +82,10 @@ const useRenderCanvas = (config: SignConfig) => {
     const displayOnLightsCtx = getCanvasContext(displayOnLightsId, true);
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
 
-    const animateCanvas = () => {
-      const animationOffset = calcAnimationOffset(
-        animationFrame,
-        config.animationFramesPerUpdate
-      );
+    const animateCanvas = (now: number) => {
+      const elapsed = now - lastUpdate;
 
-      if (animationOffset !== lastUpdate) {
+      if (elapsed >= updateInterval) {
         if (frameGlowCtx) {
           drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
@@ -99,12 +97,16 @@ const useRenderCanvas = (config: SignConfig) => {
             onLightsImageChunks
           );
         }
-        lastUpdate = animationOffset;
+
+        animationOffset =
+          (animationOffset + 1) % computedValues.pixelGrid.length;
+        // https://stackoverflow.com/a/19772220
+        lastUpdate = now - (elapsed % updateInterval);
       }
 
       animationFrame = requestAnimationFrame(animateCanvas);
     };
-    animateCanvas();
+    animateCanvas(0);
 
     if (frameMaskingCtx) {
       drawFrameMasking(frameMaskingCtx, computedValues);
