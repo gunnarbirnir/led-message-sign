@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { SignConfig } from "../types";
 import {
@@ -15,6 +15,7 @@ import {
   calcDisplayPaddingX,
   calcPixelGrid,
   calcImageWidth,
+  calcAnimationOffset,
 } from "../utils";
 import {
   getCanvasContext,
@@ -62,11 +63,12 @@ const getComputedValues = (config: SignConfig) => {
 };
 
 const useRenderCanvas = (config: SignConfig) => {
+  // So animation starts again when props change
+  const startAnimationFrame = useRef(0);
+
   useEffect(() => {
     let animationFrame = 0;
     let lastUpdate = 0;
-    let animationOffset = 0;
-    const updateInterval = 1000 / config.updatesPerSecond;
 
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
@@ -82,10 +84,13 @@ const useRenderCanvas = (config: SignConfig) => {
     const displayOnLightsCtx = getCanvasContext(displayOnLightsId, true);
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
 
-    const animateCanvas = (now: number) => {
-      const elapsed = now - lastUpdate;
+    const animateCanvas = () => {
+      const animationOffset = calcAnimationOffset(
+        animationFrame - startAnimationFrame.current,
+        config.animationFramesPerUpdate
+      );
 
-      if (elapsed >= updateInterval) {
+      if (animationOffset > lastUpdate) {
         if (frameGlowCtx) {
           drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
@@ -97,16 +102,12 @@ const useRenderCanvas = (config: SignConfig) => {
             onLightsImageChunks
           );
         }
-
-        animationOffset =
-          (animationOffset + 1) % computedValues.pixelGrid.length;
-        // https://stackoverflow.com/a/19772220
-        lastUpdate = now - (elapsed % updateInterval);
+        lastUpdate = animationOffset;
       }
 
       animationFrame = requestAnimationFrame(animateCanvas);
     };
-    animateCanvas(0);
+    animateCanvas();
 
     if (frameMaskingCtx) {
       drawFrameMasking(frameMaskingCtx, computedValues);
@@ -119,6 +120,7 @@ const useRenderCanvas = (config: SignConfig) => {
     }
 
     return () => {
+      startAnimationFrame.current = animationFrame;
       cancelAnimationFrame(animationFrame);
     };
   }, [config]);

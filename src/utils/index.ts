@@ -98,6 +98,13 @@ export const calcPixelGrid = (text: string, pixelCountX: number) => {
   return [...frontPadding, ...grid];
 };
 
+export const calcAnimationOffset = (
+  animationFrame: number,
+  animationFramesPerUpdate: number
+) => {
+  return Math.floor(animationFrame / animationFramesPerUpdate);
+};
+
 export const calcTotalOffset = (
   x: number,
   animationOffset: number,

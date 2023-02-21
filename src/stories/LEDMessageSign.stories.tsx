@@ -40,12 +40,11 @@ export default {
     },
     hideFrame: { defaultValue: DEFAULT_VALUE.HIDE_FRAME },
     coloredOffLights: { defaultValue: DEFAULT_VALUE.COLORED_OFF_LIGHTS },
-    updatesPerSecond: {
-      defaultValue: DEFAULT_VALUE.UPDATES_PER_SECOND,
+    animationFramesPerUpdate: {
+      defaultValue: DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
       control: {
         type: "number",
-        min: MIN_VALUE.UPDATES_PER_SECOND,
-        max: MAX_VALUE.UPDATES_PER_SECOND,
+        min: MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE,
       },
     },
   },

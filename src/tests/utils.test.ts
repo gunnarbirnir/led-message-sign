@@ -12,6 +12,7 @@ import {
   calcPixelAreaWidth,
   calcDisplayPaddingX,
   calcPixelGrid,
+  calcAnimationOffset,
   calcTotalOffset,
   isPixelOn,
   calcPixelXPos,
@@ -33,7 +34,7 @@ const TEST_CONFIG = {
   height: 150,
   width: 800,
   colorHue: 180,
-  updatesPerSecond: 20,
+  animationFramesPerUpdate: 3,
   frameProportions: 0.2,
 };
 
@@ -70,6 +71,7 @@ const TEST_COMPUTED_VALUES = {
 
 const TEST_X = 25;
 const TEST_Y = 3;
+const TEST_ANIMATION_FRAME = 99;
 const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
 const TEST_PIXEL_X_POS = 770;
@@ -210,6 +212,16 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelCountX
       );
       expect(grid).toStrictEqual(TEST_COMPUTED_VALUES.pixelGrid);
+    });
+  });
+
+  describe("calcAnimationOffset", () => {
+    test("Should return animation offset", () => {
+      const offset = calcAnimationOffset(
+        TEST_ANIMATION_FRAME,
+        TEST_CONFIG.animationFramesPerUpdate
+      );
+      expect(offset).toBe(TEST_ANIMATION_OFFSET);
     });
   });
 

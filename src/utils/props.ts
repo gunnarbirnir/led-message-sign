@@ -14,7 +14,7 @@ export const sanitizeProps = ({
   colorHue = DEFAULT_VALUE.COLOR_HUE,
   hideFrame = DEFAULT_VALUE.HIDE_FRAME,
   coloredOffLights = DEFAULT_VALUE.COLORED_OFF_LIGHTS,
-  updatesPerSecond = DEFAULT_VALUE.UPDATES_PER_SECOND,
+  animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
 }: LEDMessageSignProps) => {
   return {
     text:
@@ -29,10 +29,9 @@ export const sanitizeProps = ({
     ),
     hideFrame,
     coloredOffLights,
-    updatesPerSecond: sanitizeMinMaxValue(
-      Math.round(updatesPerSecond),
-      MIN_VALUE.UPDATES_PER_SECOND,
-      MAX_VALUE.UPDATES_PER_SECOND
+    animationFramesPerUpdate: sanitizeMinValue(
+      Math.round(animationFramesPerUpdate),
+      MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
   };
 };

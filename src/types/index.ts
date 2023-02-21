@@ -1,5 +1,5 @@
 export interface LEDMessageSignProps {
-  /** Message text. Max 1000 characters. */
+  /** Message text. Max 100 characters. */
   text: string;
   /** Sign height. Default is 150. */
   height?: number;
@@ -13,8 +13,8 @@ export interface LEDMessageSignProps {
   hideFrame?: boolean;
   /** Should the off lights be colored. Default is true.  */
   coloredOffLights?: boolean;
-  /** How many times the sign updates per second. Default is 20. */
-  updatesPerSecond?: number;
+  /** How many animation frames pass between sign updates. Default is 3. */
+  animationFramesPerUpdate?: number;
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
