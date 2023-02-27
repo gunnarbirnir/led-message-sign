@@ -29,9 +29,10 @@ export const sanitizeProps = ({
     ),
     hideFrame,
     coloredOffLights,
-    animationFramesPerUpdate: sanitizeMinValue(
+    animationFramesPerUpdate: sanitizeMinMaxValue(
       Math.round(animationFramesPerUpdate),
-      MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE
+      MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE,
+      MAX_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
   };
 };

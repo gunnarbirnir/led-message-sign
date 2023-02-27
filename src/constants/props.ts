@@ -19,4 +19,5 @@ export const MIN_VALUE = {
 
 export const MAX_VALUE = {
   COLOR_HUE: 360,
+  ANIMATION_FRAMES_PER_UPDATE: 60,
 };
