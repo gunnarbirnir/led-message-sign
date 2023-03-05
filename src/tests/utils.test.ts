@@ -5,12 +5,7 @@ import {
   calcFrameSize,
   calcDisplayHeight,
   calcDisplayWidth,
-  calcDisplayPaddingY,
-  calcPixelAreaHeight,
-  calcPixelSize,
-  calcPixelCountX,
-  calcPixelAreaWidth,
-  calcDisplayPaddingX,
+  calcComputedValues,
   calcPixelGrid,
   calcTotalOffset,
   isPixelOn,
@@ -18,9 +13,6 @@ import {
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
-  calcImageWidth,
-  calcImageOffset,
-  calcImageSliceWidth,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -34,7 +26,10 @@ const TEST_CONFIG = {
   width: 800,
   colorHue: 180,
   animationFramesPerUpdate: 3,
-  frameProportions: 0.2,
+  frameProportion: 0.2,
+  fullWidth: false,
+  hideFrame: false,
+  coloredOffLights: true,
 };
 
 const pixelGridPadding: number[][] = [];
@@ -43,8 +38,8 @@ for (let i = 0; i < 50; i++) {
 }
 
 const TEST_COMPUTED_VALUES = {
-  signHeight: TEST_CONFIG.height * 2,
-  signWidth: TEST_CONFIG.width * 2,
+  signHeight: 300,
+  signWidth: 1600,
   frameSize: 30,
   displayHeight: 240,
   displayWidth: 1540,
@@ -76,8 +71,6 @@ const TEST_PIXEL_X_POS = 770;
 const TEST_PIXEL_X_CENTER_POS = 785;
 const TEST_PIXEL_Y_POS = 105;
 const TEST_PIXEL_Y_CENTER_POS = 120;
-const TEST_IMAGE_OFFSET = 990;
-const TEST_IMAGE_SLICE_WIDTH = 1200;
 
 describe("Utils", () => {
   describe("hslValuesToCss", () => {
@@ -122,7 +115,7 @@ describe("Utils", () => {
     test("Should return frame size", () => {
       const size = calcFrameSize(
         TEST_COMPUTED_VALUES.signHeight,
-        TEST_CONFIG.frameProportions
+        TEST_CONFIG.frameProportion
       );
       expect(size).toBe(TEST_COMPUTED_VALUES.frameSize);
     });
@@ -148,58 +141,10 @@ describe("Utils", () => {
     });
   });
 
-  describe("calcDisplayPaddingY", () => {
-    test("Should return display vertical padding", () => {
-      const padding = calcDisplayPaddingY(TEST_COMPUTED_VALUES.signHeight);
-      expect(padding).toBe(TEST_COMPUTED_VALUES.displayPaddingY);
-    });
-  });
-
-  describe("calcPixelAreaHeight", () => {
-    test("Should return pixel area height", () => {
-      const height = calcPixelAreaHeight(
-        TEST_COMPUTED_VALUES.displayHeight,
-        TEST_COMPUTED_VALUES.displayPaddingY
-      );
-      expect(height).toBe(TEST_COMPUTED_VALUES.pixelAreaHeight);
-    });
-  });
-
-  describe("calcPixelSize", () => {
-    test("Should return pixel size", () => {
-      const size = calcPixelSize(TEST_COMPUTED_VALUES.pixelAreaHeight);
-      expect(size).toBe(TEST_COMPUTED_VALUES.pixelSize);
-    });
-  });
-
-  describe("calcPixelCountX", () => {
-    test("Should return horizontal pixel count", () => {
-      const count = calcPixelCountX(
-        TEST_COMPUTED_VALUES.displayWidth,
-        TEST_COMPUTED_VALUES.displayPaddingY,
-        TEST_COMPUTED_VALUES.pixelSize
-      );
-      expect(count).toBe(TEST_COMPUTED_VALUES.pixelCountX);
-    });
-  });
-
-  describe("calcPixelAreaWidth", () => {
-    test("Should return pixel area width", () => {
-      const width = calcPixelAreaWidth(
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelCountX
-      );
-      expect(width).toBe(TEST_COMPUTED_VALUES.pixelAreaWidth);
-    });
-  });
-
-  describe("calcDisplayPaddingX", () => {
-    test("Should return display horizontal padding", () => {
-      const padding = calcDisplayPaddingX(
-        TEST_COMPUTED_VALUES.displayWidth,
-        TEST_COMPUTED_VALUES.pixelAreaWidth
-      );
-      expect(padding).toBe(TEST_COMPUTED_VALUES.displayPaddingX);
+  describe("calcComputedValues", () => {
+    test("Should return computed values", () => {
+      const computed = calcComputedValues(TEST_CONFIG, 2);
+      expect(computed).toEqual(TEST_COMPUTED_VALUES);
     });
   });
 
@@ -282,47 +227,6 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelSize
       );
       expect(position).toBe(TEST_PIXEL_Y_CENTER_POS);
-    });
-  });
-
-  describe("calcImageWidth", () => {
-    test("Should return image width", () => {
-      const width = calcImageWidth(
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelGrid
-      );
-      expect(width).toBe(TEST_COMPUTED_VALUES.imageWidth);
-    });
-  });
-
-  describe("calcImageOffset", () => {
-    test("Should return image offset", () => {
-      const offset = calcImageOffset(
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelGrid,
-        TEST_ANIMATION_OFFSET
-      );
-      expect(offset).toBe(TEST_IMAGE_OFFSET);
-    });
-
-    test("Should return same image offset after one lap", () => {
-      const offset = calcImageOffset(
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelGrid,
-        TEST_ANIMATION_OFFSET + TEST_COMPUTED_VALUES.pixelGrid.length
-      );
-      expect(offset).toBe(TEST_IMAGE_OFFSET);
-    });
-  });
-
-  describe("calcImageSliceWidth", () => {
-    test("Should return image slice width", () => {
-      const width = calcImageSliceWidth(
-        TEST_COMPUTED_VALUES.pixelAreaWidth,
-        TEST_COMPUTED_VALUES.imageWidth,
-        TEST_IMAGE_OFFSET
-      );
-      expect(width).toBe(TEST_IMAGE_SLICE_WIDTH);
     });
   });
 
