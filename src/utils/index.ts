@@ -1,6 +1,10 @@
-import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
+import {
+  VERTICAL_PIXEL_COUNT,
+  PADDING_TO_HEIGHT_RATIO,
+  CANVAS_SCALING,
+} from "../constants";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
-import { PixelGrid, CanvasImageChunk } from "../types";
+import { PixelGrid, SignConfig } from "../types";
 
 export const hslValuesToCss = (
   hue: number,
@@ -41,39 +45,42 @@ export const calcDisplayWidth = (signWidth: number, frameSize: number) => {
   return signWidth - frameSize * 2;
 };
 
-export const calcDisplayPaddingY = (signHeight: number) => {
-  return Math.floor(signHeight * PADDING_TO_HEIGHT_RATIO);
-};
-
-export const calcPixelAreaHeight = (
-  displayHeight: number,
-  displayPaddingY: number
+export const calcComputedValues = (
+  config: SignConfig,
+  canvasScaling: number = CANVAS_SCALING
 ) => {
-  return displayHeight - displayPaddingY * 2;
-};
-
-export const calcPixelSize = (pixelAreaHeight: number) => {
-  return pixelAreaHeight / VERTICAL_PIXEL_COUNT;
-};
-
-export const calcPixelCountX = (
-  displayWidth: number,
-  displayPaddingY: number,
-  pixelSize: number
-) => {
+  const signHeight = config.height * canvasScaling;
+  const signWidth = config.width * canvasScaling;
+  const frameSize = calcFrameSize(signHeight, config.frameProportion);
+  const displayHeight = calcDisplayHeight(signHeight, frameSize);
+  const displayWidth = calcDisplayWidth(signWidth, frameSize);
+  const displayPaddingY = Math.floor(signHeight * PADDING_TO_HEIGHT_RATIO);
+  const pixelAreaHeight = displayHeight - displayPaddingY * 2;
+  const pixelSize = pixelAreaHeight / VERTICAL_PIXEL_COUNT;
   const widthWithoutPadding = displayWidth - displayPaddingY * 2;
-  return Math.floor(widthWithoutPadding / pixelSize);
-};
+  const pixelCountX = Math.floor(widthWithoutPadding / pixelSize);
+  const pixelAreaWidth = pixelSize * pixelCountX;
+  const displayPaddingX = (displayWidth - pixelAreaWidth) / 2;
+  const pixelCountY = VERTICAL_PIXEL_COUNT;
+  const pixelGrid = calcPixelGrid(config.text, pixelCountX);
+  const imageWidth = pixelSize * pixelGrid.length;
 
-export const calcPixelAreaWidth = (pixelSize: number, pixelCountX: number) => {
-  return pixelSize * pixelCountX;
-};
-
-export const calcDisplayPaddingX = (
-  displayWidth: number,
-  pixelAreaWidth: number
-) => {
-  return (displayWidth - pixelAreaWidth) / 2;
+  return {
+    signHeight,
+    signWidth,
+    frameSize,
+    displayHeight,
+    displayWidth,
+    pixelAreaHeight,
+    pixelAreaWidth,
+    displayPaddingX,
+    displayPaddingY,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+    pixelGrid,
+    imageWidth,
+  };
 };
 
 export const calcPixelGrid = (text: string, pixelCountX: number) => {
@@ -135,82 +142,6 @@ export const calcPixelYPos = (
 
 export const calcPixelYCenterPos = (pixelYPos: number, pixelSize: number) => {
   return pixelYPos + pixelSize / 2;
-};
-
-export const calcImageWidth = (pixelSize: number, pixelGrid: PixelGrid) => {
-  return pixelSize * pixelGrid.length;
-};
-
-export const calcImageOffset = (
-  pixelSize: number,
-  pixelGrid: PixelGrid,
-  animationOffset: number
-) => {
-  return pixelSize * (animationOffset % pixelGrid.length);
-};
-
-export const calcImageSliceWidth = (
-  pixelAreaWidth: number,
-  imageWidth: number,
-  imageOffset: number
-) => {
-  return Math.min(pixelAreaWidth, imageWidth - imageOffset);
-};
-
-// TODO: Test image chunk utils
-export const calcPixelsPerImageChunk = (
-  pixelSize: number,
-  imageChunkSize: number
-) => {
-  return Math.floor(imageChunkSize / pixelSize);
-};
-
-export const calcImageChunkWidth = (
-  pixelSize: number,
-  pixelsPerChunk: number
-) => {
-  return pixelsPerChunk * pixelSize;
-};
-
-export const calcImageChunkCount = (imageWidth: number, chunkWidth: number) => {
-  return Math.ceil(imageWidth / chunkWidth);
-};
-
-export const calcImageChunkStartAndEnd = (
-  index: number,
-  pixelSize: number,
-  pixelGrid: PixelGrid,
-  pixelsPerChunk: number
-) => {
-  const xStart = index * pixelsPerChunk;
-  const xEnd = Math.min(xStart + pixelsPerChunk, pixelGrid.length);
-  const start = xStart * pixelSize;
-  const end = xEnd * pixelSize;
-
-  return { start, end };
-};
-
-export const calcImageChunkSliceWidth = (
-  chunk: CanvasImageChunk,
-  imageOffset: number,
-  sliceEnd: number
-) => {
-  return Math.min(chunk.end, sliceEnd) - Math.max(chunk.start, imageOffset);
-};
-
-export const calcImageChunkSliceOffset = (
-  chunk: CanvasImageChunk,
-  imageOffset: number
-) => {
-  return Math.max(0, imageOffset - chunk.start);
-};
-
-export const calcImageChunkSliceXPos = (
-  chunk: CanvasImageChunk,
-  imageOffset: number,
-  displayPaddingX: number
-) => {
-  return displayPaddingX + Math.max(0, chunk.start - imageOffset);
 };
 
 export const calcGlowPosition = (

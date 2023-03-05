@@ -1,21 +1,7 @@
 import { useEffect } from "react";
 
 import { SignConfig } from "../types";
-import {
-  calcFrameIds,
-  calcDisplayIds,
-  calcFrameSize,
-  calcDisplayHeight,
-  calcDisplayWidth,
-  calcPixelAreaHeight,
-  calcPixelAreaWidth,
-  calcDisplayPaddingY,
-  calcPixelSize,
-  calcPixelCountX,
-  calcDisplayPaddingX,
-  calcPixelGrid,
-  calcImageWidth,
-} from "../utils";
+import { calcFrameIds, calcDisplayIds, calcComputedValues } from "../utils";
 import {
   getCanvasContext,
   getOnLightsImageChunks,
@@ -25,41 +11,6 @@ import {
   drawFrameMasking,
   drawFrameShading,
 } from "../utils/canvas";
-import { CANVAS_SCALING, VERTICAL_PIXEL_COUNT } from "../constants";
-
-const getComputedValues = (config: SignConfig) => {
-  const signHeight = config.height * CANVAS_SCALING;
-  const signWidth = config.width * CANVAS_SCALING;
-  const frameSize = calcFrameSize(signHeight, config.frameProportion);
-  const displayHeight = calcDisplayHeight(signHeight, frameSize);
-  const displayWidth = calcDisplayWidth(signWidth, frameSize);
-  const displayPaddingY = calcDisplayPaddingY(signHeight);
-  const pixelAreaHeight = calcPixelAreaHeight(displayHeight, displayPaddingY);
-  const pixelSize = calcPixelSize(pixelAreaHeight);
-  const pixelCountX = calcPixelCountX(displayWidth, displayPaddingY, pixelSize);
-  const pixelAreaWidth = calcPixelAreaWidth(pixelSize, pixelCountX);
-  const displayPaddingX = calcDisplayPaddingX(displayWidth, pixelAreaWidth);
-  const pixelCountY = VERTICAL_PIXEL_COUNT;
-  const pixelGrid = calcPixelGrid(config.text, pixelCountX);
-  const imageWidth = calcImageWidth(pixelSize, pixelGrid);
-
-  return {
-    signHeight,
-    signWidth,
-    frameSize,
-    displayHeight,
-    displayWidth,
-    pixelAreaHeight,
-    pixelAreaWidth,
-    displayPaddingY,
-    displayPaddingX,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-    pixelGrid,
-    imageWidth,
-  };
-};
 
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
@@ -72,7 +23,7 @@ const useRenderCanvas = (config: SignConfig) => {
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
     );
-    const computedValues = getComputedValues(config);
+    const computedValues = calcComputedValues(config);
     const onLightsImageChunks = getOnLightsImageChunks(computedValues, config);
 
     const frameGlowCtx = getCanvasContext(frameGlowId);

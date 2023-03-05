@@ -7,15 +7,6 @@ import {
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
-  calcImageOffset,
-  calcImageSliceWidth,
-  calcPixelsPerImageChunk,
-  calcImageChunkWidth,
-  calcImageChunkCount,
-  calcImageChunkStartAndEnd,
-  calcImageChunkSliceWidth,
-  calcImageChunkSliceOffset,
-  calcImageChunkSliceXPos,
   calcGlowPosition,
   calcDisableGlow,
   calcPixelGlow,
@@ -326,21 +317,20 @@ export const getOnLightsImageChunks = (
   const { colorHue } = config;
   const imageChunks: CanvasImageChunk[] = [];
 
-  const pixelsPerChunk = calcPixelsPerImageChunk(pixelSize, IMAGE_CHUNK_SIZE);
-  const chunkWidth = calcImageChunkWidth(pixelSize, pixelsPerChunk);
-  const chunkCount = calcImageChunkCount(imageWidth, chunkWidth);
+  const pixelsPerChunk = Math.floor(IMAGE_CHUNK_SIZE / pixelSize);
+  const chunkWidth = pixelsPerChunk * pixelSize;
+  const chunkCount = Math.ceil(imageWidth / chunkWidth);
 
   if (!chunkCount) {
     return [];
   }
 
   for (let i = 0; i < chunkCount; i++) {
-    const { start, end } = calcImageChunkStartAndEnd(
-      i,
-      pixelSize,
-      pixelGrid,
-      pixelsPerChunk
-    );
+    const xStart = i * pixelsPerChunk;
+    const xEnd = Math.min(xStart + pixelsPerChunk, pixelGrid.length);
+    const start = xStart * pixelSize;
+    const end = xEnd * pixelSize;
+
     const canvas = document.createElement("canvas");
     canvas.height = pixelAreaHeight;
     canvas.width = end - start;
@@ -427,30 +417,20 @@ export const drawDisplayOnLights = (
     imageWidth,
   } = computedValues;
 
-  const imageOffset = calcImageOffset(pixelSize, pixelGrid, animationOffset);
-  const imageSliceWidth = calcImageSliceWidth(
-    pixelAreaWidth,
-    imageWidth,
-    imageOffset
-  );
+  const imageOffset = pixelSize * (animationOffset % pixelGrid.length);
+  const imageSliceWidth = Math.min(pixelAreaWidth, imageWidth - imageOffset);
   const sliceEnd = imageOffset + imageSliceWidth;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
   onLightsImageChunks.forEach((chunk) => {
-    const chunkSliceWidth = calcImageChunkSliceWidth(
-      chunk,
-      imageOffset,
-      sliceEnd
-    );
+    const chunkSliceWidth =
+      Math.min(chunk.end, sliceEnd) - Math.max(chunk.start, imageOffset);
 
     if (chunkSliceWidth > 0) {
-      const chunkOffset = calcImageChunkSliceOffset(chunk, imageOffset);
-      const chunkXPos = calcImageChunkSliceXPos(
-        chunk,
-        imageOffset,
-        displayPaddingX
-      );
+      const chunkOffset = Math.max(0, imageOffset - chunk.start);
+      const chunkXPos =
+        displayPaddingX + Math.max(0, chunk.start - imageOffset);
 
       ctx.drawImage(
         chunk.canvas,
