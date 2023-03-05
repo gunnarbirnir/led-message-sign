@@ -12,5 +12,5 @@
     "skipLibCheck": true
   },
   "include": ["src"],
-  "exclude": ["src/tests", "src/stories"]
+  "exclude": ["src/tests"]
 }
