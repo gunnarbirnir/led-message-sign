@@ -38,7 +38,8 @@ export const sanitizeProps = ({
 };
 
 export const sanitizeMinValue = (val: number, minVal: number) => {
-  return Math.max(val, minVal);
+  const roundedVal = Math.round(val);
+  return Math.max(roundedVal, minVal);
 };
 
 export const sanitizeMinMaxValue = (
@@ -46,5 +47,6 @@ export const sanitizeMinMaxValue = (
   minVal: number,
   maxVal: number
 ) => {
-  return Math.max(Math.min(val, maxVal), minVal);
+  const roundedVal = Math.round(val);
+  return Math.max(Math.min(roundedVal, maxVal), minVal);
 };

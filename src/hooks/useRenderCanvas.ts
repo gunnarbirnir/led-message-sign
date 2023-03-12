@@ -12,13 +12,17 @@ import {
   drawFrameShading,
 } from "../utils/canvas";
 
+const INTERVAL_BUFFER = 5;
+
 const useRenderCanvas = (config: SignConfig) => {
   useEffect(() => {
     let animationFrame = 0;
     let lastUpdate = 0;
     let animationOffset = 0;
+
     const updatesPerSecond = 60 / config.animationFramesPerUpdate;
-    const updateInterval = Math.floor(1000 / updatesPerSecond);
+    const updateInterval =
+      Math.floor(1000 / updatesPerSecond) - INTERVAL_BUFFER;
 
     const { frameGlowId, frameMaskingId, frameShadingId } = calcFrameIds(
       config.id
@@ -37,7 +41,7 @@ const useRenderCanvas = (config: SignConfig) => {
     const animateCanvas = (now: number) => {
       const elapsed = now - lastUpdate;
 
-      if (elapsed >= updateInterval) {
+      if (elapsed > updateInterval) {
         if (frameGlowCtx) {
           drawFrameGlow(frameGlowCtx, computedValues, config, animationOffset);
         }
