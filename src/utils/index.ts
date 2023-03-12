@@ -54,9 +54,12 @@ export const calcComputedValues = (
   const frameSize = calcFrameSize(signHeight, config.frameProportion);
   const displayHeight = calcDisplayHeight(signHeight, frameSize);
   const displayWidth = calcDisplayWidth(signWidth, frameSize);
-  const displayPaddingY = Math.floor(signHeight * PADDING_TO_HEIGHT_RATIO);
-  const pixelAreaHeight = displayHeight - displayPaddingY * 2;
-  const pixelSize = pixelAreaHeight / VERTICAL_PIXEL_COUNT;
+  const approxPaddingY = signHeight * PADDING_TO_HEIGHT_RATIO * 2;
+  const pixelSize = Math.round(
+    (displayHeight - approxPaddingY) / VERTICAL_PIXEL_COUNT
+  );
+  const pixelAreaHeight = pixelSize * VERTICAL_PIXEL_COUNT;
+  const displayPaddingY = (displayHeight - pixelAreaHeight) / 2;
   const widthWithoutPadding = displayWidth - displayPaddingY * 2;
   const pixelCountX = Math.floor(widthWithoutPadding / pixelSize);
   const pixelAreaWidth = pixelSize * pixelCountX;
