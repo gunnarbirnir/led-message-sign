@@ -1,62 +1,112 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
-import { useSignConfigContext } from "../hooks";
-import { COLORS } from "../constants/colors";
+import { useSignContext } from "../hooks";
 import {
-  calcDisplayIds,
-  calcFrameSize,
-  calcDisplayHeight,
-  calcDisplayWidth,
-} from "../utils";
+  getCanvasContext,
+  drawDisplayOffLights,
+  getOnLightsImageChunks,
+  drawDisplayOnLights,
+} from "../utils/canvas";
+import { COLORS } from "../constants/colors";
+import { CANVAS_SCALING } from "../constants";
 import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
-  const { id, height, width, frameProportion } = useSignConfigContext();
+  const {
+    config,
+    computedValues: {
+      displayWidth,
+      displayHeight,
+      pixelAreaHeight,
+      pixelAreaWidth,
+      displayPaddingX,
+      displayPaddingY,
+      imageWidth,
+      pixelSize,
+    },
+    computedValuesScaled,
+  } = useSignContext();
+  const { id } = config;
+
   const { displayOnLightsId, displayOffLightsId } = useMemo(
-    () => calcDisplayIds(id),
+    () => ({
+      displayOnLightsId: `sign-display-on-lights-${id}`,
+      displayOffLightsId: `sign-display-off-lights-${id}`,
+    }),
     [id]
   );
-  const frameSize = useMemo(
-    () => calcFrameSize(height, frameProportion),
-    [height, frameProportion]
-  );
-  const displayHeight = useMemo(
-    () => calcDisplayHeight(height, frameSize),
-    [height, frameSize]
-  );
-  const displayWidth = useMemo(
-    () => calcDisplayWidth(width, frameSize),
-    [width, frameSize]
+  const onLightsImageChunks = useMemo(
+    () => getOnLightsImageChunks(displayOnLightsId, computedValuesScaled),
+    [displayOnLightsId, computedValuesScaled]
   );
 
+  useEffect(() => {
+    const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
+
+    if (displayOffLightsCtx) {
+      drawDisplayOffLights(displayOffLightsCtx, computedValuesScaled, config);
+    }
+  }, [displayOffLightsId, displayOnLightsId, computedValuesScaled, config]);
+
+  useEffect(() => {
+    drawDisplayOnLights(onLightsImageChunks, computedValuesScaled, config);
+  }, [computedValuesScaled, onLightsImageChunks, config]);
+
   return (
-    <StyledSignDisplay>
-      <DisplayCanvas
+    <StyledSignDisplay style={{ width: displayWidth, height: displayHeight }}>
+      <OffPixels
         id={displayOffLightsId}
         height={displayHeight}
         width={displayWidth}
       />
-      <DisplayCanvas
-        id={displayOnLightsId}
-        height={displayHeight}
-        width={displayWidth}
-      />
+      <OnPixels
+        style={{
+          top: displayPaddingY,
+          left: displayPaddingX,
+          height: pixelAreaHeight,
+          width: pixelAreaWidth,
+        }}
+      >
+        <div
+          style={{
+            width: imageWidth,
+            transform: `translateX(-${pixelSize * 100}px)`,
+          }}
+        >
+          {onLightsImageChunks.map((chunk) => (
+            <Canvas
+              id={chunk.id}
+              key={chunk.id}
+              height={pixelAreaHeight}
+              width={(chunk.end - chunk.start) / CANVAS_SCALING}
+            />
+          ))}
+        </div>
+      </OnPixels>
     </StyledSignDisplay>
   );
 };
 
 const StyledSignDisplay = styled.div`
-  height: 100%;
-  width: 100%;
   position: relative;
   background-color: ${COLORS.BACKGROUND};
 `;
 
-const DisplayCanvas = styled(Canvas)`
+const OffPixels = styled(Canvas)`
   position: absolute;
   top: 0;
   left: 0;
+`;
+
+const OnPixels = styled.div`
+  position: absolute;
+  overflow: hidden;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+  }
 `;
 
 export default SignDisplay;

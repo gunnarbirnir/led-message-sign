@@ -1,10 +1,10 @@
 import React, { FC, memo, useRef, useMemo, useId } from "react";
-import styled from "styled-components";
 
 import { LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
-import { useObjectSize, useRenderCanvas } from "../hooks";
-import { SignConfigContext } from "../context";
+import { calcComputedValues } from "../utils";
+import { useObjectSize } from "../hooks";
+import { SignContext } from "../context";
 import { FRAME_PROPORTION } from "../constants";
 import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
@@ -27,26 +27,23 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
     }),
     [signId, sanitizedProps, containerWidth]
   );
-  useRenderCanvas(config);
+  const computedValues = useMemo(() => calcComputedValues(config, 1), [config]);
+  const computedValuesScaled = useMemo(
+    () => calcComputedValues(config),
+    [config]
+  );
 
   return (
-    <SignConfigContext.Provider value={config}>
-      <StyledLEDMessageSign
-        ref={containerRef}
-        style={fullWidth ? { width: "100%" } : undefined}
-      >
+    <SignContext.Provider
+      value={{ config, computedValues, computedValuesScaled }}
+    >
+      <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
         <SignFrame>
           <SignDisplay />
         </SignFrame>
-      </StyledLEDMessageSign>
-    </SignConfigContext.Provider>
+      </div>
+    </SignContext.Provider>
   );
 };
-
-const StyledLEDMessageSign = styled.div`
-  & > * {
-    box-sizing: border-box;
-  }
-`;
 
 export default memo(LEDMessageSign);

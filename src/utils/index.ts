@@ -18,42 +18,15 @@ export const hslValuesToCss = (
   return `hsl(${hue}deg ${saturation}% ${lightness}% / ${opacity})`;
 };
 
-export const calcFrameIds = (id: string) => {
-  return {
-    frameGlowId: `sign-frame-glow-${id}`,
-    frameMaskingId: `sign-frame-masking-${id}`,
-    frameShadingId: `sign-frame-shading-${id}`,
-  };
-};
-
-export const calcDisplayIds = (id: string) => {
-  return {
-    displayOnLightsId: `sign-display-on-lights-${id}`,
-    displayOffLightsId: `sign-display-off-lights-${id}`,
-  };
-};
-
-export const calcFrameSize = (signHeight: number, frameProportion: number) => {
-  return (signHeight * frameProportion) / 2;
-};
-
-export const calcDisplayHeight = (signHeight: number, frameSize: number) => {
-  return signHeight - frameSize * 2;
-};
-
-export const calcDisplayWidth = (signWidth: number, frameSize: number) => {
-  return signWidth - frameSize * 2;
-};
-
 export const calcComputedValues = (
   config: SignConfig,
   canvasScaling: number = CANVAS_SCALING
 ) => {
   const signHeight = config.height * canvasScaling;
   const signWidth = config.width * canvasScaling;
-  const frameSize = calcFrameSize(signHeight, config.frameProportion);
-  const displayHeight = calcDisplayHeight(signHeight, frameSize);
-  const displayWidth = calcDisplayWidth(signWidth, frameSize);
+  const frameSize = (signHeight * config.frameProportion) / 2;
+  const displayHeight = signHeight - frameSize * 2;
+  const displayWidth = signWidth - frameSize * 2;
   const approxPaddingY = signHeight * PADDING_TO_HEIGHT_RATIO * 2;
   const pixelSize = Math.round(
     (displayHeight - approxPaddingY) / VERTICAL_PIXEL_COUNT

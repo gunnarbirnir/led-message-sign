@@ -309,12 +309,10 @@ const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
 const IMAGE_CHUNK_SIZE = 4000;
 
 export const getOnLightsImageChunks = (
-  computedValues: SignComputedValues,
-  config: SignConfig
+  onLightsId: string,
+  computedValues: SignComputedValues
 ) => {
-  const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight, imageWidth } =
-    computedValues;
-  const { colorHue } = config;
+  const { pixelSize, pixelGrid, imageWidth } = computedValues;
   const imageChunks: CanvasImageChunk[] = [];
 
   const pixelsPerChunk = Math.floor(IMAGE_CHUNK_SIZE / pixelSize);
@@ -331,20 +329,28 @@ export const getOnLightsImageChunks = (
     const start = xStart * pixelSize;
     const end = xEnd * pixelSize;
 
-    const canvas = document.createElement("canvas");
-    canvas.height = pixelAreaHeight;
-    canvas.width = end - start;
-    imageChunks.push({ canvas, start, end });
+    imageChunks.push({ id: `${onLightsId}-${i}`, start, end });
   }
 
+  return imageChunks;
+};
+
+export const drawDisplayOnLights = (
+  imageChunks: CanvasImageChunk[],
+  computedValues: SignComputedValues,
+  config: SignConfig
+) => {
+  const { pixelSize, pixelCountY, pixelGrid } = computedValues;
+  const { colorHue } = config;
+
   let chunkIdx = 0;
-  let ctx = imageChunks[0].canvas.getContext("2d", { alpha: true });
+  let ctx = getCanvasContext(imageChunks[0].id, true);
 
   for (let x = 0; x < pixelGrid.length; x++) {
     const pixelXPos = calcPixelXPos(x, pixelSize, 0);
 
     if (pixelXPos >= imageChunks[chunkIdx].end) {
-      ctx = imageChunks[++chunkIdx].canvas.getContext("2d", { alpha: true });
+      ctx = getCanvasContext(imageChunks[++chunkIdx].id, true);
     }
 
     if (ctx) {
@@ -368,7 +374,7 @@ export const getOnLightsImageChunks = (
           grd.addColorStop(
             0,
             hslValuesToCss(
-              colorHue,
+              chunkIdx * 60,
               COLOR_VALUES.LIGHT.saturation,
               COLOR_VALUES.LIGHT.lightness
             )
@@ -395,56 +401,6 @@ export const getOnLightsImageChunks = (
       }
     }
   }
-
-  return imageChunks;
-};
-
-export const drawDisplayOnLights = (
-  ctx: CanvasRenderingContext2D,
-  computedValues: SignComputedValues,
-  animationOffset: number = 0,
-  onLightsImageChunks: CanvasImageChunk[]
-) => {
-  const {
-    displayHeight,
-    displayWidth,
-    pixelSize,
-    pixelAreaHeight,
-    pixelAreaWidth,
-    displayPaddingX,
-    displayPaddingY,
-    pixelGrid,
-    imageWidth,
-  } = computedValues;
-
-  const imageOffset = pixelSize * (animationOffset % pixelGrid.length);
-  const imageSliceWidth = Math.min(pixelAreaWidth, imageWidth - imageOffset);
-  const sliceEnd = imageOffset + imageSliceWidth;
-
-  ctx.clearRect(0, 0, displayWidth, displayHeight);
-
-  onLightsImageChunks.forEach((chunk) => {
-    const chunkSliceWidth =
-      Math.min(chunk.end, sliceEnd) - Math.max(chunk.start, imageOffset);
-
-    if (chunkSliceWidth > 0) {
-      const chunkOffset = Math.max(0, imageOffset - chunk.start);
-      const chunkXPos =
-        displayPaddingX + Math.max(0, chunk.start - imageOffset);
-
-      ctx.drawImage(
-        chunk.canvas,
-        chunkOffset,
-        0,
-        chunkSliceWidth,
-        pixelAreaHeight,
-        chunkXPos,
-        displayPaddingY,
-        chunkSliceWidth,
-        pixelAreaHeight
-      );
-    }
-  });
 };
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;

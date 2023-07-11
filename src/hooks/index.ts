@@ -1,5 +1,4 @@
 import useObjectSize from "./useObjectSize";
-import useRenderCanvas from "./useRenderCanvas";
-import useSignConfigContext from "./useSignConfigContext";
+import useSignContext from "./useSignContext";
 
-export { useObjectSize, useRenderCanvas, useSignConfigContext };
+export { useObjectSize, useSignContext };

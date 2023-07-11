@@ -1,49 +1,43 @@
-import React, { FC, PropsWithChildren, useMemo } from "react";
+import React, { FC, PropsWithChildren } from "react";
 import styled from "styled-components";
 
-import { useSignConfigContext } from "../hooks";
+import { useSignContext } from "../hooks";
 import { COLORS } from "../constants/colors";
-import { calcFrameIds, calcFrameSize } from "../utils";
-import Canvas from "./Canvas";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
-  const { id, height, width, frameProportion } = useSignConfigContext();
-  const { frameGlowId, frameMaskingId, frameShadingId } = useMemo(
-    () => calcFrameIds(id),
+  const {
+    config: { height, width },
+    computedValues: { frameSize },
+  } = useSignContext();
+  /* const {} = useMemo(
+    () => ({
+      frameGlowId: `sign-frame-glow-${id}`,
+      frameMaskingId: `sign-frame-masking-${id}`,
+      frameShadingId: `sign-frame-shading-${id}`,
+    }),
     [id]
-  );
-  const frameSize = useMemo(
-    () => calcFrameSize(height, frameProportion),
-    [height, frameProportion]
-  );
+  ); */
 
   if (!width) {
     return null;
   }
 
   return (
-    <StyledSignFrame style={{ height, width, padding: frameSize }}>
-      {!!frameSize && (
-        <>
-          <FrameCanvas id={frameGlowId} height={height} width={width} />
-          <FrameCanvas id={frameMaskingId} height={height} width={width} />
-          <FrameCanvas id={frameShadingId} height={height} width={width} />
-        </>
-      )}
-      {children}
+    <StyledSignFrame style={{ height, width }}>
+      <SignContent style={{ top: frameSize, left: frameSize }}>
+        {children}
+      </SignContent>
     </StyledSignFrame>
   );
 };
 
 const StyledSignFrame = styled.div`
-  background-color: ${COLORS.FRAME};
   position: relative;
+  background-color: ${COLORS.FRAME};
 `;
 
-const FrameCanvas = styled(Canvas)`
+const SignContent = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
 `;
 
 export default SignFrame;
