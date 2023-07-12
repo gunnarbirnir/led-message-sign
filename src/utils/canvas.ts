@@ -374,7 +374,7 @@ export const drawDisplayOnLights = (
           grd.addColorStop(
             0,
             hslValuesToCss(
-              chunkIdx * 60,
+              colorHue,
               COLOR_VALUES.LIGHT.saturation,
               COLOR_VALUES.LIGHT.lightness
             )

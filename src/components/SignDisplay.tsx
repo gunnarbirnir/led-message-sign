@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useEffect } from "react";
+import React, { FC, useMemo, useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { useSignContext } from "../hooks";
@@ -13,6 +13,7 @@ import { CANVAS_SCALING } from "../constants";
 import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
+  const onLightsRef = useRef<HTMLDivElement>(null);
   const {
     config,
     computedValues: {
@@ -24,6 +25,7 @@ const SignDisplay: FC = () => {
       displayPaddingY,
       imageWidth,
       pixelSize,
+      pixelGrid,
     },
     computedValuesScaled,
   } = useSignContext();
@@ -53,6 +55,30 @@ const SignDisplay: FC = () => {
     drawDisplayOnLights(onLightsImageChunks, computedValuesScaled, config);
   }, [computedValuesScaled, onLightsImageChunks, config]);
 
+  useEffect(() => {
+    let onLightsAnimation: Animation | null = null;
+
+    if (onLightsRef.current) {
+      const keyframes = {
+        transform: [`translateX(-${pixelGrid.length * pixelSize}px)`],
+      };
+      const options = {
+        id: "on-lights-animation",
+        duration: pixelGrid.length * 200,
+        easing: `steps(${pixelGrid.length})`,
+        iterations: Infinity,
+      };
+
+      onLightsAnimation = onLightsRef.current.animate(keyframes, options);
+    }
+
+    return () => {
+      if (onLightsAnimation) {
+        onLightsAnimation.cancel();
+      }
+    };
+  }, [pixelGrid.length, pixelSize]);
+
   return (
     <StyledSignDisplay style={{ width: displayWidth, height: displayHeight }}>
       <OffPixels
@@ -68,12 +94,7 @@ const SignDisplay: FC = () => {
           width: pixelAreaWidth,
         }}
       >
-        <div
-          style={{
-            width: imageWidth,
-            transform: `translateX(-${pixelSize * 100}px)`,
-          }}
-        >
+        <div ref={onLightsRef} style={{ width: imageWidth }}>
           {onLightsImageChunks.map((chunk) => (
             <Canvas
               id={chunk.id}
