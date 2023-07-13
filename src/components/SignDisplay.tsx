@@ -9,27 +9,23 @@ import {
   drawDisplayOnLights,
 } from "../utils/canvas";
 import { COLORS } from "../constants/colors";
-import { CANVAS_SCALING } from "../constants";
 import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
   const onLightsRef = useRef<HTMLDivElement>(null);
-  const {
-    config,
-    computedValues: {
-      displayWidth,
-      displayHeight,
-      pixelAreaHeight,
-      pixelAreaWidth,
-      displayPaddingX,
-      displayPaddingY,
-      imageWidth,
-      pixelSize,
-      pixelGrid,
-    },
-    computedValuesScaled,
-  } = useSignContext();
+  const { config, computedValues } = useSignContext();
   const { id } = config;
+  const {
+    displayWidth,
+    displayHeight,
+    pixelAreaHeight,
+    pixelAreaWidth,
+    displayPaddingX,
+    displayPaddingY,
+    imageWidth,
+    pixelSize,
+    pixelGrid,
+  } = computedValues;
 
   const { displayOnLightsId, displayOffLightsId } = useMemo(
     () => ({
@@ -39,21 +35,21 @@ const SignDisplay: FC = () => {
     [id]
   );
   const onLightsImageChunks = useMemo(
-    () => getOnLightsImageChunks(displayOnLightsId, computedValuesScaled),
-    [displayOnLightsId, computedValuesScaled]
+    () => getOnLightsImageChunks(displayOnLightsId, computedValues),
+    [displayOnLightsId, computedValues]
   );
 
   useEffect(() => {
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
 
     if (displayOffLightsCtx) {
-      drawDisplayOffLights(displayOffLightsCtx, computedValuesScaled, config);
+      drawDisplayOffLights(displayOffLightsCtx, computedValues, config);
     }
-  }, [displayOffLightsId, displayOnLightsId, computedValuesScaled, config]);
+  }, [displayOffLightsId, displayOnLightsId, computedValues, config]);
 
   useEffect(() => {
-    drawDisplayOnLights(onLightsImageChunks, computedValuesScaled, config);
-  }, [computedValuesScaled, onLightsImageChunks, config]);
+    drawDisplayOnLights(onLightsImageChunks, computedValues, config);
+  }, [computedValues, onLightsImageChunks, config]);
 
   useEffect(() => {
     let onLightsAnimation: Animation | null = null;
@@ -100,7 +96,7 @@ const SignDisplay: FC = () => {
               id={chunk.id}
               key={chunk.id}
               height={pixelAreaHeight}
-              width={(chunk.end - chunk.start) / CANVAS_SCALING}
+              width={chunk.end - chunk.start}
             />
           ))}
         </div>

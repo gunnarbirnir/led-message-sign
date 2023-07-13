@@ -18,10 +18,16 @@ import {
   FillStyle,
   CanvasImageChunk,
 } from "../types";
+import { CANVAS_SCALING } from "../constants";
 
 export const getCanvasContext = (id: string, alpha: boolean = false) => {
   const canvas = document.getElementById(id) as HTMLCanvasElement;
   const ctx = canvas ? canvas.getContext("2d", { alpha }) : null;
+
+  if (ctx) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(CANVAS_SCALING, CANVAS_SCALING);
+  }
 
   return ctx;
 };

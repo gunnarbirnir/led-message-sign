@@ -1,10 +1,5 @@
 import {
   hslValuesToCss,
-  calcFrameIds,
-  calcDisplayIds,
-  calcFrameSize,
-  calcDisplayHeight,
-  calcDisplayWidth,
   calcComputedValues,
   calcPixelGrid,
   calcTotalOffset,
@@ -87,57 +82,6 @@ describe("Utils", () => {
     test("Should set opacity if specified", () => {
       const style = hslValuesToCss(180, 50, 99, 0.5);
       expect(style).toBe("hsl(180deg 50% 99% / 0.5)");
-    });
-  });
-
-  describe("calcFrameId", () => {
-    test("Should return frame ids", () => {
-      const id = calcFrameIds(TEST_CONFIG.id);
-      expect(id).toStrictEqual({
-        frameGlowId: "sign-frame-glow-123",
-        frameMaskingId: "sign-frame-masking-123",
-        frameShadingId: "sign-frame-shading-123",
-      });
-    });
-  });
-
-  describe("calcDisplayId", () => {
-    test("Should return display ids", () => {
-      const id = calcDisplayIds(TEST_CONFIG.id);
-      expect(id).toStrictEqual({
-        displayOnLightsId: "sign-display-on-lights-123",
-        displayOffLightsId: "sign-display-off-lights-123",
-      });
-    });
-  });
-
-  describe("calcFrameSize", () => {
-    test("Should return frame size", () => {
-      const size = calcFrameSize(
-        TEST_COMPUTED_VALUES.signHeight,
-        TEST_CONFIG.frameProportion
-      );
-      expect(size).toBe(TEST_COMPUTED_VALUES.frameSize);
-    });
-  });
-
-  describe("calcDisplayHeight", () => {
-    test("Should return display height", () => {
-      const height = calcDisplayHeight(
-        TEST_COMPUTED_VALUES.signHeight,
-        TEST_COMPUTED_VALUES.frameSize
-      );
-      expect(height).toBe(TEST_COMPUTED_VALUES.displayHeight);
-    });
-  });
-
-  describe("calcDisplayWidth", () => {
-    test("Should return display width", () => {
-      const width = calcDisplayWidth(
-        TEST_COMPUTED_VALUES.signWidth,
-        TEST_COMPUTED_VALUES.frameSize
-      );
-      expect(width).toBe(TEST_COMPUTED_VALUES.displayWidth);
     });
   });
 

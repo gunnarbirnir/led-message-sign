@@ -28,15 +28,9 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
     [signId, sanitizedProps, containerWidth]
   );
   const computedValues = useMemo(() => calcComputedValues(config, 1), [config]);
-  const computedValuesScaled = useMemo(
-    () => calcComputedValues(config),
-    [config]
-  );
 
   return (
-    <SignContext.Provider
-      value={{ config, computedValues, computedValuesScaled }}
-    >
+    <SignContext.Provider value={{ config, computedValues }}>
       <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
         <SignFrame>
           <SignDisplay />
