@@ -312,7 +312,7 @@ export const drawFrameShading = (
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
 const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
-const IMAGE_CHUNK_SIZE = 4000;
+const IMAGE_CHUNK_SIZE = 4000 / CANVAS_SCALING;
 
 export const getOnLightsImageChunks = (
   onLightsId: string,
@@ -346,17 +346,30 @@ export const drawDisplayOnLights = (
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
-  const { pixelSize, pixelCountY, pixelGrid } = computedValues;
+  const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight } = computedValues;
   const { colorHue } = config;
+
+  const clearCanvas = (ctx: CanvasRenderingContext2D | null) => {
+    if (ctx) {
+      ctx.clearRect(
+        0,
+        0,
+        imageChunks[chunkIdx].end - imageChunks[chunkIdx].start,
+        pixelAreaHeight
+      );
+    }
+  };
 
   let chunkIdx = 0;
   let ctx = getCanvasContext(imageChunks[0].id, true);
+  clearCanvas(ctx);
 
   for (let x = 0; x < pixelGrid.length; x++) {
     const pixelXPos = calcPixelXPos(x, pixelSize, 0);
 
     if (pixelXPos >= imageChunks[chunkIdx].end) {
       ctx = getCanvasContext(imageChunks[++chunkIdx].id, true);
+      clearCanvas(ctx);
     }
 
     if (ctx) {
