@@ -39,7 +39,7 @@ export const calcComputedValues = (
   const displayPaddingX = (displayWidth - pixelAreaWidth) / 2;
   const pixelCountY = VERTICAL_PIXEL_COUNT;
   const pixelGrid = calcPixelGrid(config.text, pixelCountX);
-  const imageWidth = pixelSize * pixelGrid.length;
+  const pixelGridWidth = pixelSize * pixelGrid.length;
 
   return {
     signHeight,
@@ -55,7 +55,7 @@ export const calcComputedValues = (
     pixelCountX,
     pixelCountY,
     pixelGrid,
-    imageWidth,
+    pixelGridWidth,
   };
 };
 

@@ -1,22 +1,18 @@
 import { COLORS, COLOR_VALUES } from "../constants/colors";
 import {
   hslValuesToCss,
-  calcTotalOffset,
   isPixelOn,
   calcPixelXPos,
   calcPixelXCenterPos,
   calcPixelYPos,
   calcPixelYCenterPos,
-  calcGlowPosition,
-  calcDisableGlow,
-  calcPixelGlow,
 } from "../utils";
 import {
   SignComputedValues,
   Tuple,
   SignConfig,
   FillStyle,
-  CanvasImageChunk,
+  CanvasChunk,
 } from "../types";
 import { CANVAS_SCALING } from "../constants";
 
@@ -104,67 +100,185 @@ const getFrameUtils = (
 };
 
 export const drawFrameGlow = (
-  ctx: CanvasRenderingContext2D,
+  canvasChunks: CanvasChunk[],
   computedValues: SignComputedValues,
-  config: SignConfig,
-  animationOffset: number = 0
+  config: SignConfig
 ) => {
   const {
     signHeight,
-    signWidth,
     pixelSize,
     pixelCountX,
     pixelCountY,
     pixelGrid,
+    frameSize,
   } = computedValues;
   const { colorHue } = config;
-  const {
-    drawFrameTopBorder,
-    drawFrameRightBorder,
-    drawFrameBottomBorder,
-    drawFrameLeftBorder,
-  } = getFrameUtils(ctx, computedValues);
 
-  ctx.clearRect(0, 0, signWidth, signHeight);
+  let chunkIdx = -1;
+  let ctx = null;
+  let topGlow = null;
+  let bottomGlow = null;
+  let prevTopGlow = null;
+  let prevBottomGlow = null;
 
-  // Horizontal frame glow
-  const topGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
-  topGlow.addColorStop(0, COLORS.TRANSPARENT);
-  topGlow.addColorStop(1, COLORS.TRANSPARENT);
-  const bottomGlow = ctx.createLinearGradient(0, 0, signWidth, 0);
-  bottomGlow.addColorStop(0, COLORS.TRANSPARENT);
-  bottomGlow.addColorStop(1, COLORS.TRANSPARENT);
+  for (let x = 0; x < pixelGrid.length; x++) {
+    const pixelXPos = calcPixelXPos(x, pixelSize, 0);
 
-  for (let x = 0; x < pixelCountX; x++) {
-    const offsetX = calcTotalOffset(x, animationOffset, pixelGrid);
-    const position = calcGlowPosition(x, signWidth, pixelSize, pixelCountX);
-    const disableGlow = calcDisableGlow(x, offsetX, pixelCountX);
-    const topGlowOpacity = disableGlow ?? calcPixelGlow(offsetX, 0, pixelGrid);
-    const bottomGlowOpacity =
-      disableGlow ?? calcPixelGlow(offsetX, pixelCountY - 1, pixelGrid);
+    if (!ctx || pixelXPos >= canvasChunks[chunkIdx].end) {
+      if (ctx && topGlow && bottomGlow) {
+        ctx.fillStyle = topGlow;
+        topGlow.addColorStop(
+          1,
+          hslValuesToCss(
+            colorHue,
+            COLOR_VALUES.GLOW.saturation,
+            COLOR_VALUES.GLOW.lightness,
+            prevTopGlow ?? 0
+          )
+        );
+        ctx.fillRect(
+          0,
+          0,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          frameSize
+        );
 
+        ctx.fillStyle = bottomGlow;
+        bottomGlow.addColorStop(
+          1,
+          hslValuesToCss(
+            colorHue,
+            COLOR_VALUES.GLOW.saturation,
+            COLOR_VALUES.GLOW.lightness,
+            prevBottomGlow ?? 0
+          )
+        );
+        ctx.fillRect(
+          0,
+          signHeight - frameSize,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          frameSize
+        );
+      }
+
+      ctx = getCanvasContext(canvasChunks[++chunkIdx].id, true);
+
+      if (ctx) {
+        // Clear canvas
+        ctx.clearRect(
+          0,
+          0,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          signHeight
+        );
+
+        // Horizontal frame glow
+        topGlow = ctx.createLinearGradient(
+          0,
+          0,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          0
+        );
+        topGlow.addColorStop(
+          0,
+          hslValuesToCss(
+            colorHue,
+            COLOR_VALUES.GLOW.saturation,
+            COLOR_VALUES.GLOW.lightness,
+            prevTopGlow ?? 0
+          )
+        );
+
+        bottomGlow = ctx.createLinearGradient(
+          0,
+          0,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          0
+        );
+        bottomGlow.addColorStop(
+          0,
+          hslValuesToCss(
+            colorHue,
+            COLOR_VALUES.GLOW.saturation,
+            COLOR_VALUES.GLOW.lightness,
+            prevBottomGlow ?? 0
+          )
+        );
+      }
+    }
+
+    if (ctx && topGlow && bottomGlow) {
+      const chunkPixelXPos = pixelXPos - canvasChunks[chunkIdx].start;
+      const pixelXCenterPos = calcPixelXCenterPos(chunkPixelXPos, pixelSize);
+      const position =
+        pixelXCenterPos /
+        (canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start);
+      const topPixelOn = isPixelOn(x, 0, pixelGrid);
+      const outsideOfMessage = x < pixelCountX;
+      prevTopGlow = outsideOfMessage ? 0 : topPixelOn ? 1 : 0.5;
+      const bottomPixelOn = isPixelOn(x, pixelCountY - 1, pixelGrid);
+      prevBottomGlow = outsideOfMessage ? 0 : bottomPixelOn ? 1 : 0.5;
+
+      topGlow.addColorStop(
+        position,
+        hslValuesToCss(
+          colorHue,
+          COLOR_VALUES.GLOW.saturation,
+          COLOR_VALUES.GLOW.lightness,
+          prevTopGlow
+        )
+      );
+      bottomGlow.addColorStop(
+        position,
+        hslValuesToCss(
+          colorHue,
+          COLOR_VALUES.GLOW.saturation,
+          COLOR_VALUES.GLOW.lightness,
+          prevBottomGlow
+        )
+      );
+    }
+  }
+
+  // TODO: Refactor
+  if (ctx && topGlow && bottomGlow) {
+    ctx.fillStyle = topGlow;
     topGlow.addColorStop(
-      position,
+      1,
       hslValuesToCss(
         colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
-        topGlowOpacity
+        0
       )
     );
+    ctx.fillRect(
+      0,
+      0,
+      canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+      frameSize
+    );
+
+    ctx.fillStyle = bottomGlow;
     bottomGlow.addColorStop(
-      position,
+      1,
       hslValuesToCss(
         colorHue,
         COLOR_VALUES.GLOW.saturation,
         COLOR_VALUES.GLOW.lightness,
-        bottomGlowOpacity
+        0
       )
+    );
+    ctx.fillRect(
+      0,
+      signHeight - frameSize,
+      canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+      frameSize
     );
   }
 
   // Vertical frame glow
-  const leftGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
+  /* const leftGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
   leftGlow.addColorStop(0, COLORS.TRANSPARENT);
   leftGlow.addColorStop(1, COLORS.TRANSPARENT);
   const rightGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
@@ -200,12 +314,12 @@ export const drawFrameGlow = (
         rightGlowOpacity
       )
     );
-  }
+  } */
 
-  drawFrameTopBorder(topGlow);
-  drawFrameRightBorder(rightGlow);
-  drawFrameBottomBorder(bottomGlow);
-  drawFrameLeftBorder(leftGlow);
+  // drawFrameTopBorder(topGlow);
+  // drawFrameRightBorder(rightGlow);
+  // drawFrameBottomBorder(bottomGlow);
+  // drawFrameLeftBorder(leftGlow);
 };
 
 const MASKING_GRADIENT_POSITION = 0.2;
@@ -214,7 +328,8 @@ export const drawFrameMasking = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues
 ) => {
-  const { signHeight, signWidth, frameSize } = computedValues;
+  const { signHeight, signWidth, frameSize, displayPaddingX, displayPaddingY } =
+    computedValues;
   const {
     drawFrameTopBorder,
     drawFrameRightBorder,
@@ -254,6 +369,28 @@ export const drawFrameMasking = (
   drawFrameRightBorder(maskingRight);
   drawFrameBottomBorder(maskingBottom);
   drawFrameLeftBorder(maskingLeft);
+
+  const glowMaskingX = ctx.createLinearGradient(0, 0, signWidth, 0);
+  const glowMaskingXStart = displayPaddingX / signWidth;
+  // TODO: Create constants
+  const glowMaskingXEnd = glowMaskingXStart + 0.1;
+  glowMaskingX.addColorStop(glowMaskingXStart, COLORS.FRAME);
+  glowMaskingX.addColorStop(glowMaskingXEnd, COLORS.TRANSPARENT);
+  glowMaskingX.addColorStop(1 - glowMaskingXEnd, COLORS.TRANSPARENT);
+  glowMaskingX.addColorStop(1 - glowMaskingXStart, COLORS.FRAME);
+
+  const glowMaskingY = ctx.createLinearGradient(0, 0, 0, signHeight);
+  const glowMaskingYStart = displayPaddingY / signHeight;
+  const glowMaskingYEnd = glowMaskingYStart + 0.3;
+  glowMaskingY.addColorStop(glowMaskingYStart, COLORS.FRAME);
+  glowMaskingY.addColorStop(glowMaskingYEnd, COLORS.TRANSPARENT);
+  glowMaskingY.addColorStop(1 - glowMaskingYEnd, COLORS.TRANSPARENT);
+  glowMaskingY.addColorStop(1 - glowMaskingYStart, COLORS.FRAME);
+
+  drawFrameTopBorder(glowMaskingX);
+  drawFrameRightBorder(glowMaskingY);
+  drawFrameBottomBorder(glowMaskingX);
+  drawFrameLeftBorder(glowMaskingY);
 };
 
 const FRAME_SHADING_OPACITY = 0.7;
@@ -310,20 +447,18 @@ export const drawFrameShading = (
   drawFrameLeftBorder(shadingY);
 };
 
-const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
-const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
-const IMAGE_CHUNK_SIZE = 4000 / CANVAS_SCALING;
+const CANVAS_CHUNK_SIZE = 4000 / CANVAS_SCALING;
 
-export const getOnLightsImageChunks = (
-  onLightsId: string,
+export const getCanvasChunks = (
+  chunkBaseId: string,
   computedValues: SignComputedValues
 ) => {
-  const { pixelSize, pixelGrid, imageWidth } = computedValues;
-  const imageChunks: CanvasImageChunk[] = [];
+  const { pixelSize, pixelGrid, pixelGridWidth } = computedValues;
+  const canvasChunks: CanvasChunk[] = [];
 
-  const pixelsPerChunk = Math.floor(IMAGE_CHUNK_SIZE / pixelSize);
+  const pixelsPerChunk = Math.floor(CANVAS_CHUNK_SIZE / pixelSize);
   const chunkWidth = pixelsPerChunk * pixelSize;
-  const chunkCount = Math.ceil(imageWidth / chunkWidth);
+  const chunkCount = Math.ceil(pixelGridWidth / chunkWidth);
 
   if (!chunkCount) {
     return [];
@@ -335,45 +470,44 @@ export const getOnLightsImageChunks = (
     const start = xStart * pixelSize;
     const end = xEnd * pixelSize;
 
-    imageChunks.push({ id: `${onLightsId}-${i}`, start, end });
+    canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
   }
 
-  return imageChunks;
+  return canvasChunks;
 };
 
+const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
+const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
+
 export const drawDisplayOnLights = (
-  imageChunks: CanvasImageChunk[],
+  canvasChunks: CanvasChunk[],
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
   const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight } = computedValues;
   const { colorHue } = config;
 
-  const clearCanvas = (ctx: CanvasRenderingContext2D | null) => {
-    if (ctx) {
-      ctx.clearRect(
-        0,
-        0,
-        imageChunks[chunkIdx].end - imageChunks[chunkIdx].start,
-        pixelAreaHeight
-      );
-    }
-  };
-
-  let chunkIdx = 0;
-  let ctx = getCanvasContext(imageChunks[0].id, true);
-  clearCanvas(ctx);
+  let chunkIdx = -1;
+  let ctx = null;
 
   for (let x = 0; x < pixelGrid.length; x++) {
     const pixelXPos = calcPixelXPos(x, pixelSize, 0);
 
-    if (pixelXPos >= imageChunks[chunkIdx].end) {
-      ctx = getCanvasContext(imageChunks[++chunkIdx].id, true);
-      clearCanvas(ctx);
+    if (!ctx || pixelXPos >= canvasChunks[chunkIdx].end) {
+      ctx = getCanvasContext(canvasChunks[++chunkIdx].id, true);
+
+      if (ctx) {
+        ctx.clearRect(
+          canvasChunks[chunkIdx].start,
+          0,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          pixelAreaHeight
+        );
+      }
     }
 
     if (ctx) {
-      const chunkPixelXPos = pixelXPos - imageChunks[chunkIdx].start;
+      const chunkPixelXPos = pixelXPos - canvasChunks[chunkIdx].start;
       const pixelXCenterPos = calcPixelXCenterPos(chunkPixelXPos, pixelSize);
 
       for (let y = 0; y < pixelCountY; y++) {

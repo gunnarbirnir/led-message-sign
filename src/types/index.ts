@@ -36,7 +36,7 @@ export interface SignComputedValues {
   pixelCountX: number;
   pixelCountY: number;
   pixelGrid: PixelGrid;
-  imageWidth: number;
+  pixelGridWidth: number;
 }
 
 export type Tuple = [number, number];
@@ -56,7 +56,7 @@ export type Alphabet = { [letter: string]: Letter };
 
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 
-export interface CanvasImageChunk {
+export interface CanvasChunk {
   id: string;
   start: number;
   end: number;

@@ -5,7 +5,7 @@ import { useSignContext } from "../hooks";
 import {
   getCanvasContext,
   drawDisplayOffLights,
-  getOnLightsImageChunks,
+  getCanvasChunks,
   drawDisplayOnLights,
 } from "../utils/canvas";
 import { COLORS } from "../constants/colors";
@@ -22,7 +22,7 @@ const SignDisplay: FC = () => {
     pixelAreaWidth,
     displayPaddingX,
     displayPaddingY,
-    imageWidth,
+    pixelGridWidth,
     pixelSize,
     pixelGrid,
   } = computedValues;
@@ -34,8 +34,8 @@ const SignDisplay: FC = () => {
     }),
     [id]
   );
-  const onLightsImageChunks = useMemo(
-    () => getOnLightsImageChunks(displayOnLightsId, computedValues),
+  const onLightsCanvasChunks = useMemo(
+    () => getCanvasChunks(displayOnLightsId, computedValues),
     [displayOnLightsId, computedValues]
   );
 
@@ -45,11 +45,11 @@ const SignDisplay: FC = () => {
     if (displayOffLightsCtx) {
       drawDisplayOffLights(displayOffLightsCtx, computedValues, config);
     }
-  }, [displayOffLightsId, displayOnLightsId, computedValues, config]);
+  }, [displayOffLightsId, computedValues, config]);
 
   useEffect(() => {
-    drawDisplayOnLights(onLightsImageChunks, computedValues, config);
-  }, [computedValues, onLightsImageChunks, config]);
+    drawDisplayOnLights(onLightsCanvasChunks, computedValues, config);
+  }, [onLightsCanvasChunks, computedValues, config]);
 
   useEffect(() => {
     let onLightsAnimation: Animation | null = null;
@@ -59,7 +59,7 @@ const SignDisplay: FC = () => {
         transform: [`translateX(-${pixelGrid.length * pixelSize}px)`],
       };
       const options = {
-        id: "on-lights-animation",
+        id: `on-lights-animation-${id}`,
         duration: pixelGrid.length * 200,
         easing: `steps(${pixelGrid.length})`,
         iterations: Infinity,
@@ -73,7 +73,7 @@ const SignDisplay: FC = () => {
         onLightsAnimation.cancel();
       }
     };
-  }, [pixelGrid.length, pixelSize]);
+  }, [id, pixelGrid.length, pixelSize]);
 
   return (
     <StyledSignDisplay style={{ width: displayWidth, height: displayHeight }}>
@@ -90,8 +90,8 @@ const SignDisplay: FC = () => {
           width: pixelAreaWidth,
         }}
       >
-        <div ref={onLightsRef} style={{ width: imageWidth }}>
-          {onLightsImageChunks.map((chunk) => (
+        <div ref={onLightsRef} style={{ width: pixelGridWidth }}>
+          {onLightsCanvasChunks.map((chunk) => (
             <Canvas
               id={chunk.id}
               key={chunk.id}

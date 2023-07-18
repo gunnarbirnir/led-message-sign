@@ -32,7 +32,7 @@ const SignContext = createContext<{
     pixelCountX: 0,
     pixelCountY: 0,
     pixelGrid: [],
-    imageWidth: 0,
+    pixelGridWidth: 0,
   },
 });
 
