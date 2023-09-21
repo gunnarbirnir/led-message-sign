@@ -104,14 +104,8 @@ export const drawFrameGlow = (
   computedValues: SignComputedValues,
   config: SignConfig
 ) => {
-  const {
-    signHeight,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-    pixelGrid,
-    frameSize,
-  } = computedValues;
+  const { signHeight, pixelSize, pixelCountY, pixelGrid, frameSize } =
+    computedValues;
   const { colorHue } = config;
 
   let chunkIdx = -1;
@@ -126,7 +120,6 @@ export const drawFrameGlow = (
 
     if (!ctx || pixelXPos >= canvasChunks[chunkIdx].end) {
       if (ctx && topGlow && bottomGlow) {
-        ctx.fillStyle = topGlow;
         topGlow.addColorStop(
           1,
           hslValuesToCss(
@@ -136,6 +129,7 @@ export const drawFrameGlow = (
             prevTopGlow ?? 0
           )
         );
+        ctx.fillStyle = topGlow;
         ctx.fillRect(
           0,
           0,
@@ -143,7 +137,6 @@ export const drawFrameGlow = (
           frameSize
         );
 
-        ctx.fillStyle = bottomGlow;
         bottomGlow.addColorStop(
           1,
           hslValuesToCss(
@@ -153,6 +146,7 @@ export const drawFrameGlow = (
             prevBottomGlow ?? 0
           )
         );
+        ctx.fillStyle = bottomGlow;
         ctx.fillRect(
           0,
           signHeight - frameSize,
@@ -214,10 +208,12 @@ export const drawFrameGlow = (
         pixelXCenterPos /
         (canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start);
       const topPixelOn = isPixelOn(x, 0, pixelGrid);
-      const outsideOfMessage = x < pixelCountX;
-      prevTopGlow = outsideOfMessage ? 0 : topPixelOn ? 1 : 0.5;
+      const secondTopPixelOn = isPixelOn(x, 1, pixelGrid);
+      // TODO: Create constants
+      prevTopGlow = topPixelOn ? 0.8 : secondTopPixelOn ? 0.4 : 0;
       const bottomPixelOn = isPixelOn(x, pixelCountY - 1, pixelGrid);
-      prevBottomGlow = outsideOfMessage ? 0 : bottomPixelOn ? 1 : 0.5;
+      const secondBottomPixelOn = isPixelOn(x, pixelCountY - 2, pixelGrid);
+      prevBottomGlow = bottomPixelOn ? 0.8 : secondBottomPixelOn ? 0.4 : 0;
 
       topGlow.addColorStop(
         position,
@@ -242,7 +238,6 @@ export const drawFrameGlow = (
 
   // TODO: Refactor
   if (ctx && topGlow && bottomGlow) {
-    ctx.fillStyle = topGlow;
     topGlow.addColorStop(
       1,
       hslValuesToCss(
@@ -252,6 +247,7 @@ export const drawFrameGlow = (
         0
       )
     );
+    ctx.fillStyle = topGlow;
     ctx.fillRect(
       0,
       0,
@@ -259,7 +255,6 @@ export const drawFrameGlow = (
       frameSize
     );
 
-    ctx.fillStyle = bottomGlow;
     bottomGlow.addColorStop(
       1,
       hslValuesToCss(
@@ -269,6 +264,7 @@ export const drawFrameGlow = (
         0
       )
     );
+    ctx.fillStyle = bottomGlow;
     ctx.fillRect(
       0,
       signHeight - frameSize,
