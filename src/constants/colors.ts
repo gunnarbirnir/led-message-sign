@@ -3,6 +3,7 @@ import { hslValuesToCss } from "../utils";
 
 enum COLOR {
   FRAME = "FRAME",
+  FRAME_TRANSPARENT = "FRAME_TRANSPARENT",
   BACKGROUND = "BACKGROUND",
   LIGHT = "LIGHT",
   BULB_ON = "BULB_ON",
@@ -16,6 +17,13 @@ export const COLOR_VALUES: Record<COLOR, HSLColorValues> = {
     hue: 0,
     saturation: 0,
     lightness: 15,
+  },
+  // TODO: Opacity utils function?
+  FRAME_TRANSPARENT: {
+    hue: 0,
+    saturation: 0,
+    lightness: 15,
+    opacity: 0,
   },
   BACKGROUND: {
     hue: 0,

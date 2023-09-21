@@ -60,16 +60,16 @@ export const calcComputedValues = (
 };
 
 export const calcPixelGrid = (text: string, pixelCountX: number) => {
-  const addSpaceBehindLetter = (text: string, index: number) => {
+  /* const addSpaceBehindLetter = (text: string, index: number) => {
     return index !== text.length - 1 ? [EMPTY_COLUMN] : [];
-  };
+  }; */
 
   const grid = text
     .toUpperCase()
     .split("")
     .map((letter, index) => [
       ...(ALPHABET[letter] || UNKNOWN_LETTER),
-      ...addSpaceBehindLetter(text, index),
+      ...[EMPTY_COLUMN],
     ])
     .flat();
 

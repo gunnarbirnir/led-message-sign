@@ -210,10 +210,10 @@ export const drawFrameGlow = (
       const topPixelOn = isPixelOn(x, 0, pixelGrid);
       const secondTopPixelOn = isPixelOn(x, 1, pixelGrid);
       // TODO: Create constants
-      prevTopGlow = topPixelOn ? 0.8 : secondTopPixelOn ? 0.4 : 0;
+      prevTopGlow = topPixelOn ? 1 : secondTopPixelOn ? 0.5 : 0;
       const bottomPixelOn = isPixelOn(x, pixelCountY - 1, pixelGrid);
       const secondBottomPixelOn = isPixelOn(x, pixelCountY - 2, pixelGrid);
-      prevBottomGlow = bottomPixelOn ? 0.8 : secondBottomPixelOn ? 0.4 : 0;
+      prevBottomGlow = bottomPixelOn ? 1 : secondBottomPixelOn ? 0.5 : 0;
 
       topGlow.addColorStop(
         position,
@@ -324,8 +324,14 @@ export const drawFrameMasking = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues
 ) => {
-  const { signHeight, signWidth, frameSize, displayPaddingX, displayPaddingY } =
-    computedValues;
+  const {
+    signHeight,
+    signWidth,
+    frameSize,
+    displayPaddingX,
+    displayPaddingY,
+    pixelSize,
+  } = computedValues;
   const {
     drawFrameTopBorder,
     drawFrameRightBorder,
@@ -337,7 +343,7 @@ export const drawFrameMasking = (
 
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
   maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingTop.addColorStop(1, COLORS.TRANSPARENT);
+  maskingTop.addColorStop(1, COLORS.FRAME_TRANSPARENT);
 
   const maskingRight = ctx.createLinearGradient(
     signWidth,
@@ -346,7 +352,7 @@ export const drawFrameMasking = (
     0
   );
   maskingRight.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingRight.addColorStop(1, COLORS.TRANSPARENT);
+  maskingRight.addColorStop(1, COLORS.FRAME_TRANSPARENT);
 
   const maskingBottom = ctx.createLinearGradient(
     signWidth,
@@ -355,11 +361,11 @@ export const drawFrameMasking = (
     signHeight - frameSize
   );
   maskingBottom.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingBottom.addColorStop(1, COLORS.TRANSPARENT);
+  maskingBottom.addColorStop(1, COLORS.FRAME_TRANSPARENT);
 
   const maskingLeft = ctx.createLinearGradient(0, 0, frameSize, 0);
   maskingLeft.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingLeft.addColorStop(1, COLORS.TRANSPARENT);
+  maskingLeft.addColorStop(1, COLORS.FRAME_TRANSPARENT);
 
   drawFrameTopBorder(maskingTop);
   drawFrameRightBorder(maskingRight);
@@ -367,20 +373,19 @@ export const drawFrameMasking = (
   drawFrameLeftBorder(maskingLeft);
 
   const glowMaskingX = ctx.createLinearGradient(0, 0, signWidth, 0);
-  const glowMaskingXStart = displayPaddingX / signWidth;
-  // TODO: Create constants
-  const glowMaskingXEnd = glowMaskingXStart + 0.1;
+  const glowMaskingXStart = (frameSize + displayPaddingX) / signWidth;
+  const glowMaskingXEnd = glowMaskingXStart + pixelSize / signWidth;
   glowMaskingX.addColorStop(glowMaskingXStart, COLORS.FRAME);
-  glowMaskingX.addColorStop(glowMaskingXEnd, COLORS.TRANSPARENT);
-  glowMaskingX.addColorStop(1 - glowMaskingXEnd, COLORS.TRANSPARENT);
+  glowMaskingX.addColorStop(glowMaskingXEnd, COLORS.FRAME_TRANSPARENT);
+  glowMaskingX.addColorStop(1 - glowMaskingXEnd, COLORS.FRAME_TRANSPARENT);
   glowMaskingX.addColorStop(1 - glowMaskingXStart, COLORS.FRAME);
 
   const glowMaskingY = ctx.createLinearGradient(0, 0, 0, signHeight);
-  const glowMaskingYStart = displayPaddingY / signHeight;
-  const glowMaskingYEnd = glowMaskingYStart + 0.3;
+  const glowMaskingYStart = (frameSize + displayPaddingY) / signHeight;
+  const glowMaskingYEnd = glowMaskingYStart + pixelSize / signHeight;
   glowMaskingY.addColorStop(glowMaskingYStart, COLORS.FRAME);
-  glowMaskingY.addColorStop(glowMaskingYEnd, COLORS.TRANSPARENT);
-  glowMaskingY.addColorStop(1 - glowMaskingYEnd, COLORS.TRANSPARENT);
+  glowMaskingY.addColorStop(glowMaskingYEnd, COLORS.FRAME_TRANSPARENT);
+  glowMaskingY.addColorStop(1 - glowMaskingYEnd, COLORS.FRAME_TRANSPARENT);
   glowMaskingY.addColorStop(1 - glowMaskingYStart, COLORS.FRAME);
 
   drawFrameTopBorder(glowMaskingX);
