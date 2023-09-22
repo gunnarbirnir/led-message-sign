@@ -272,50 +272,84 @@ export const drawFrameGlow = (
       frameSize
     );
   }
+};
 
-  // Vertical frame glow
-  /* const leftGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
-  leftGlow.addColorStop(0, COLORS.TRANSPARENT);
-  leftGlow.addColorStop(1, COLORS.TRANSPARENT);
-  const rightGlow = ctx.createLinearGradient(0, 0, 0, signHeight);
-  rightGlow.addColorStop(0, COLORS.TRANSPARENT);
-  rightGlow.addColorStop(1, COLORS.TRANSPARENT);
+export const drawFrameVerticalGlow = (
+  canvasChunks: CanvasChunk[],
+  computedValues: SignComputedValues,
+  config: SignConfig
+) => {
+  const { pixelSize, pixelCountY, pixelGrid, frameSize, pixelAreaHeight } =
+    computedValues;
+  const { colorHue } = config;
 
-  for (let y = 0; y < pixelCountY; y++) {
-    const leftOffsetX = calcTotalOffset(0, animationOffset, pixelGrid);
-    const rightOffsetX = calcTotalOffset(
-      pixelCountX - 1,
-      animationOffset,
-      pixelGrid
-    );
-    const position = calcGlowPosition(y, signHeight, pixelSize, pixelCountY);
-    const leftGlowOpacity = calcPixelGlow(leftOffsetX, y, pixelGrid, true);
-    const rightGlowOpacity = calcPixelGlow(rightOffsetX, y, pixelGrid, true);
+  let chunkIdx = -1;
+  let ctx = null;
+  let glow = null;
 
-    leftGlow.addColorStop(
-      position,
-      hslValuesToCss(
-        colorHue,
-        COLOR_VALUES.GLOW.saturation,
-        COLOR_VALUES.GLOW.lightness,
-        leftGlowOpacity
-      )
-    );
-    rightGlow.addColorStop(
-      position,
-      hslValuesToCss(
-        colorHue,
-        COLOR_VALUES.GLOW.saturation,
-        COLOR_VALUES.GLOW.lightness,
-        rightGlowOpacity
-      )
-    );
-  } */
+  for (let x = 0; x < pixelGrid.length; x++) {
+    const currentXPos = x * frameSize;
 
-  // drawFrameTopBorder(topGlow);
-  // drawFrameRightBorder(rightGlow);
-  // drawFrameBottomBorder(bottomGlow);
-  // drawFrameLeftBorder(leftGlow);
+    if (!ctx || currentXPos >= canvasChunks[chunkIdx].end) {
+      ctx = getCanvasContext(canvasChunks[++chunkIdx].id, true);
+
+      if (ctx) {
+        // Clear canvas
+        ctx.clearRect(
+          0,
+          0,
+          canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
+          pixelAreaHeight
+        );
+      }
+    }
+
+    if (ctx) {
+      const chunkXPos = currentXPos - canvasChunks[chunkIdx].start;
+
+      glow = ctx.createLinearGradient(chunkXPos, 0, chunkXPos, pixelAreaHeight);
+      glow.addColorStop(
+        0,
+        hslValuesToCss(
+          colorHue,
+          COLOR_VALUES.GLOW.saturation,
+          COLOR_VALUES.GLOW.lightness,
+          0
+        )
+      );
+
+      for (let y = 0; y < pixelCountY; y++) {
+        const pixelYPos = y * pixelSize;
+        const pixelYCenterPos = pixelYPos + pixelSize / 2;
+        const position = pixelYCenterPos / pixelAreaHeight;
+        const isCurrentPixelOn = isPixelOn(x, y, pixelGrid);
+        const isNextPixelOn =
+          x < pixelGrid.length - 1 && isPixelOn(x + 1, y, pixelGrid);
+
+        glow.addColorStop(
+          position,
+          hslValuesToCss(
+            colorHue,
+            COLOR_VALUES.GLOW.saturation,
+            COLOR_VALUES.GLOW.lightness,
+            isCurrentPixelOn ? 1 : isNextPixelOn ? 0.5 : 0
+          )
+        );
+      }
+
+      glow.addColorStop(
+        1,
+        hslValuesToCss(
+          colorHue,
+          COLOR_VALUES.GLOW.saturation,
+          COLOR_VALUES.GLOW.lightness,
+          0
+        )
+      );
+      ctx.fillStyle = glow;
+      ctx.fillRect(chunkXPos, 0, frameSize, pixelAreaHeight);
+    }
+  }
 };
 
 const MASKING_GRADIENT_POSITION = 0.2;
@@ -470,6 +504,33 @@ export const getCanvasChunks = (
     const xEnd = Math.min(xStart + pixelsPerChunk, pixelGrid.length);
     const start = xStart * pixelSize;
     const end = xEnd * pixelSize;
+
+    canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
+  }
+
+  return canvasChunks;
+};
+
+export const getVerticalGlowCanvasChunks = (
+  chunkBaseId: string,
+  computedValues: SignComputedValues
+) => {
+  const { frameSize, pixelGrid, pixelGridWidth } = computedValues;
+  const canvasChunks: CanvasChunk[] = [];
+
+  const framesPerChunk = Math.floor(CANVAS_CHUNK_SIZE / frameSize);
+  const chunkWidth = framesPerChunk * frameSize;
+  const chunkCount = Math.ceil(pixelGridWidth / chunkWidth);
+
+  if (!chunkCount) {
+    return [];
+  }
+
+  for (let i = 0; i < chunkCount; i++) {
+    const xStart = i * framesPerChunk;
+    const xEnd = Math.min(xStart + framesPerChunk, pixelGrid.length);
+    const start = xStart * frameSize;
+    const end = xEnd * frameSize;
 
     canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
   }
