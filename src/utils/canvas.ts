@@ -277,10 +277,17 @@ export const drawFrameGlow = (
 export const drawFrameVerticalGlow = (
   canvasChunks: CanvasChunk[],
   computedValues: SignComputedValues,
-  config: SignConfig
+  config: SignConfig,
+  side: "left" | "right" = "left"
 ) => {
-  const { pixelSize, pixelCountY, pixelGrid, frameSize, pixelAreaHeight } =
-    computedValues;
+  const {
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+    pixelGrid,
+    frameSize,
+    pixelAreaHeight,
+  } = computedValues;
   const { colorHue } = config;
 
   let chunkIdx = -1;
@@ -322,9 +329,17 @@ export const drawFrameVerticalGlow = (
         const pixelYPos = y * pixelSize;
         const pixelYCenterPos = pixelYPos + pixelSize / 2;
         const position = pixelYCenterPos / pixelAreaHeight;
-        const isCurrentPixelOn = isPixelOn(x, y, pixelGrid);
+        const isCurrentPixelOn =
+          side === "right"
+            ? // TODO: Look into edge cases
+              x <= pixelGrid.length - pixelCountX &&
+              isPixelOn(x + pixelCountX - 1, y, pixelGrid)
+            : isPixelOn(x, y, pixelGrid);
         const isNextPixelOn =
-          x < pixelGrid.length - 1 && isPixelOn(x + 1, y, pixelGrid);
+          side === "right"
+            ? x <= pixelGrid.length - pixelCountX + 1 &&
+              isPixelOn(x + pixelCountX - 2, y, pixelGrid)
+            : x < pixelGrid.length - 1 && isPixelOn(x + 1, y, pixelGrid);
 
         glow.addColorStop(
           position,
