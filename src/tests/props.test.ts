@@ -16,7 +16,7 @@ describe("Props", () => {
         width: 0,
         colorHue: 1000,
         hideFrame: false,
-        animationFramesPerUpdate: 0,
+        durationPerPosition: 0,
       });
 
       expect(props).toStrictEqual({
@@ -27,7 +27,7 @@ describe("Props", () => {
         colorHue: 360,
         hideFrame: false,
         coloredOffLights: true,
-        animationFramesPerUpdate: 1,
+        durationPerPosition: 16,
       });
     });
   });

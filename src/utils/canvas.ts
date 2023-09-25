@@ -1,12 +1,5 @@
 import { COLORS, COLOR_VALUES } from "../constants/colors";
-import {
-  hslValuesToCss,
-  isPixelOn,
-  calcPixelXPos,
-  calcPixelXCenterPos,
-  calcPixelYPos,
-  calcPixelYCenterPos,
-} from "../utils";
+import { hslValuesToCss, isPixelOn } from "../utils";
 import {
   SignComputedValues,
   Tuple,
@@ -116,7 +109,7 @@ export const drawFrameGlow = (
   let prevBottomGlow = null;
 
   for (let x = 0; x < pixelGrid.length; x++) {
-    const pixelXPos = calcPixelXPos(x, pixelSize, 0);
+    const pixelXPos = x * pixelSize;
 
     if (!ctx || pixelXPos >= canvasChunks[chunkIdx].end) {
       if (ctx && topGlow && bottomGlow) {
@@ -203,7 +196,7 @@ export const drawFrameGlow = (
 
     if (ctx && topGlow && bottomGlow) {
       const chunkPixelXPos = pixelXPos - canvasChunks[chunkIdx].start;
-      const pixelXCenterPos = calcPixelXCenterPos(chunkPixelXPos, pixelSize);
+      const pixelXCenterPos = chunkPixelXPos + pixelSize / 2;
       const position =
         pixelXCenterPos /
         (canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start);
@@ -568,7 +561,7 @@ export const drawDisplayOnLights = (
   let ctx = null;
 
   for (let x = 0; x < pixelGrid.length; x++) {
-    const pixelXPos = calcPixelXPos(x, pixelSize, 0);
+    const pixelXPos = x * pixelSize;
 
     if (!ctx || pixelXPos >= canvasChunks[chunkIdx].end) {
       ctx = getCanvasContext(canvasChunks[++chunkIdx].id, true);
@@ -585,12 +578,12 @@ export const drawDisplayOnLights = (
 
     if (ctx) {
       const chunkPixelXPos = pixelXPos - canvasChunks[chunkIdx].start;
-      const pixelXCenterPos = calcPixelXCenterPos(chunkPixelXPos, pixelSize);
+      const pixelXCenterPos = chunkPixelXPos + pixelSize / 2;
 
       for (let y = 0; y < pixelCountY; y++) {
         const pixelOn = isPixelOn(x, y, pixelGrid);
-        const pixelYPos = calcPixelYPos(y, pixelSize, 0);
-        const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+        const pixelYPos = y * pixelSize;
+        const pixelYCenterPos = pixelYPos + pixelSize / 2;
 
         if (pixelOn) {
           const grd = ctx.createRadialGradient(
@@ -660,12 +653,12 @@ export const drawDisplayOffLights = (
     : 0;
 
   for (let x = 0; x < pixelCountX; x++) {
-    const pixelXPos = calcPixelXPos(x, pixelSize, displayPaddingX);
-    const pixelXCenterPos = calcPixelXCenterPos(pixelXPos, pixelSize);
+    const pixelXPos = x * pixelSize + displayPaddingX;
+    const pixelXCenterPos = pixelXPos + pixelSize / 2;
 
     for (let y = 0; y < pixelCountY; y++) {
-      const pixelYPos = calcPixelYPos(y, pixelSize, displayPaddingY);
-      const pixelYCenterPos = calcPixelYCenterPos(pixelYPos, pixelSize);
+      const pixelYPos = y * pixelSize + displayPaddingY;
+      const pixelYCenterPos = pixelYPos + pixelSize / 2;
 
       ctx.fillStyle = hslValuesToCss(
         colorHue,

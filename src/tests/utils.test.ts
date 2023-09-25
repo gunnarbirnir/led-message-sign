@@ -2,15 +2,7 @@ import {
   hslValuesToCss,
   calcComputedValues,
   calcPixelGrid,
-  calcTotalOffset,
   isPixelOn,
-  calcPixelXPos,
-  calcPixelXCenterPos,
-  calcPixelYPos,
-  calcPixelYCenterPos,
-  calcGlowPosition,
-  calcDisableGlow,
-  calcPixelGlow,
 } from "../utils";
 import { ALPHABET, EMPTY_COLUMN } from "../constants/alphabet";
 
@@ -20,7 +12,7 @@ const TEST_CONFIG = {
   height: 150,
   width: 800,
   colorHue: 180,
-  animationFramesPerUpdate: 3,
+  durationPerPosition: 150,
   frameProportion: 0.2,
   fullWidth: false,
   hideFrame: false,
@@ -58,14 +50,8 @@ const TEST_COMPUTED_VALUES = {
   ],
 };
 
-const TEST_X = 25;
 const TEST_Y = 3;
-const TEST_ANIMATION_OFFSET = 33;
 const TEST_OFFSET_X = 58;
-const TEST_PIXEL_X_POS = 770;
-const TEST_PIXEL_X_CENTER_POS = 785;
-const TEST_PIXEL_Y_POS = 105;
-const TEST_PIXEL_Y_CENTER_POS = 120;
 
 describe("Utils", () => {
   describe("hslValuesToCss", () => {
@@ -87,7 +73,7 @@ describe("Utils", () => {
 
   describe("calcComputedValues", () => {
     test("Should return computed values", () => {
-      const computed = calcComputedValues(TEST_CONFIG, 2);
+      const computed = calcComputedValues(TEST_CONFIG);
       expect(computed).toEqual(TEST_COMPUTED_VALUES);
     });
   });
@@ -99,17 +85,6 @@ describe("Utils", () => {
         TEST_COMPUTED_VALUES.pixelCountX
       );
       expect(grid).toStrictEqual(TEST_COMPUTED_VALUES.pixelGrid);
-    });
-  });
-
-  describe("calcTotalOffset", () => {
-    test("Should return total offset", () => {
-      const offset = calcTotalOffset(
-        TEST_X,
-        TEST_ANIMATION_OFFSET,
-        TEST_COMPUTED_VALUES.pixelGrid
-      );
-      expect(offset).toBe(TEST_OFFSET_X);
     });
   });
 
@@ -129,143 +104,6 @@ describe("Utils", () => {
 
       expect(isOn1).toBe(false);
       expect(isOn2).toBe(false);
-    });
-  });
-
-  describe("calcPixelXPos", () => {
-    test("Should return pixel horizontal position", () => {
-      const position = calcPixelXPos(
-        TEST_X,
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.displayPaddingX
-      );
-      expect(position).toBe(TEST_PIXEL_X_POS);
-    });
-  });
-
-  describe("calcPixelXCenterPos", () => {
-    test("Should return pixel horizontal center position", () => {
-      const position = calcPixelXCenterPos(
-        TEST_PIXEL_X_POS,
-        TEST_COMPUTED_VALUES.pixelSize
-      );
-      expect(position).toBe(TEST_PIXEL_X_CENTER_POS);
-    });
-  });
-
-  describe("calcPixelYPos", () => {
-    test("Should return pixel vertical position", () => {
-      const position = calcPixelYPos(
-        TEST_Y,
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.displayPaddingY
-      );
-      expect(position).toBe(TEST_PIXEL_Y_POS);
-    });
-  });
-
-  describe("calcPixelYCenterPos", () => {
-    test("Should return pixel vertical center position", () => {
-      const position = calcPixelYCenterPos(
-        TEST_PIXEL_Y_POS,
-        TEST_COMPUTED_VALUES.pixelSize
-      );
-      expect(position).toBe(TEST_PIXEL_Y_CENTER_POS);
-    });
-  });
-
-  describe("calcGlowPosition", () => {
-    test("Should return horizontal glow position", () => {
-      const position = calcGlowPosition(
-        TEST_X,
-        TEST_COMPUTED_VALUES.signWidth,
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelCountX
-      );
-      // Has a lot of decimals
-      const rounded = Math.round(position * 10) / 10;
-
-      expect(rounded).toBe(0.5);
-    });
-
-    test("Should return vertical glow position", () => {
-      const position = calcGlowPosition(
-        TEST_Y,
-        TEST_COMPUTED_VALUES.signHeight,
-        TEST_COMPUTED_VALUES.pixelSize,
-        TEST_COMPUTED_VALUES.pixelCountY
-      );
-      const rounded = Math.round(position * 10) / 10;
-
-      expect(rounded).toBe(0.5);
-    });
-  });
-
-  describe("calcDisableGlow", () => {
-    test("Should return 0 for starting position", () => {
-      const disableGlow = calcDisableGlow(
-        TEST_X,
-        TEST_X,
-        TEST_COMPUTED_VALUES.pixelCountX
-      );
-      expect(disableGlow).toBe(0);
-    });
-
-    test("Should return 0 for position before start", () => {
-      const disableGlow = calcDisableGlow(49, 48, 50);
-      expect(disableGlow).toBe(0);
-    });
-
-    test("Should return 0 for position after start", () => {
-      const disableGlow = calcDisableGlow(0, 1, 50);
-      expect(disableGlow).toBe(0);
-    });
-
-    test("Should return undefined for other position", () => {
-      const disableGlow = calcDisableGlow(
-        TEST_X,
-        TEST_OFFSET_X,
-        TEST_COMPUTED_VALUES.pixelCountX
-      );
-      expect(disableGlow).toBe(undefined);
-    });
-  });
-
-  describe("calcPixelGlow", () => {
-    test("Should return 1 since pixel is on", () => {
-      const glow = calcPixelGlow(
-        TEST_OFFSET_X,
-        TEST_Y,
-        TEST_COMPUTED_VALUES.pixelGrid
-      );
-      expect(glow).toBe(1);
-    });
-
-    test("Should return 0.75 for pixel at distance 1", () => {
-      const glow = calcPixelGlow(
-        TEST_OFFSET_X + 2,
-        TEST_Y,
-        TEST_COMPUTED_VALUES.pixelGrid
-      );
-      expect(glow).toBe(0.75);
-    });
-
-    test("Should return 0.5 for pixel at distance 2", () => {
-      const glow = calcPixelGlow(
-        TEST_OFFSET_X + 3,
-        TEST_Y,
-        TEST_COMPUTED_VALUES.pixelGrid
-      );
-      expect(glow).toBe(0.5);
-    });
-
-    test("Should return 0 for pixel with longer distance", () => {
-      const glow = calcPixelGlow(
-        TEST_X,
-        TEST_Y,
-        TEST_COMPUTED_VALUES.pixelGrid
-      );
-      expect(glow).toBe(0);
     });
   });
 });

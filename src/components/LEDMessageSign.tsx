@@ -5,7 +5,7 @@ import { sanitizeProps } from "../utils/props";
 import { calcComputedValues } from "../utils";
 import { useObjectSize } from "../hooks";
 import { SignContext } from "../context";
-import { FRAME_PROPORTION } from "../constants";
+import { FRAME_TO_HEIGHT_RATIO } from "../constants";
 import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
 
@@ -23,11 +23,11 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
       ...sanitizedProps,
       id: signId,
       width: sanitizedProps.fullWidth ? containerWidth : sanitizedProps.width,
-      frameProportion: sanitizedProps.hideFrame ? 0 : FRAME_PROPORTION,
+      frameProportion: sanitizedProps.hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
     }),
     [signId, sanitizedProps, containerWidth]
   );
-  const computedValues = useMemo(() => calcComputedValues(config, 1), [config]);
+  const computedValues = useMemo(() => calcComputedValues(config), [config]);
 
   return (
     <SignContext.Provider value={{ config, computedValues }}>

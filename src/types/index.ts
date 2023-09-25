@@ -5,16 +5,16 @@ export interface LEDMessageSignProps {
   height?: number;
   /** Sign width. Default is 800. */
   width?: number;
-  /** Make sign fill available space. If true width prop will be ignored. Default is false.  */
+  /** Make sign fill available space. If true width prop will be ignored. Default is false. */
   fullWidth?: boolean;
   /** Hue value for HSL color. Default is 0. */
   colorHue?: number;
-  /** Hide sign frame. Default is false.  */
+  /** Hide sign frame. Default is false. */
   hideFrame?: boolean;
-  /** Should the off lights be colored. Default is true.  */
+  /** Should the off lights be colored. Default is true. */
   coloredOffLights?: boolean;
-  /** How many animation frames pass between sign updates. Default is 3. */
-  animationFramesPerUpdate?: number;
+  /** Duration per position in ms. Default is 100. */
+  durationPerPosition?: number;
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
