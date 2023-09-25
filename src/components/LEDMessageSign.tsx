@@ -1,9 +1,9 @@
-import React, { FC, memo, useRef, useMemo, useId } from "react";
+import React, { FC, memo, useRef, useMemo, useId, useCallback } from "react";
 
 import { LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
-import { calcComputedValues } from "../utils";
-import { useObjectSize } from "../hooks";
+import { calcComputedValues, generateId as generateIdUtil } from "../utils";
+import { useObjectSize, useAnimateSign } from "../hooks";
 import { SignContext } from "../context";
 import { FRAME_TO_HEIGHT_RATIO } from "../constants";
 import SignFrame from "./SignFrame";
@@ -17,6 +17,10 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
   ]);
   const sanitizedProps = useMemo(() => sanitizeProps(props), [props]);
   const { fullWidth } = sanitizedProps;
+  const generateId = useCallback(
+    (baseId: string) => generateIdUtil(signId, baseId),
+    [signId]
+  );
 
   const config = useMemo(
     () => ({
@@ -28,9 +32,10 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
     [signId, sanitizedProps, containerWidth]
   );
   const computedValues = useMemo(() => calcComputedValues(config), [config]);
+  useAnimateSign(config, computedValues, generateId);
 
   return (
-    <SignContext.Provider value={{ config, computedValues }}>
+    <SignContext.Provider value={{ config, computedValues, generateId }}>
       <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
         <SignFrame>
           <SignDisplay />

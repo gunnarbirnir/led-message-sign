@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useEffect, useRef } from "react";
+import React, { FC, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
 import { useSignContext } from "../hooks";
@@ -9,12 +9,11 @@ import {
   drawDisplayOnLights,
 } from "../utils/canvas";
 import { COLORS } from "../constants/colors";
+import { ON_LIGHTS_ANIMATION_CONTAINER_ID } from "../constants/animation";
 import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
-  const onLightsRef = useRef<HTMLDivElement>(null);
-  const { config, computedValues } = useSignContext();
-  const { id } = config;
+  const { config, computedValues, generateId } = useSignContext();
   const {
     displayWidth,
     displayHeight,
@@ -23,16 +22,21 @@ const SignDisplay: FC = () => {
     displayPaddingX,
     displayPaddingY,
     pixelGridWidth,
-    pixelSize,
-    pixelGrid,
   } = computedValues;
 
-  const { displayOnLightsId, displayOffLightsId } = useMemo(
+  const {
+    displayOnLightsId,
+    displayOffLightsId,
+    onLightsAnimationContainerId,
+  } = useMemo(
     () => ({
-      displayOnLightsId: `sign-display-on-lights-${id}`,
-      displayOffLightsId: `sign-display-off-lights-${id}`,
+      displayOnLightsId: generateId("sign-display-on-lights"),
+      displayOffLightsId: generateId("sign-display-off-lights"),
+      onLightsAnimationContainerId: generateId(
+        ON_LIGHTS_ANIMATION_CONTAINER_ID
+      ),
     }),
-    [id]
+    [generateId]
   );
   const onLightsCanvasChunks = useMemo(
     () => getCanvasChunks(displayOnLightsId, computedValues),
@@ -51,30 +55,6 @@ const SignDisplay: FC = () => {
     drawDisplayOnLights(onLightsCanvasChunks, computedValues, config);
   }, [onLightsCanvasChunks, computedValues, config]);
 
-  useEffect(() => {
-    let onLightsAnimation: Animation | null = null;
-
-    if (onLightsRef.current) {
-      const keyframes = {
-        transform: [`translateX(-${pixelGrid.length * pixelSize}px)`],
-      };
-      const options = {
-        id: `on-lights-animation-${id}`,
-        duration: pixelGrid.length * 200,
-        easing: `steps(${pixelGrid.length})`,
-        iterations: Infinity,
-      };
-
-      onLightsAnimation = onLightsRef.current.animate(keyframes, options);
-    }
-
-    return () => {
-      if (onLightsAnimation) {
-        onLightsAnimation.cancel();
-      }
-    };
-  }, [id, pixelGrid.length, pixelSize]);
-
   return (
     <StyledSignDisplay style={{ width: displayWidth, height: displayHeight }}>
       <OffPixels
@@ -90,7 +70,10 @@ const SignDisplay: FC = () => {
           width: pixelAreaWidth,
         }}
       >
-        <div ref={onLightsRef} style={{ width: pixelGridWidth }}>
+        <div
+          id={onLightsAnimationContainerId}
+          style={{ width: pixelGridWidth }}
+        >
           {onLightsCanvasChunks.map((chunk) => (
             <Canvas
               id={chunk.id}

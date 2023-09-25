@@ -2,6 +2,10 @@ import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
 import { PixelGrid, SignConfig } from "../types";
 
+export const generateId = (signId: string, baseId: string) => {
+  return `${baseId}-${signId}`;
+};
+
 export const hslValuesToCss = (
   hue: number,
   saturation: number = 100,
