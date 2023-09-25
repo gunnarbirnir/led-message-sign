@@ -380,12 +380,18 @@ export const drawFrameMasking = (
     drawFrameBottomBorder,
     drawFrameLeftBorder,
   } = getFrameUtils(ctx, computedValues);
+  const transparentColor = hslValuesToCss(
+    COLOR_VALUES.FRAME.hue,
+    COLOR_VALUES.FRAME.saturation,
+    COLOR_VALUES.FRAME.lightness,
+    0
+  );
 
   ctx.clearRect(0, 0, signWidth, signHeight);
 
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
   maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingTop.addColorStop(1, COLORS.FRAME_TRANSPARENT);
+  maskingTop.addColorStop(1, transparentColor);
 
   const maskingRight = ctx.createLinearGradient(
     signWidth,
@@ -394,7 +400,7 @@ export const drawFrameMasking = (
     0
   );
   maskingRight.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingRight.addColorStop(1, COLORS.FRAME_TRANSPARENT);
+  maskingRight.addColorStop(1, transparentColor);
 
   const maskingBottom = ctx.createLinearGradient(
     signWidth,
@@ -403,11 +409,11 @@ export const drawFrameMasking = (
     signHeight - frameSize
   );
   maskingBottom.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingBottom.addColorStop(1, COLORS.FRAME_TRANSPARENT);
+  maskingBottom.addColorStop(1, transparentColor);
 
   const maskingLeft = ctx.createLinearGradient(0, 0, frameSize, 0);
   maskingLeft.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingLeft.addColorStop(1, COLORS.FRAME_TRANSPARENT);
+  maskingLeft.addColorStop(1, transparentColor);
 
   drawFrameTopBorder(maskingTop);
   drawFrameRightBorder(maskingRight);
@@ -418,16 +424,16 @@ export const drawFrameMasking = (
   const glowMaskingXStart = (frameSize + displayPaddingX) / signWidth;
   const glowMaskingXEnd = glowMaskingXStart + pixelSize / signWidth;
   glowMaskingX.addColorStop(glowMaskingXStart, COLORS.FRAME);
-  glowMaskingX.addColorStop(glowMaskingXEnd, COLORS.FRAME_TRANSPARENT);
-  glowMaskingX.addColorStop(1 - glowMaskingXEnd, COLORS.FRAME_TRANSPARENT);
+  glowMaskingX.addColorStop(glowMaskingXEnd, transparentColor);
+  glowMaskingX.addColorStop(1 - glowMaskingXEnd, transparentColor);
   glowMaskingX.addColorStop(1 - glowMaskingXStart, COLORS.FRAME);
 
   const glowMaskingY = ctx.createLinearGradient(0, 0, 0, signHeight);
   const glowMaskingYStart = (frameSize + displayPaddingY) / signHeight;
   const glowMaskingYEnd = glowMaskingYStart + pixelSize / signHeight;
   glowMaskingY.addColorStop(glowMaskingYStart, COLORS.FRAME);
-  glowMaskingY.addColorStop(glowMaskingYEnd, COLORS.FRAME_TRANSPARENT);
-  glowMaskingY.addColorStop(1 - glowMaskingYEnd, COLORS.FRAME_TRANSPARENT);
+  glowMaskingY.addColorStop(glowMaskingYEnd, transparentColor);
+  glowMaskingY.addColorStop(1 - glowMaskingYEnd, transparentColor);
   glowMaskingY.addColorStop(1 - glowMaskingYStart, COLORS.FRAME);
 
   drawFrameTopBorder(glowMaskingX);
