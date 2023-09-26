@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
-import { useSignContext } from "../hooks";
+import { useSignContext, useSignIds } from "../hooks";
 import {
   getCanvasContext,
   drawDisplayOffLights,
@@ -9,11 +9,10 @@ import {
   drawDisplayOnLights,
 } from "../utils/canvas";
 import { COLORS } from "../constants/colors";
-import { ON_LIGHTS_ANIMATION_CONTAINER_ID } from "../constants/animation";
 import Canvas from "./Canvas";
 
 const SignDisplay: FC = () => {
-  const { config, computedValues, generateId } = useSignContext();
+  const { config, computedValues } = useSignContext();
   const {
     displayWidth,
     displayHeight,
@@ -28,16 +27,7 @@ const SignDisplay: FC = () => {
     displayOnLightsId,
     displayOffLightsId,
     onLightsAnimationContainerId,
-  } = useMemo(
-    () => ({
-      displayOnLightsId: generateId("sign-display-on-lights"),
-      displayOffLightsId: generateId("sign-display-off-lights"),
-      onLightsAnimationContainerId: generateId(
-        ON_LIGHTS_ANIMATION_CONTAINER_ID
-      ),
-    }),
-    [generateId]
-  );
+  } = useSignIds();
   const onLightsCanvasChunks = useMemo(
     () => getCanvasChunks(displayOnLightsId, computedValues),
     [displayOnLightsId, computedValues]

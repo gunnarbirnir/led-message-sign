@@ -1,15 +1,8 @@
-import React, {
-  FC,
-  PropsWithChildren,
-  useMemo,
-  useEffect,
-  useRef,
-} from "react";
+import React, { FC, PropsWithChildren, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
-import { useSignContext } from "../hooks";
+import { useSignContext, useSignIds } from "../hooks";
 import { COLORS } from "../constants/colors";
-import { FRAME_GLOW_HORIZONTAL_ANIMATION_CONTAINER_ID } from "../constants/animation";
 import {
   getCanvasChunks,
   getVerticalGlowCanvasChunks,
@@ -22,54 +15,39 @@ import {
 import Canvas from "./Canvas";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
-  const frameVerticalLeftGlowRef = useRef<HTMLDivElement>(null);
-  const frameVerticalRightGlowRef = useRef<HTMLDivElement>(null);
-
-  const { config, computedValues, generateId } = useSignContext();
-  const { id, height, width } = config;
+  const { config, computedValues } = useSignContext();
+  const { height, width } = config;
   const {
     frameSize,
     pixelGridWidth,
     displayPaddingX,
     displayPaddingY,
     pixelGrid,
-    pixelSize,
     pixelAreaWidth,
     pixelAreaHeight,
   } = computedValues;
 
-  // TODO: Create hook
   const {
-    frameGlowId,
-    frameVerticalLeftGlowId,
-    frameVerticalRightGlowId,
+    frameGlowHorizontalId,
+    frameGlowVerticalLeftId,
+    frameGlowVerticalRightId,
     frameMaskingId,
     frameShadingId,
-    frameGlowHorizontalAnimationContainer,
-  } = useMemo(
-    () => ({
-      frameGlowId: generateId("sign-frame-glow"),
-      frameVerticalLeftGlowId: generateId("sign-frame-vertical-left-glow"),
-      frameVerticalRightGlowId: generateId("sign-frame-vertical-right-glow"),
-      frameMaskingId: generateId("sign-frame-masking"),
-      frameShadingId: generateId("sign-frame-shading"),
-      frameGlowHorizontalAnimationContainer: generateId(
-        FRAME_GLOW_HORIZONTAL_ANIMATION_CONTAINER_ID
-      ),
-    }),
-    [generateId]
-  );
+    frameGlowHorizontalAnimationContainerId,
+    frameGlowVerticalLeftAnimationContainerId,
+    frameGlowVerticalRightAnimationContainerId,
+  } = useSignIds();
   const frameGlowCanvasChunks = useMemo(
-    () => getCanvasChunks(frameGlowId, computedValues),
-    [frameGlowId, computedValues]
+    () => getCanvasChunks(frameGlowHorizontalId, computedValues),
+    [frameGlowHorizontalId, computedValues]
   );
   const frameVerticalLeftGlowCanvasChunks = useMemo(
-    () => getVerticalGlowCanvasChunks(frameVerticalLeftGlowId, computedValues),
-    [frameVerticalLeftGlowId, computedValues]
+    () => getVerticalGlowCanvasChunks(frameGlowVerticalLeftId, computedValues),
+    [frameGlowVerticalLeftId, computedValues]
   );
   const frameVerticalRightGlowCanvasChunks = useMemo(
-    () => getVerticalGlowCanvasChunks(frameVerticalRightGlowId, computedValues),
-    [frameVerticalRightGlowId, computedValues]
+    () => getVerticalGlowCanvasChunks(frameGlowVerticalRightId, computedValues),
+    [frameGlowVerticalRightId, computedValues]
   );
 
   useEffect(() => {
@@ -105,58 +83,6 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     config,
   ]);
 
-  useEffect(() => {
-    let frameVerticalLeftGlowAnimation: Animation | null = null;
-
-    if (frameVerticalLeftGlowRef.current) {
-      const keyframes = {
-        transform: [`translateX(-${pixelGrid.length * frameSize}px)`],
-      };
-      const options = {
-        id: `frame-vertical-glow-animation-${id}`,
-        duration: pixelGrid.length * 200,
-        easing: `steps(${pixelGrid.length})`,
-        iterations: Infinity,
-      };
-
-      frameVerticalLeftGlowAnimation = frameVerticalLeftGlowRef.current.animate(
-        keyframes,
-        options
-      );
-    }
-
-    return () => {
-      if (frameVerticalLeftGlowAnimation) {
-        frameVerticalLeftGlowAnimation.cancel();
-      }
-    };
-  }, [id, frameSize, pixelGrid.length, pixelSize]);
-
-  useEffect(() => {
-    let frameVerticalRightGlowAnimation: Animation | null = null;
-
-    if (frameVerticalRightGlowRef.current) {
-      const keyframes = {
-        transform: [`translateX(-${pixelGrid.length * frameSize}px)`],
-      };
-      const options = {
-        id: `frame-vertical-glow-animation-${id}`,
-        duration: pixelGrid.length * 200,
-        easing: `steps(${pixelGrid.length})`,
-        iterations: Infinity,
-      };
-
-      frameVerticalRightGlowAnimation =
-        frameVerticalRightGlowRef.current.animate(keyframes, options);
-    }
-
-    return () => {
-      if (frameVerticalRightGlowAnimation) {
-        frameVerticalRightGlowAnimation.cancel();
-      }
-    };
-  }, [id, frameSize, pixelGrid.length, pixelSize]);
-
   if (!width) {
     return null;
   }
@@ -171,7 +97,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div
-          id={frameGlowHorizontalAnimationContainer}
+          id={frameGlowHorizontalAnimationContainerId}
           style={{ width: pixelGridWidth }}
         >
           {frameGlowCanvasChunks.map((chunk) => (
@@ -193,7 +119,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div
-          ref={frameVerticalLeftGlowRef}
+          id={frameGlowVerticalLeftAnimationContainerId}
           style={{ width: pixelGrid.length * frameSize }}
         >
           {frameVerticalLeftGlowCanvasChunks.map((chunk) => (
@@ -215,7 +141,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div
-          ref={frameVerticalRightGlowRef}
+          id={frameGlowVerticalRightAnimationContainerId}
           style={{ width: pixelGrid.length * frameSize }}
         >
           {frameVerticalRightGlowCanvasChunks.map((chunk) => (

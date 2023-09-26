@@ -5,7 +5,6 @@ import { SignConfig, SignComputedValues } from "../types";
 const SignContext = createContext<{
   config: SignConfig;
   computedValues: SignComputedValues;
-  generateId: (baseId: string) => string;
 }>({
   config: {
     id: "",
@@ -35,7 +34,6 @@ const SignContext = createContext<{
     pixelGrid: [],
     pixelGridWidth: 0,
   },
-  generateId: () => "",
 });
 
 export default SignContext;
