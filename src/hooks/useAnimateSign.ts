@@ -9,20 +9,22 @@ import {
   FRAME_GLOW_VERTICAL_RIGHT_ANIMATION_CONTAINER_ID,
 } from "../constants/animation";
 
+const SECOND_MS = 1000;
+
 const useAnimateSign = (
   config: SignConfig,
   computedValues: SignComputedValues
 ) => {
-  const { id, durationPerPosition } = config;
+  const { id, updatesPerSecond } = config;
   const { pixelSize, pixelGrid, frameSize } = computedValues;
 
   const animationBaseOptions = useMemo(
     () => ({
-      duration: pixelGrid.length * durationPerPosition,
+      duration: pixelGrid.length * (SECOND_MS / updatesPerSecond),
       easing: `steps(${pixelGrid.length})`,
       iterations: Infinity,
     }),
-    [durationPerPosition, pixelGrid.length]
+    [updatesPerSecond, pixelGrid.length]
   );
 
   const generateId = useCallback(

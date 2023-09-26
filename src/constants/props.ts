@@ -5,18 +5,19 @@ export const DEFAULT_VALUE = {
   COLOR_HUE: 0,
   HIDE_FRAME: false,
   COLORED_OFF_LIGHTS: true,
-  DURATION_PER_POSITION: 100,
+  UPDATES_PER_SECOND: 20,
 };
 
 export const MAX_CHARACTERS = 100;
 
 export const MIN_VALUE = {
-  HEIGHT: 50,
+  HEIGHT: 60,
   WIDTH: 100,
   COLOR_HUE: 0,
-  DURATION_PER_POSITION: 16,
+  UPDATES_PER_SECOND: 1,
 };
 
 export const MAX_VALUE = {
   COLOR_HUE: 360,
+  UPDATES_PER_SECOND: 60,
 };

@@ -30,6 +30,10 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
   const computedValues = useMemo(() => calcComputedValues(config), [config]);
   useAnimateSign(config, computedValues);
 
+  console.log("config: ", config);
+  console.log("computedValues: ", computedValues);
+  console.log("---------------");
+
   return (
     <SignContext.Provider value={{ config, computedValues }}>
       <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
