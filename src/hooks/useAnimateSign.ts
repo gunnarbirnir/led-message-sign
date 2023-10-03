@@ -18,7 +18,7 @@ const useAnimateSign = (
   const { id, updatesPerSecond } = config;
   const { pixelSize, pixelGrid, frameSize } = computedValues;
 
-  const animationBaseOptions = useMemo(
+  const animationOptions = useMemo(
     () => ({
       duration: pixelGrid.length * (SECOND_MS / updatesPerSecond),
       easing: `steps(${pixelGrid.length})`,
@@ -31,8 +31,11 @@ const useAnimateSign = (
     (baseId: string) => generateIdUtil(id, baseId),
     [id]
   );
-  const calcTransformDistance = useCallback(
-    (itemSize: number) => `translateX(-${itemSize * pixelGrid.length}px)`,
+  const calcKeyframes = useCallback(
+    (itemSize: number) => [
+      { transform: "translateX(0px)" },
+      { transform: `translateX(-${itemSize * pixelGrid.length}px)` },
+    ],
     [pixelGrid.length]
   );
   // Use refs instead?
@@ -59,79 +62,63 @@ const useAnimateSign = (
     let frameGlowVerticalRightAnimation: Animation | null = null;
 
     if (onLightsContainer) {
-      const keyframes = {
-        transform: [calcTransformDistance(pixelSize)],
-      };
-      const options = {
-        id: generateId("on-lights-animation"),
-        ...animationBaseOptions,
-      };
+      const keyframes = calcKeyframes(pixelSize);
 
-      onLightsAnimation = onLightsContainer.animate(keyframes, options);
+      onLightsAnimation = onLightsContainer.animate(
+        keyframes,
+        animationOptions
+      );
     }
 
     if (frameGlowHorizontalAnimationContainer) {
-      const keyframes = {
-        transform: [calcTransformDistance(pixelSize)],
-      };
-      const options = {
-        id: generateId("frame-glow-horizontal-animation"),
-        ...animationBaseOptions,
-      };
+      const keyframes = calcKeyframes(pixelSize);
 
       frameGlowHorizontalAnimation =
-        frameGlowHorizontalAnimationContainer.animate(keyframes, options);
+        frameGlowHorizontalAnimationContainer.animate(
+          keyframes,
+          animationOptions
+        );
     }
 
     if (frameGlowVerticalLeftAnimationContainer) {
-      const keyframes = {
-        transform: [calcTransformDistance(frameSize)],
-      };
-      const options = {
-        id: generateId("frame-glow-vertical-left-animation"),
-        ...animationBaseOptions,
-      };
+      const keyframes = calcKeyframes(frameSize);
 
       frameGlowVerticalLeftAnimation =
-        frameGlowVerticalLeftAnimationContainer.animate(keyframes, options);
+        frameGlowVerticalLeftAnimationContainer.animate(
+          keyframes,
+          animationOptions
+        );
     }
 
     if (frameGlowVerticalRightAnimationContainer) {
-      const keyframes = {
-        transform: [calcTransformDistance(frameSize)],
-      };
-      const options = {
-        id: generateId("frame-glow-vertical-right-animation"),
-        ...animationBaseOptions,
-      };
+      const keyframes = calcKeyframes(frameSize);
 
       frameGlowVerticalRightAnimation =
-        frameGlowVerticalRightAnimationContainer.animate(keyframes, options);
+        frameGlowVerticalRightAnimationContainer.animate(
+          keyframes,
+          animationOptions
+        );
     }
 
-    if (onLightsAnimation?.effect) {
-      const { progress } = onLightsAnimation.effect.getComputedTiming();
+    const syncAnimations = async () => {
+      if (onLightsAnimation) {
+        try {
+          await onLightsAnimation.ready;
+          const { startTime } = onLightsAnimation;
 
-      if (progress !== null && progress !== undefined) {
-        if (frameGlowHorizontalAnimation?.effect) {
-          frameGlowHorizontalAnimation.effect.updateTiming({
-            iterationStart: progress,
-          });
-        }
-
-        if (frameGlowVerticalLeftAnimation?.effect) {
-          frameGlowVerticalLeftAnimation.effect.updateTiming({
-            iterationStart: progress,
-          });
-        }
-
-        if (frameGlowVerticalRightAnimation?.effect) {
-          frameGlowVerticalRightAnimation.effect.updateTiming({
-            iterationStart: progress,
-          });
-        }
+          if (frameGlowHorizontalAnimation) {
+            frameGlowHorizontalAnimation.startTime = startTime;
+          }
+          if (frameGlowVerticalLeftAnimation) {
+            frameGlowVerticalLeftAnimation.startTime = startTime;
+          }
+          if (frameGlowVerticalRightAnimation) {
+            frameGlowVerticalRightAnimation.startTime = startTime;
+          }
+        } catch {}
       }
-    }
+    };
+    syncAnimations();
 
     return () => {
       if (onLightsAnimation) {
@@ -150,9 +137,9 @@ const useAnimateSign = (
   }, [
     pixelSize,
     frameSize,
-    animationBaseOptions,
+    animationOptions,
     generateId,
-    calcTransformDistance,
+    calcKeyframes,
     getContainer,
   ]);
 };

@@ -21,7 +21,7 @@ export const hslValuesToCss = (
 export const calcComputedValues = (config: SignConfig) => {
   const signHeight = config.height;
   const signWidth = config.width;
-  const frameSize = signHeight * config.frameProportion;
+  const frameSize = Math.round(signHeight * config.frameProportion);
   const displayHeight = signHeight - frameSize * 2;
   const displayWidth = signWidth - frameSize * 2;
   const approxPaddingY = signHeight * PADDING_TO_HEIGHT_RATIO * 2;

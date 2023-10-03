@@ -98,7 +98,11 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
       >
         <div
           id={frameGlowHorizontalAnimationContainerId}
-          style={{ width: pixelGridWidth }}
+          style={{
+            width: pixelGridWidth,
+            willChange: "transform",
+            transform: "translate3d(0, 0, 0)",
+          }}
         >
           {frameGlowCanvasChunks.map((chunk) => (
             <Canvas
@@ -120,7 +124,11 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
       >
         <div
           id={frameGlowVerticalLeftAnimationContainerId}
-          style={{ width: pixelGrid.length * frameSize }}
+          style={{
+            width: pixelGrid.length * frameSize,
+            willChange: "transform",
+            transform: "translate3d(0, 0, 0)",
+          }}
         >
           {frameVerticalLeftGlowCanvasChunks.map((chunk) => (
             <Canvas
@@ -142,7 +150,11 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
       >
         <div
           id={frameGlowVerticalRightAnimationContainerId}
-          style={{ width: pixelGrid.length * frameSize }}
+          style={{
+            width: pixelGrid.length * frameSize,
+            willChange: "transform",
+            transform: "translate3d(0, 0, 0)",
+          }}
         >
           {frameVerticalRightGlowCanvasChunks.map((chunk) => (
             <Canvas

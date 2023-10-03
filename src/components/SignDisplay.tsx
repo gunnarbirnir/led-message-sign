@@ -62,7 +62,11 @@ const SignDisplay: FC = () => {
       >
         <div
           id={onLightsAnimationContainerId}
-          style={{ width: pixelGridWidth }}
+          style={{
+            width: pixelGridWidth,
+            willChange: "transform",
+            transform: "translate3d(0, 0, 0)",
+          }}
         >
           {onLightsCanvasChunks.map((chunk) => (
             <Canvas
