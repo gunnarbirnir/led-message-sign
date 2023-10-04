@@ -5,7 +5,7 @@ export const DEFAULT_VALUE = {
   COLOR_HUE: 0,
   HIDE_FRAME: false,
   COLORED_OFF_LIGHTS: true,
-  UPDATES_PER_SECOND: 20,
+  ANIMATION_FRAMES_PER_UPDATE: 6,
 };
 
 export const MAX_CHARACTERS = 100;
@@ -14,10 +14,11 @@ export const MIN_VALUE = {
   HEIGHT: 60,
   WIDTH: 100,
   COLOR_HUE: 0,
-  UPDATES_PER_SECOND: 1,
+  ANIMATION_FRAMES_PER_UPDATE: 1,
 };
 
 export const MAX_VALUE = {
+  // TODO: Add height and width?
   COLOR_HUE: 360,
-  UPDATES_PER_SECOND: 60,
+  ANIMATION_FRAMES_PER_UPDATE: 60,
 };

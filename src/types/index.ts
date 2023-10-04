@@ -13,8 +13,8 @@ export interface LEDMessageSignProps {
   hideFrame?: boolean;
   /** Should the off lights be colored. Default is true. */
   coloredOffLights?: boolean;
-  /** How many times the sign updates per second. Default is 20. */
-  updatesPerSecond?: number;
+  /** How many animation frames pass between sign updates. Default is 6. */
+  animationFramesPerUpdate?: number;
 }
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
