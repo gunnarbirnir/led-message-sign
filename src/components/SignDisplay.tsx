@@ -90,11 +90,6 @@ const OffPixels = styled(Canvas)`
 const OnPixels = styled.div`
   position: absolute;
   overflow: hidden;
-
-  & > div {
-    display: flex;
-    flex-direction: row;
-  }
 `;
 
 export default SignDisplay;

@@ -21,6 +21,35 @@ export const getCanvasContext = (id: string, alpha: boolean = false) => {
   return ctx;
 };
 
+const CANVAS_CHUNK_SIZE = 4000 / CANVAS_SCALING;
+
+export const getCanvasChunks = (
+  chunkBaseId: string,
+  itemSize: number,
+  itemCount: number
+) => {
+  const canvasChunks: CanvasChunk[] = [];
+  const itemsPerChunk = Math.floor(CANVAS_CHUNK_SIZE / itemSize);
+  const chunkWidth = itemsPerChunk * itemSize;
+  const totalWidth = itemCount * itemSize;
+  const chunkCount = Math.ceil(totalWidth / chunkWidth);
+
+  if (!chunkCount) {
+    return [];
+  }
+
+  for (let i = 0; i < chunkCount; i++) {
+    const xStart = i * itemsPerChunk;
+    const xEnd = Math.min(xStart + itemsPerChunk, itemCount);
+    const start = xStart * itemSize;
+    const end = xEnd * itemSize;
+
+    canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
+  }
+
+  return canvasChunks;
+};
+
 const getFrameUtils = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues
@@ -496,33 +525,56 @@ export const drawFrameShading = (
   drawFrameLeftBorder(shadingY);
 };
 
-const CANVAS_CHUNK_SIZE = 4000 / CANVAS_SCALING;
+const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 
-export const getCanvasChunks = (
-  chunkBaseId: string,
-  itemSize: number,
-  itemCount: number
+export const drawDisplayOffLights = (
+  ctx: CanvasRenderingContext2D,
+  computedValues: SignComputedValues,
+  config: SignConfig
 ) => {
-  const canvasChunks: CanvasChunk[] = [];
-  const itemsPerChunk = Math.floor(CANVAS_CHUNK_SIZE / itemSize);
-  const chunkWidth = itemsPerChunk * itemSize;
-  const totalWidth = itemCount * itemSize;
-  const chunkCount = Math.ceil(totalWidth / chunkWidth);
+  const {
+    displayWidth,
+    displayHeight,
+    displayPaddingX,
+    displayPaddingY,
+    pixelSize,
+    pixelCountX,
+    pixelCountY,
+  } = computedValues;
+  const { colorHue, coloredOffLights } = config;
 
-  if (!chunkCount) {
-    return [];
+  ctx.clearRect(0, 0, displayWidth, displayHeight);
+  ctx.fillStyle = COLORS.BACKGROUND;
+  ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+  const bulbOffColorSaturation = coloredOffLights
+    ? COLOR_VALUES.BULB_OFF.saturation
+    : 0;
+
+  for (let x = 0; x < pixelCountX; x++) {
+    const pixelXPos = x * pixelSize + displayPaddingX;
+    const pixelXCenterPos = pixelXPos + pixelSize / 2;
+
+    for (let y = 0; y < pixelCountY; y++) {
+      const pixelYPos = y * pixelSize + displayPaddingY;
+      const pixelYCenterPos = pixelYPos + pixelSize / 2;
+
+      ctx.fillStyle = hslValuesToCss(
+        colorHue,
+        bulbOffColorSaturation,
+        COLOR_VALUES.BULB_OFF.lightness
+      );
+      ctx.beginPath();
+      ctx.arc(
+        pixelXCenterPos,
+        pixelYCenterPos,
+        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
+        0,
+        2 * Math.PI
+      );
+      ctx.fill();
+    }
   }
-
-  for (let i = 0; i < chunkCount; i++) {
-    const xStart = i * itemsPerChunk;
-    const xEnd = Math.min(xStart + itemsPerChunk, itemCount);
-    const start = xStart * itemSize;
-    const end = xEnd * itemSize;
-
-    canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
-  }
-
-  return canvasChunks;
 };
 
 const PIXEL_TO_LIGHT_INNER_RADIUS_RATIO = 5;
@@ -601,58 +653,6 @@ export const drawDisplayOnLights = (
           ctx.fill();
         }
       }
-    }
-  }
-};
-
-const PIXEL_TO_BULB_RADIUS_RATIO = 6;
-
-export const drawDisplayOffLights = (
-  ctx: CanvasRenderingContext2D,
-  computedValues: SignComputedValues,
-  config: SignConfig
-) => {
-  const {
-    displayWidth,
-    displayHeight,
-    displayPaddingX,
-    displayPaddingY,
-    pixelSize,
-    pixelCountX,
-    pixelCountY,
-  } = computedValues;
-  const { colorHue, coloredOffLights } = config;
-
-  ctx.clearRect(0, 0, displayWidth, displayHeight);
-  ctx.fillStyle = COLORS.BACKGROUND;
-  ctx.fillRect(0, 0, displayWidth, displayHeight);
-
-  const bulbOffColorSaturation = coloredOffLights
-    ? COLOR_VALUES.BULB_OFF.saturation
-    : 0;
-
-  for (let x = 0; x < pixelCountX; x++) {
-    const pixelXPos = x * pixelSize + displayPaddingX;
-    const pixelXCenterPos = pixelXPos + pixelSize / 2;
-
-    for (let y = 0; y < pixelCountY; y++) {
-      const pixelYPos = y * pixelSize + displayPaddingY;
-      const pixelYCenterPos = pixelYPos + pixelSize / 2;
-
-      ctx.fillStyle = hslValuesToCss(
-        colorHue,
-        bulbOffColorSaturation,
-        COLOR_VALUES.BULB_OFF.lightness
-      );
-      ctx.beginPath();
-      ctx.arc(
-        pixelXCenterPos,
-        pixelYCenterPos,
-        pixelSize / PIXEL_TO_BULB_RADIUS_RATIO,
-        0,
-        2 * Math.PI
-      );
-      ctx.fill();
     }
   }
 };

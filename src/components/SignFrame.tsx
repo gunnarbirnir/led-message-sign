@@ -177,21 +177,11 @@ const FrameGlow = styled.div`
   position: absolute;
   top: 0;
   overflow: hidden;
-
-  & > div {
-    display: flex;
-    flex-direction: row;
-  }
 `;
 
 const FrameVerticalGlow = styled.div`
   position: absolute;
   overflow: hidden;
-
-  & > div {
-    display: flex;
-    flex-direction: row;
-  }
 `;
 
 const SignContent = styled.div`
