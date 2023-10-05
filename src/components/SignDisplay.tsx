@@ -11,6 +11,7 @@ import {
 } from "../utils/canvas";
 import { COLORS } from "../constants/colors";
 import Canvas from "./Canvas";
+import AnimationContainer from "./AnimationContainer";
 
 const SignDisplay: FC = () => {
   const { config, computedValues } = useSignContext();
@@ -23,7 +24,6 @@ const SignDisplay: FC = () => {
     displayPaddingY,
     pixelGridWidth,
   } = computedValues;
-
   const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
     useMemo(() => getSignIds(config.id), [config.id]);
   const onLightsCanvasChunks = getCanvasChunks(
@@ -58,14 +58,7 @@ const SignDisplay: FC = () => {
           width: pixelAreaWidth,
         }}
       >
-        <div
-          id={onLightsAnimationId}
-          style={{
-            width: pixelGridWidth,
-            willChange: "transform",
-            transform: "translate3d(0, 0, 0)",
-          }}
-        >
+        <AnimationContainer id={onLightsAnimationId} width={pixelGridWidth}>
           {onLightsCanvasChunks.map((chunk) => (
             <Canvas
               id={chunk.id}
@@ -74,7 +67,7 @@ const SignDisplay: FC = () => {
               width={chunk.end - chunk.start}
             />
           ))}
-        </div>
+        </AnimationContainer>
       </OnPixels>
     </StyledSignDisplay>
   );

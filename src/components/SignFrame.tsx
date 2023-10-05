@@ -14,6 +14,7 @@ import {
   drawFrameVerticalGlow,
 } from "../utils/canvas";
 import Canvas from "./Canvas";
+import AnimationContainer from "./AnimationContainer";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { config, computedValues } = useSignContext();
@@ -98,13 +99,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           left: frameSize + displayPaddingX,
         }}
       >
-        <div
+        <AnimationContainer
           id={horizontalGlowAnimationId}
-          style={{
-            width: pixelGridWidth,
-            willChange: "transform",
-            transform: "translate3d(0, 0, 0)",
-          }}
+          width={pixelGridWidth}
         >
           {frameGlowCanvasChunks.map((chunk) => (
             <Canvas
@@ -114,7 +111,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
               width={chunk.end - chunk.start}
             />
           ))}
-        </div>
+        </AnimationContainer>
       </FrameGlow>
       <FrameVerticalGlow
         style={{
@@ -124,13 +121,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           height: pixelAreaHeight,
         }}
       >
-        <div
+        <AnimationContainer
           id={leftGlowAnimationId}
-          style={{
-            width: pixelGrid.length * frameSize,
-            willChange: "transform",
-            transform: "translate3d(0, 0, 0)",
-          }}
+          width={pixelGrid.length * frameSize}
         >
           {frameVerticalLeftGlowCanvasChunks.map((chunk) => (
             <Canvas
@@ -140,7 +133,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
               width={chunk.end - chunk.start}
             />
           ))}
-        </div>
+        </AnimationContainer>
       </FrameVerticalGlow>
       <FrameVerticalGlow
         style={{
@@ -150,13 +143,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           height: pixelAreaHeight,
         }}
       >
-        <div
+        <AnimationContainer
           id={rightGlowAnimationId}
-          style={{
-            width: pixelGrid.length * frameSize,
-            willChange: "transform",
-            transform: "translate3d(0, 0, 0)",
-          }}
+          width={pixelGrid.length * frameSize}
         >
           {frameVerticalRightGlowCanvasChunks.map((chunk) => (
             <Canvas
@@ -166,7 +155,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
               width={chunk.end - chunk.start}
             />
           ))}
-        </div>
+        </AnimationContainer>
       </FrameVerticalGlow>
       <FrameLayer id={frameMaskingId} height={height} width={width} />
       <FrameLayer id={frameShadingId} height={height} width={width} />
