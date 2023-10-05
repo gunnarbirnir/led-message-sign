@@ -1,7 +1,8 @@
 import React, { FC, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
-import { useSignContext, useSignIds } from "../hooks";
+import { useSignContext } from "../hooks";
+import { getSignIds } from "../utils";
 import {
   getCanvasContext,
   drawDisplayOffLights,
@@ -23,14 +24,11 @@ const SignDisplay: FC = () => {
     pixelGridWidth,
   } = computedValues;
 
-  const {
+  const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
+    useMemo(() => getSignIds(config.id), [config.id]);
+  const onLightsCanvasChunks = getCanvasChunks(
     displayOnLightsId,
-    displayOffLightsId,
-    onLightsAnimationContainerId,
-  } = useSignIds();
-  const onLightsCanvasChunks = useMemo(
-    () => getCanvasChunks(displayOnLightsId, computedValues),
-    [displayOnLightsId, computedValues]
+    computedValues
   );
 
   useEffect(() => {
@@ -61,7 +59,7 @@ const SignDisplay: FC = () => {
         }}
       >
         <div
-          id={onLightsAnimationContainerId}
+          id={onLightsAnimationId}
           style={{
             width: pixelGridWidth,
             willChange: "transform",

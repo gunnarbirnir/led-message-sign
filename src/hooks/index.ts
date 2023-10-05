@@ -1,6 +1,5 @@
 import useObjectSize from "./useObjectSize";
 import useSignContext from "./useSignContext";
-import useAnimateSign from "./useAnimateSign";
-import useSignIds from "./useSignIds";
+import useSignAnimation from "./useSignAnimation";
 
-export { useObjectSize, useSignContext, useAnimateSign, useSignIds };
+export { useObjectSize, useSignContext, useSignAnimation };

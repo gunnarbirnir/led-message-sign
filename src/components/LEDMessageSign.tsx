@@ -1,9 +1,9 @@
-import React, { FC, memo, useRef, useMemo, useId, Fragment } from "react";
+import React, { FC, memo, useRef, useId, Fragment } from "react";
 
 import { BaseProps, LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
 import { calcComputedValues } from "../utils";
-import { useObjectSize, useAnimateSign } from "../hooks";
+import { useObjectSize, useSignAnimation } from "../hooks";
 import { SignContext } from "../context";
 import { FRAME_TO_HEIGHT_RATIO } from "../constants";
 import SignFrame from "./SignFrame";
@@ -19,34 +19,32 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   const { width: containerWidth } = useObjectSize(containerRef, [
     props.fullWidth,
   ]);
-  const sanitizedProps = useMemo(() => sanitizeProps(props), [props]);
-  const { fullWidth, hideFrame } = sanitizedProps;
 
-  const config = useMemo(
-    () => ({
-      ...sanitizedProps,
-      id: signId,
-      width: sanitizedProps.fullWidth ? containerWidth : sanitizedProps.width,
-      frameProportion: sanitizedProps.hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
-    }),
-    [signId, sanitizedProps, containerWidth]
-  );
-  const computedValues = useMemo(() => calcComputedValues(config), [config]);
+  const sanitizedProps = sanitizeProps(props);
+  const { hideFrame, fullWidth, width } = sanitizedProps;
   const Frame = hideFrame ? Fragment : SignFrame;
+  const containerStyle = {
+    ...style,
+    ...(fullWidth ? { width: "100%" } : {}),
+  };
 
-  useAnimateSign(config, computedValues);
+  const config = {
+    ...sanitizedProps,
+    id: signId,
+    width: fullWidth ? containerWidth : width,
+    frameProportion: hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
+  };
+  const computedValues = calcComputedValues(config);
+  useSignAnimation(config, computedValues);
 
+  // TODO: remove
   /* console.log("config: ", config);
   console.log("computedValues: ", computedValues);
   console.log("---------------"); */
 
   return (
     <SignContext.Provider value={{ config, computedValues }}>
-      <div
-        ref={containerRef}
-        className={className}
-        style={{ ...style, width: fullWidth ? "100%" : "revert" }}
-      >
+      <div ref={containerRef} className={className} style={containerStyle}>
         <Frame>
           <SignDisplay />
         </Frame>

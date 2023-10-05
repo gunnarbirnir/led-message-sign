@@ -2,10 +2,6 @@ import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
 import { PixelGrid, SignConfig } from "../types";
 
-export const generateId = (signId: string, baseId: string) => {
-  return `${baseId}-${signId}`;
-};
-
 export const hslValuesToCss = (
   hue: number,
   saturation: number = 100,
@@ -84,4 +80,24 @@ export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
     return false;
   }
   return !!pixelGrid[x][y];
+};
+
+export const getSignIds = (signId: string) => {
+  const generateId = (baseId: string) => {
+    return `${baseId}-${signId}`;
+  };
+
+  return {
+    displayOnLightsId: generateId("sign-display-on-lights"),
+    displayOffLightsId: generateId("sign-display-off-lights"),
+    onLightsAnimationId: generateId("on-lights-animation"),
+    frameGlowHorizontalId: generateId("sign-frame-glow-horizontal"),
+    frameGlowVerticalLeftId: generateId("sign-frame-glow-vertical-left"),
+    frameGlowVerticalRightId: generateId("sign-frame-glow-vertical-right"),
+    frameMaskingId: generateId("sign-frame-masking"),
+    frameShadingId: generateId("sign-frame-shading"),
+    horizontalGlowAnimationId: generateId("horizontal-glow-animation"),
+    leftGlowAnimationId: generateId("left-glow-animation"),
+    rightGlowAnimationId: generateId("right-glow-animation"),
+  };
 };

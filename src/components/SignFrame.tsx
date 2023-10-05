@@ -1,8 +1,9 @@
 import React, { FC, PropsWithChildren, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
-import { useSignContext, useSignIds } from "../hooks";
+import { useSignContext } from "../hooks";
 import { COLORS } from "../constants/colors";
+import { getSignIds } from "../utils";
 import {
   getCanvasChunks,
   getVerticalGlowCanvasChunks,
@@ -16,7 +17,7 @@ import Canvas from "./Canvas";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { config, computedValues } = useSignContext();
-  const { height, width } = config;
+  const { id, height, width } = config;
   const {
     frameSize,
     pixelGridWidth,
@@ -33,21 +34,22 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     frameGlowVerticalRightId,
     frameMaskingId,
     frameShadingId,
-    frameGlowHorizontalAnimationContainerId,
-    frameGlowVerticalLeftAnimationContainerId,
-    frameGlowVerticalRightAnimationContainerId,
-  } = useSignIds();
-  const frameGlowCanvasChunks = useMemo(
-    () => getCanvasChunks(frameGlowHorizontalId, computedValues),
-    [frameGlowHorizontalId, computedValues]
+    horizontalGlowAnimationId,
+    leftGlowAnimationId,
+    rightGlowAnimationId,
+  } = useMemo(() => getSignIds(id), [id]);
+
+  const frameGlowCanvasChunks = getCanvasChunks(
+    frameGlowHorizontalId,
+    computedValues
   );
-  const frameVerticalLeftGlowCanvasChunks = useMemo(
-    () => getVerticalGlowCanvasChunks(frameGlowVerticalLeftId, computedValues),
-    [frameGlowVerticalLeftId, computedValues]
+  const frameVerticalLeftGlowCanvasChunks = getVerticalGlowCanvasChunks(
+    frameGlowVerticalLeftId,
+    computedValues
   );
-  const frameVerticalRightGlowCanvasChunks = useMemo(
-    () => getVerticalGlowCanvasChunks(frameGlowVerticalRightId, computedValues),
-    [frameGlowVerticalRightId, computedValues]
+  const frameVerticalRightGlowCanvasChunks = getVerticalGlowCanvasChunks(
+    frameGlowVerticalRightId,
+    computedValues
   );
 
   useEffect(() => {
@@ -97,7 +99,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div
-          id={frameGlowHorizontalAnimationContainerId}
+          id={horizontalGlowAnimationId}
           style={{
             width: pixelGridWidth,
             willChange: "transform",
@@ -123,7 +125,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div
-          id={frameGlowVerticalLeftAnimationContainerId}
+          id={leftGlowAnimationId}
           style={{
             width: pixelGrid.length * frameSize,
             willChange: "transform",
@@ -149,7 +151,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div
-          id={frameGlowVerticalRightAnimationContainerId}
+          id={rightGlowAnimationId}
           style={{
             width: pixelGrid.length * frameSize,
             willChange: "transform",
