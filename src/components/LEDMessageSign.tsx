@@ -1,4 +1,4 @@
-import React, { FC, memo, useRef, useMemo, useId } from "react";
+import React, { FC, memo, useRef, useMemo, useId, Fragment } from "react";
 
 import { LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
@@ -16,7 +16,7 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
     props.fullWidth,
   ]);
   const sanitizedProps = useMemo(() => sanitizeProps(props), [props]);
-  const { fullWidth } = sanitizedProps;
+  const { fullWidth, hideFrame } = sanitizedProps;
 
   const config = useMemo(
     () => ({
@@ -28,6 +28,8 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
     [signId, sanitizedProps, containerWidth]
   );
   const computedValues = useMemo(() => calcComputedValues(config), [config]);
+  const Frame = hideFrame ? Fragment : SignFrame;
+
   useAnimateSign(config, computedValues);
 
   /* console.log("config: ", config);
@@ -37,9 +39,9 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
   return (
     <SignContext.Provider value={{ config, computedValues }}>
       <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
-        <SignFrame>
+        <Frame>
           <SignDisplay />
-        </SignFrame>
+        </Frame>
       </div>
     </SignContext.Provider>
   );
