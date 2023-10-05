@@ -1,3 +1,10 @@
+import { CSSProperties } from "react";
+
+export interface BaseProps {
+  style?: CSSProperties;
+  className?: string;
+}
+
 export interface LEDMessageSignProps {
   /** Message text. Max 100 characters. */
   text: string;

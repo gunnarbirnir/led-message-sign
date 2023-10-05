@@ -1,6 +1,6 @@
 import React, { FC, memo, useRef, useMemo, useId, Fragment } from "react";
 
-import { LEDMessageSignProps } from "../types";
+import { BaseProps, LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
 import { calcComputedValues } from "../utils";
 import { useObjectSize, useAnimateSign } from "../hooks";
@@ -9,7 +9,11 @@ import { FRAME_TO_HEIGHT_RATIO } from "../constants";
 import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
 
-const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
+const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
+  style,
+  className,
+  ...props
+}) => {
   const signId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const { width: containerWidth } = useObjectSize(containerRef, [
@@ -38,7 +42,11 @@ const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
 
   return (
     <SignContext.Provider value={{ config, computedValues }}>
-      <div ref={containerRef} style={fullWidth ? { width: "100%" } : undefined}>
+      <div
+        ref={containerRef}
+        className={className}
+        style={{ ...style, width: fullWidth ? "100%" : "revert" }}
+      >
         <Frame>
           <SignDisplay />
         </Frame>
