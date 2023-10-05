@@ -16,19 +16,22 @@ import AnimationContainer from "./AnimationContainer";
 const SignDisplay: FC = () => {
   const { config, computedValues } = useSignContext();
   const {
+    pixelSize,
     displayWidth,
     displayHeight,
     pixelAreaHeight,
     pixelAreaWidth,
     displayPaddingX,
     displayPaddingY,
+    pixelGrid,
     pixelGridWidth,
   } = computedValues;
+
   const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
     useMemo(() => getSignIds(config.id), [config.id]);
-  const onLightsCanvasChunks = getCanvasChunks(
-    displayOnLightsId,
-    computedValues
+  const onLightsCanvasChunks = useMemo(
+    () => getCanvasChunks(displayOnLightsId, pixelSize, pixelGrid.length),
+    [displayOnLightsId, pixelSize, pixelGrid.length]
   );
 
   useEffect(() => {

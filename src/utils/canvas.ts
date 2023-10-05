@@ -500,51 +500,24 @@ const CANVAS_CHUNK_SIZE = 4000 / CANVAS_SCALING;
 
 export const getCanvasChunks = (
   chunkBaseId: string,
-  computedValues: SignComputedValues
+  itemSize: number,
+  itemCount: number
 ) => {
-  const { pixelSize, pixelGrid, pixelGridWidth } = computedValues;
   const canvasChunks: CanvasChunk[] = [];
-
-  const pixelsPerChunk = Math.floor(CANVAS_CHUNK_SIZE / pixelSize);
-  const chunkWidth = pixelsPerChunk * pixelSize;
-  const chunkCount = Math.ceil(pixelGridWidth / chunkWidth);
+  const itemsPerChunk = Math.floor(CANVAS_CHUNK_SIZE / itemSize);
+  const chunkWidth = itemsPerChunk * itemSize;
+  const totalWidth = itemCount * itemSize;
+  const chunkCount = Math.ceil(totalWidth / chunkWidth);
 
   if (!chunkCount) {
     return [];
   }
 
   for (let i = 0; i < chunkCount; i++) {
-    const xStart = i * pixelsPerChunk;
-    const xEnd = Math.min(xStart + pixelsPerChunk, pixelGrid.length);
-    const start = xStart * pixelSize;
-    const end = xEnd * pixelSize;
-
-    canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
-  }
-
-  return canvasChunks;
-};
-
-export const getVerticalGlowCanvasChunks = (
-  chunkBaseId: string,
-  computedValues: SignComputedValues
-) => {
-  const { frameSize, pixelGrid, pixelGridWidth } = computedValues;
-  const canvasChunks: CanvasChunk[] = [];
-
-  const framesPerChunk = Math.floor(CANVAS_CHUNK_SIZE / frameSize);
-  const chunkWidth = framesPerChunk * frameSize;
-  const chunkCount = Math.ceil(pixelGridWidth / chunkWidth);
-
-  if (!chunkCount) {
-    return [];
-  }
-
-  for (let i = 0; i < chunkCount; i++) {
-    const xStart = i * framesPerChunk;
-    const xEnd = Math.min(xStart + framesPerChunk, pixelGrid.length);
-    const start = xStart * frameSize;
-    const end = xEnd * frameSize;
+    const xStart = i * itemsPerChunk;
+    const xEnd = Math.min(xStart + itemsPerChunk, itemCount);
+    const start = xStart * itemSize;
+    const end = xEnd * itemSize;
 
     canvasChunks.push({ id: `${chunkBaseId}-${i}`, start, end });
   }

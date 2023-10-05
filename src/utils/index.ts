@@ -88,14 +88,14 @@ export const getSignIds = (signId: string) => {
   };
 
   return {
-    displayOnLightsId: generateId("sign-display-on-lights"),
-    displayOffLightsId: generateId("sign-display-off-lights"),
+    displayOnLightsId: generateId("display-on-lights"),
+    displayOffLightsId: generateId("display-off-lights"),
     onLightsAnimationId: generateId("on-lights-animation"),
-    frameGlowHorizontalId: generateId("sign-frame-glow-horizontal"),
-    frameGlowVerticalLeftId: generateId("sign-frame-glow-vertical-left"),
-    frameGlowVerticalRightId: generateId("sign-frame-glow-vertical-right"),
-    frameMaskingId: generateId("sign-frame-masking"),
-    frameShadingId: generateId("sign-frame-shading"),
+    frameHorizontalGlowId: generateId("frame-horizontal-glow"),
+    frameLeftGlowId: generateId("frame-left-glow"),
+    frameRightGlowId: generateId("frame-right-glow"),
+    frameMaskingId: generateId("frame-masking"),
+    frameShadingId: generateId("frame-shading"),
     horizontalGlowAnimationId: generateId("horizontal-glow-animation"),
     leftGlowAnimationId: generateId("left-glow-animation"),
     rightGlowAnimationId: generateId("right-glow-animation"),

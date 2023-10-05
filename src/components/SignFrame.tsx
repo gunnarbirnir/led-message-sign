@@ -6,7 +6,6 @@ import { COLORS } from "../constants/colors";
 import { getSignIds } from "../utils";
 import {
   getCanvasChunks,
-  getVerticalGlowCanvasChunks,
   getCanvasContext,
   drawFrameMasking,
   drawFrameShading,
@@ -20,6 +19,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { config, computedValues } = useSignContext();
   const { id, height, width } = config;
   const {
+    pixelSize,
     frameSize,
     pixelGridWidth,
     displayPaddingX,
@@ -30,9 +30,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   } = computedValues;
 
   const {
-    frameGlowHorizontalId,
-    frameGlowVerticalLeftId,
-    frameGlowVerticalRightId,
+    frameHorizontalGlowId,
+    frameLeftGlowId,
+    frameRightGlowId,
     frameMaskingId,
     frameShadingId,
     horizontalGlowAnimationId,
@@ -40,17 +40,17 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     rightGlowAnimationId,
   } = useMemo(() => getSignIds(id), [id]);
 
-  const frameGlowCanvasChunks = getCanvasChunks(
-    frameGlowHorizontalId,
-    computedValues
+  const horizontalGlowCanvasChunks = useMemo(
+    () => getCanvasChunks(frameHorizontalGlowId, pixelSize, pixelGrid.length),
+    [frameHorizontalGlowId, pixelGrid.length, pixelSize]
   );
-  const frameVerticalLeftGlowCanvasChunks = getVerticalGlowCanvasChunks(
-    frameGlowVerticalLeftId,
-    computedValues
+  const leftGlowCanvasChunks = useMemo(
+    () => getCanvasChunks(frameLeftGlowId, frameSize, pixelGrid.length),
+    [frameLeftGlowId, frameSize, pixelGrid.length]
   );
-  const frameVerticalRightGlowCanvasChunks = getVerticalGlowCanvasChunks(
-    frameGlowVerticalRightId,
-    computedValues
+  const rightGlowCanvasChunks = useMemo(
+    () => getCanvasChunks(frameRightGlowId, frameSize, pixelGrid.length),
+    [frameRightGlowId, frameSize, pixelGrid.length]
   );
 
   useEffect(() => {
@@ -66,24 +66,20 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   }, [frameMaskingId, frameShadingId, computedValues]);
 
   useEffect(() => {
-    drawFrameGlow(frameGlowCanvasChunks, computedValues, config);
+    drawFrameGlow(horizontalGlowCanvasChunks, computedValues, config);
+    drawFrameVerticalGlow(leftGlowCanvasChunks, computedValues, config);
     drawFrameVerticalGlow(
-      frameVerticalLeftGlowCanvasChunks,
-      computedValues,
-      config
-    );
-    drawFrameVerticalGlow(
-      frameVerticalRightGlowCanvasChunks,
+      rightGlowCanvasChunks,
       computedValues,
       config,
       "right"
     );
   }, [
-    frameGlowCanvasChunks,
-    frameVerticalLeftGlowCanvasChunks,
-    frameVerticalRightGlowCanvasChunks,
     computedValues,
     config,
+    horizontalGlowCanvasChunks,
+    leftGlowCanvasChunks,
+    rightGlowCanvasChunks,
   ]);
 
   if (!width) {
@@ -103,7 +99,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           id={horizontalGlowAnimationId}
           width={pixelGridWidth}
         >
-          {frameGlowCanvasChunks.map((chunk) => (
+          {horizontalGlowCanvasChunks.map((chunk) => (
             <Canvas
               id={chunk.id}
               key={chunk.id}
@@ -125,7 +121,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           id={leftGlowAnimationId}
           width={pixelGrid.length * frameSize}
         >
-          {frameVerticalLeftGlowCanvasChunks.map((chunk) => (
+          {leftGlowCanvasChunks.map((chunk) => (
             <Canvas
               id={chunk.id}
               key={chunk.id}
@@ -147,7 +143,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           id={rightGlowAnimationId}
           width={pixelGrid.length * frameSize}
         >
-          {frameVerticalRightGlowCanvasChunks.map((chunk) => (
+          {rightGlowCanvasChunks.map((chunk) => (
             <Canvas
               id={chunk.id}
               key={chunk.id}
