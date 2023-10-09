@@ -390,6 +390,28 @@ export const drawFrameVerticalGlow = (
 };
 
 const MASKING_GRADIENT_POSITION = 0.2;
+const TRANSPARENT_FRAME_COLOR = hslValuesToCss(
+  COLOR_VALUES.FRAME.hue,
+  COLOR_VALUES.FRAME.saturation,
+  COLOR_VALUES.FRAME.lightness,
+  0
+);
+
+const addMaskingColorStops = (gradient: CanvasGradient) => {
+  gradient.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
+  gradient.addColorStop(1, TRANSPARENT_FRAME_COLOR);
+};
+
+const addGlowMaskingColorStops = (
+  gradient: CanvasGradient,
+  start: number,
+  end: number
+) => {
+  gradient.addColorStop(start, COLORS.FRAME);
+  gradient.addColorStop(end, TRANSPARENT_FRAME_COLOR);
+  gradient.addColorStop(1 - end, TRANSPARENT_FRAME_COLOR);
+  gradient.addColorStop(1 - start, COLORS.FRAME);
+};
 
 export const drawFrameMasking = (
   ctx: CanvasRenderingContext2D,
@@ -409,18 +431,11 @@ export const drawFrameMasking = (
     drawFrameBottomBorder,
     drawFrameLeftBorder,
   } = getFrameUtils(ctx, computedValues);
-  const transparentColor = hslValuesToCss(
-    COLOR_VALUES.FRAME.hue,
-    COLOR_VALUES.FRAME.saturation,
-    COLOR_VALUES.FRAME.lightness,
-    0
-  );
 
   ctx.clearRect(0, 0, signWidth, signHeight);
 
   const maskingTop = ctx.createLinearGradient(0, 0, 0, frameSize);
-  maskingTop.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingTop.addColorStop(1, transparentColor);
+  addMaskingColorStops(maskingTop);
 
   const maskingRight = ctx.createLinearGradient(
     signWidth,
@@ -428,8 +443,7 @@ export const drawFrameMasking = (
     signWidth - frameSize,
     0
   );
-  maskingRight.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingRight.addColorStop(1, transparentColor);
+  addMaskingColorStops(maskingRight);
 
   const maskingBottom = ctx.createLinearGradient(
     signWidth,
@@ -437,12 +451,10 @@ export const drawFrameMasking = (
     signWidth,
     signHeight - frameSize
   );
-  maskingBottom.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingBottom.addColorStop(1, transparentColor);
+  addMaskingColorStops(maskingBottom);
 
   const maskingLeft = ctx.createLinearGradient(0, 0, frameSize, 0);
-  maskingLeft.addColorStop(MASKING_GRADIENT_POSITION, COLORS.FRAME);
-  maskingLeft.addColorStop(1, transparentColor);
+  addMaskingColorStops(maskingLeft);
 
   drawFrameTopBorder(maskingTop);
   drawFrameRightBorder(maskingRight);
@@ -452,18 +464,12 @@ export const drawFrameMasking = (
   const glowMaskingX = ctx.createLinearGradient(0, 0, signWidth, 0);
   const glowMaskingXStart = (frameSize + displayPaddingX) / signWidth;
   const glowMaskingXEnd = glowMaskingXStart + pixelSize / signWidth;
-  glowMaskingX.addColorStop(glowMaskingXStart, COLORS.FRAME);
-  glowMaskingX.addColorStop(glowMaskingXEnd, transparentColor);
-  glowMaskingX.addColorStop(1 - glowMaskingXEnd, transparentColor);
-  glowMaskingX.addColorStop(1 - glowMaskingXStart, COLORS.FRAME);
+  addGlowMaskingColorStops(glowMaskingX, glowMaskingXStart, glowMaskingXEnd);
 
   const glowMaskingY = ctx.createLinearGradient(0, 0, 0, signHeight);
   const glowMaskingYStart = (frameSize + displayPaddingY) / signHeight;
   const glowMaskingYEnd = glowMaskingYStart + pixelSize / signHeight;
-  glowMaskingY.addColorStop(glowMaskingYStart, COLORS.FRAME);
-  glowMaskingY.addColorStop(glowMaskingYEnd, transparentColor);
-  glowMaskingY.addColorStop(1 - glowMaskingYEnd, transparentColor);
-  glowMaskingY.addColorStop(1 - glowMaskingYStart, COLORS.FRAME);
+  addGlowMaskingColorStops(glowMaskingY, glowMaskingYStart, glowMaskingYEnd);
 
   drawFrameTopBorder(glowMaskingX);
   drawFrameRightBorder(glowMaskingY);
@@ -490,8 +496,19 @@ const VERTICAL_SHADE_COLOR = hslValuesToCss(
   COLOR_VALUES.FRAME.lightness - 10,
   FRAME_SHADING_OPACITY
 );
-const HORIZONTAL_SHADE_SIZE = 0.3;
+const HORIZONTAL_SHADE_SIZE = 0.2;
 const VERTICAL_SHADE_SIZE = 0.4;
+
+const addShadingColorStops = (
+  gradient: CanvasGradient,
+  shadeColor: string,
+  shadeSize: number
+) => {
+  gradient.addColorStop(0, shadeColor);
+  gradient.addColorStop(shadeSize, FRAME_SHADE_COLOR);
+  gradient.addColorStop(1 - shadeSize, FRAME_SHADE_COLOR);
+  gradient.addColorStop(1, shadeColor);
+};
 
 export const drawFrameShading = (
   ctx: CanvasRenderingContext2D,
@@ -508,16 +525,10 @@ export const drawFrameShading = (
   ctx.clearRect(0, 0, signWidth, signHeight);
 
   const shadingX = ctx.createLinearGradient(0, 0, signWidth, 0);
-  shadingX.addColorStop(0, HORIZONTAL_SHADE_COLOR);
-  shadingX.addColorStop(HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);
-  shadingX.addColorStop(1 - HORIZONTAL_SHADE_SIZE, FRAME_SHADE_COLOR);
-  shadingX.addColorStop(1, HORIZONTAL_SHADE_COLOR);
+  addShadingColorStops(shadingX, HORIZONTAL_SHADE_COLOR, HORIZONTAL_SHADE_SIZE);
 
   const shadingY = ctx.createLinearGradient(0, 0, 0, signHeight);
-  shadingY.addColorStop(0, VERTICAL_SHADE_COLOR);
-  shadingY.addColorStop(VERTICAL_SHADE_SIZE, FRAME_SHADE_COLOR);
-  shadingY.addColorStop(1 - VERTICAL_SHADE_SIZE, FRAME_SHADE_COLOR);
-  shadingY.addColorStop(1, VERTICAL_SHADE_COLOR);
+  addShadingColorStops(shadingY, VERTICAL_SHADE_COLOR, VERTICAL_SHADE_SIZE);
 
   drawFrameTopBorder(shadingX);
   drawFrameRightBorder(shadingY);
