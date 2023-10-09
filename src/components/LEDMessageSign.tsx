@@ -10,7 +10,7 @@ import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
 
 const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
-  style,
+  style = {},
   className,
   ...props
 }) => {
