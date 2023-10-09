@@ -21,8 +21,8 @@ const AnimationContainer: FC<PropsWithChildren<AnimationContainerProps>> = ({
 const StyledAnimationContainer = styled.div`
   display: flex;
   flex-direction: row;
-  will-change: "transform";
-  // transform: "translate3d(0, 0, 0)",
+  will-change: transform;
+  // transform: translate3d(0, 0, 0);
 `;
 
 export default AnimationContainer;
