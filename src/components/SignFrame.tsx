@@ -18,8 +18,9 @@ import CanvasChunks from "./CanvasChunks";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { config, computedValues } = useSignContext();
-  const { id, height, width } = config;
   const {
+    signHeight,
+    signWidth,
     pixelSize,
     frameSize,
     pixelGridWidth,
@@ -39,7 +40,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     horizontalGlowAnimationId,
     leftGlowAnimationId,
     rightGlowAnimationId,
-  } = useMemo(() => getSignIds(id), [id]);
+  } = useMemo(() => getSignIds(config.id), [config.id]);
 
   const horizontalGlowCanvasChunks = useMemo(
     () => getCanvasChunks(frameHorizontalGlowId, pixelSize, pixelGrid.length),
@@ -91,15 +92,15 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     rightGlowCanvasChunks,
   ]);
 
-  if (!width) {
+  if (!signWidth) {
     return null;
   }
 
   return (
-    <StyledSignFrame style={{ height, width }}>
+    <StyledSignFrame style={{ height: signHeight, width: signWidth }}>
       <HorizontalGlow
         style={{
-          height,
+          height: signHeight,
           width: pixelAreaWidth,
           left: frameSize + displayPaddingX,
         }}
@@ -108,7 +109,10 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           id={horizontalGlowAnimationId}
           width={pixelGridWidth}
         >
-          <CanvasChunks chunks={horizontalGlowCanvasChunks} height={height} />
+          <CanvasChunks
+            chunks={horizontalGlowCanvasChunks}
+            height={signHeight}
+          />
         </AnimationContainer>
       </HorizontalGlow>
 
@@ -124,7 +128,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         </AnimationContainer>
       </VerticalGlow>
 
-      <VerticalGlow style={{ ...verticalGlowStyle, left: width - frameSize }}>
+      <VerticalGlow
+        style={{ ...verticalGlowStyle, left: signWidth - frameSize }}
+      >
         <AnimationContainer
           id={rightGlowAnimationId}
           width={pixelGrid.length * frameSize}
@@ -136,8 +142,8 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         </AnimationContainer>
       </VerticalGlow>
 
-      <FrameLayer id={frameMaskingId} height={height} width={width} />
-      <FrameLayer id={frameShadingId} height={height} width={width} />
+      <FrameLayer id={frameMaskingId} height={signHeight} width={signWidth} />
+      <FrameLayer id={frameShadingId} height={signHeight} width={signWidth} />
       <SignContent style={{ top: frameSize, left: frameSize }}>
         {children}
       </SignContent>
