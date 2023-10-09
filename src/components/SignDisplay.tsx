@@ -3,12 +3,8 @@ import styled from "styled-components";
 
 import { useSignContext } from "../hooks";
 import { getSignIds } from "../utils";
-import {
-  getCanvasContext,
-  drawDisplayOffLights,
-  getCanvasChunks,
-  drawDisplayOnLights,
-} from "../utils/canvas";
+import { getCanvasContext, getCanvasChunks } from "../utils/canvas";
+import { drawDisplayOffLights, drawDisplayOnLights } from "../utils/display";
 import { COLORS } from "../constants/colors";
 import Canvas from "./Canvas";
 import AnimationContainer from "./AnimationContainer";

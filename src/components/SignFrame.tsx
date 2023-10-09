@@ -4,14 +4,13 @@ import styled from "styled-components";
 import { useSignContext } from "../hooks";
 import { COLORS } from "../constants/colors";
 import { getSignIds } from "../utils";
+import { getCanvasChunks, getCanvasContext } from "../utils/canvas";
 import {
-  getCanvasChunks,
-  getCanvasContext,
   drawFrameMasking,
   drawFrameShading,
   drawFrameGlow,
   drawFrameVerticalGlow,
-} from "../utils/canvas";
+} from "../utils/frame";
 import Canvas from "./Canvas";
 import AnimationContainer from "./AnimationContainer";
 import CanvasChunks from "./CanvasChunks";
