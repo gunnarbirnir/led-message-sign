@@ -14,6 +14,7 @@ import {
 } from "../utils/canvas";
 import Canvas from "./Canvas";
 import AnimationContainer from "./AnimationContainer";
+import CanvasChunks from "./CanvasChunks";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { config, computedValues } = useSignContext();
@@ -42,7 +43,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
 
   const horizontalGlowCanvasChunks = useMemo(
     () => getCanvasChunks(frameHorizontalGlowId, pixelSize, pixelGrid.length),
-    [frameHorizontalGlowId, pixelGrid.length, pixelSize]
+    [frameHorizontalGlowId, pixelSize, pixelGrid.length]
   );
   const leftGlowCanvasChunks = useMemo(
     () => getCanvasChunks(frameLeftGlowId, frameSize, pixelGrid.length),
@@ -51,6 +52,14 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const rightGlowCanvasChunks = useMemo(
     () => getCanvasChunks(frameRightGlowId, frameSize, pixelGrid.length),
     [frameRightGlowId, frameSize, pixelGrid.length]
+  );
+  const verticalGlowStyle = useMemo(
+    () => ({
+      top: frameSize + displayPaddingY,
+      width: frameSize,
+      height: pixelAreaHeight,
+    }),
+    [frameSize, displayPaddingY, pixelAreaHeight]
   );
 
   useEffect(() => {
@@ -88,7 +97,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <StyledSignFrame style={{ height, width }}>
-      <FrameGlow
+      <HorizontalGlow
         style={{
           height,
           width: pixelAreaWidth,
@@ -99,60 +108,34 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
           id={horizontalGlowAnimationId}
           width={pixelGridWidth}
         >
-          {horizontalGlowCanvasChunks.map((chunk) => (
-            <Canvas
-              id={chunk.id}
-              key={chunk.id}
-              height={height}
-              width={chunk.end - chunk.start}
-            />
-          ))}
+          <CanvasChunks chunks={horizontalGlowCanvasChunks} height={height} />
         </AnimationContainer>
-      </FrameGlow>
-      <FrameVerticalGlow
-        style={{
-          top: frameSize + displayPaddingY,
-          left: 0,
-          width: frameSize,
-          height: pixelAreaHeight,
-        }}
-      >
+      </HorizontalGlow>
+
+      <VerticalGlow style={{ ...verticalGlowStyle, left: 0 }}>
         <AnimationContainer
           id={leftGlowAnimationId}
           width={pixelGrid.length * frameSize}
         >
-          {leftGlowCanvasChunks.map((chunk) => (
-            <Canvas
-              id={chunk.id}
-              key={chunk.id}
-              height={pixelAreaHeight}
-              width={chunk.end - chunk.start}
-            />
-          ))}
+          <CanvasChunks
+            chunks={leftGlowCanvasChunks}
+            height={pixelAreaHeight}
+          />
         </AnimationContainer>
-      </FrameVerticalGlow>
-      <FrameVerticalGlow
-        style={{
-          top: frameSize + displayPaddingY,
-          left: width - frameSize,
-          width: frameSize,
-          height: pixelAreaHeight,
-        }}
-      >
+      </VerticalGlow>
+
+      <VerticalGlow style={{ ...verticalGlowStyle, left: width - frameSize }}>
         <AnimationContainer
           id={rightGlowAnimationId}
           width={pixelGrid.length * frameSize}
         >
-          {rightGlowCanvasChunks.map((chunk) => (
-            <Canvas
-              id={chunk.id}
-              key={chunk.id}
-              height={pixelAreaHeight}
-              width={chunk.end - chunk.start}
-            />
-          ))}
+          <CanvasChunks
+            chunks={rightGlowCanvasChunks}
+            height={pixelAreaHeight}
+          />
         </AnimationContainer>
-      </FrameVerticalGlow>
+      </VerticalGlow>
+
       <FrameLayer id={frameMaskingId} height={height} width={width} />
       <FrameLayer id={frameShadingId} height={height} width={width} />
       <SignContent style={{ top: frameSize, left: frameSize }}>
@@ -167,21 +150,21 @@ const StyledSignFrame = styled.div`
   background-color: ${COLORS.FRAME};
 `;
 
+const HorizontalGlow = styled.div`
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+`;
+
+const VerticalGlow = styled.div`
+  position: absolute;
+  overflow: hidden;
+`;
+
 const FrameLayer = styled(Canvas)`
   position: absolute;
   top: 0;
   left: 0;
-`;
-
-const FrameGlow = styled.div`
-  position: absolute;
-  top: 0;
-  overflow: hidden;
-`;
-
-const FrameVerticalGlow = styled.div`
-  position: absolute;
-  overflow: hidden;
 `;
 
 const SignContent = styled.div`

@@ -12,6 +12,7 @@ import {
 import { COLORS } from "../constants/colors";
 import Canvas from "./Canvas";
 import AnimationContainer from "./AnimationContainer";
+import CanvasChunks from "./CanvasChunks";
 
 const SignDisplay: FC = () => {
   const { config, computedValues } = useSignContext();
@@ -62,14 +63,10 @@ const SignDisplay: FC = () => {
         }}
       >
         <AnimationContainer id={onLightsAnimationId} width={pixelGridWidth}>
-          {onLightsCanvasChunks.map((chunk) => (
-            <Canvas
-              id={chunk.id}
-              key={chunk.id}
-              height={pixelAreaHeight}
-              width={chunk.end - chunk.start}
-            />
-          ))}
+          <CanvasChunks
+            chunks={onLightsCanvasChunks}
+            height={pixelAreaHeight}
+          />
         </AnimationContainer>
       </OnPixels>
     </StyledSignDisplay>
