@@ -1,6 +1,6 @@
 {
   "name": "@gunnarbirnir/led-message-sign",
-  "version": "0.1.22",
+  "version": "0.2.0",
   "license": "MIT",
   "author": "Gunnar Olafsson",
   "main": "dist/index.cjs.js",
