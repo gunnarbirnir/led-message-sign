@@ -37,11 +37,6 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   const computedValues = calcComputedValues(config);
   useSignAnimation(config, computedValues);
 
-  // TODO: remove
-  /* console.log("config: ", config);
-  console.log("computedValues: ", computedValues);
-  console.log("---------------"); */
-
   return (
     <SignContext.Provider value={{ config, computedValues }}>
       <div ref={containerRef} className={className} style={containerStyle}>
