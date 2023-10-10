@@ -92,9 +92,11 @@ const useSignAnimation = (
         try {
           await onLightsAnimation.ready;
           const { startTime } = onLightsAnimation;
-          const startTimeNum = (startTime ?? 0) as number;
           const roundedStartTime =
-            Math.ceil(startTimeNum / updateDuration) * updateDuration;
+            startTime !== null
+              ? Math.ceil((startTime as number) / updateDuration) *
+                updateDuration
+              : null;
 
           onLightsAnimation.startTime = roundedStartTime;
           if (horizontalGlowAnimation) {
