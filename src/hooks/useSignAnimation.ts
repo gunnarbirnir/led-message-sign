@@ -92,6 +92,7 @@ const useSignAnimation = (
         try {
           await onLightsAnimation.ready;
           const { startTime } = onLightsAnimation;
+          // Sync to animation frame
           const roundedStartTime =
             startTime !== null
               ? Math.ceil((startTime as number) / updateDuration) *
