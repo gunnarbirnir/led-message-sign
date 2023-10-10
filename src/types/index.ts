@@ -1,3 +1,10 @@
+import { CSSProperties } from "react";
+
+export interface BaseProps {
+  style?: CSSProperties;
+  className?: string;
+}
+
 export interface LEDMessageSignProps {
   /** Message text. Max 100 characters. */
   text: string;
@@ -5,15 +12,15 @@ export interface LEDMessageSignProps {
   height?: number;
   /** Sign width. Default is 800. */
   width?: number;
-  /** Make sign fill available space. If true width prop will be ignored. Default is false.  */
+  /** Make sign fill available space. If true width prop will be ignored. Default is false. */
   fullWidth?: boolean;
   /** Hue value for HSL color. Default is 0. */
   colorHue?: number;
-  /** Hide sign frame. Default is false.  */
+  /** Hide sign frame. Default is false. */
   hideFrame?: boolean;
-  /** Should the off lights be colored. Default is true.  */
+  /** Should the off lights be colored. Default is true. */
   coloredOffLights?: boolean;
-  /** How many animation frames pass between sign updates. Default is 3. */
+  /** How many animation frames pass between sign updates. Default is 6. */
   animationFramesPerUpdate?: number;
 }
 
@@ -36,7 +43,7 @@ export interface SignComputedValues {
   pixelCountX: number;
   pixelCountY: number;
   pixelGrid: PixelGrid;
-  imageWidth: number;
+  pixelGridWidth: number;
 }
 
 export type Tuple = [number, number];
@@ -56,8 +63,8 @@ export type Alphabet = { [letter: string]: Letter };
 
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 
-export interface CanvasImageChunk {
-  canvas: HTMLCanvasElement;
+export interface CanvasChunk {
+  id: string;
   start: number;
   end: number;
 }

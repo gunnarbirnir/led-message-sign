@@ -1,52 +1,51 @@
-import React, { FC, memo, useRef, useMemo, useId } from "react";
-import styled from "styled-components";
+import React, { FC, memo, useRef, useId, Fragment } from "react";
 
-import { LEDMessageSignProps } from "../types";
+import { BaseProps, LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
-import { useObjectSize, useRenderCanvas } from "../hooks";
-import { SignConfigContext } from "../context";
-import { FRAME_PROPORTION } from "../constants";
+import { calcComputedValues } from "../utils";
+import { useObjectSize, useSignAnimation } from "../hooks";
+import { SignContext } from "../context";
+import { FRAME_TO_HEIGHT_RATIO } from "../constants";
 import SignFrame from "./SignFrame";
 import SignDisplay from "./SignDisplay";
 
-const LEDMessageSign: FC<LEDMessageSignProps> = (props) => {
+const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
+  style = {},
+  className,
+  ...props
+}) => {
   const signId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const { width: containerWidth } = useObjectSize(containerRef, [
     props.fullWidth,
   ]);
-  const sanitizedProps = useMemo(() => sanitizeProps(props), [props]);
-  const { fullWidth } = sanitizedProps;
 
-  const config = useMemo(
-    () => ({
-      ...sanitizedProps,
-      id: signId,
-      width: sanitizedProps.fullWidth ? containerWidth : sanitizedProps.width,
-      frameProportion: sanitizedProps.hideFrame ? 0 : FRAME_PROPORTION,
-    }),
-    [signId, sanitizedProps, containerWidth]
-  );
-  useRenderCanvas(config);
+  const sanitizedProps = sanitizeProps(props);
+  const { hideFrame, fullWidth, width } = sanitizedProps;
+  const Frame = hideFrame ? Fragment : SignFrame;
+  const containerStyle = {
+    ...style,
+    ...(fullWidth ? { width: "100%" } : {}),
+  };
+
+  const config = {
+    ...sanitizedProps,
+    id: signId,
+    width: fullWidth ? containerWidth : width,
+    frameProportion: hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
+  };
+  const computedValues = calcComputedValues(config);
+  useSignAnimation(config, computedValues);
 
   return (
-    <SignConfigContext.Provider value={config}>
-      <StyledLEDMessageSign
-        ref={containerRef}
-        style={fullWidth ? { width: "100%" } : undefined}
-      >
-        <SignFrame>
+    <SignContext.Provider value={{ config, computedValues }}>
+      <div ref={containerRef} className={className} style={containerStyle}>
+        <Frame>
           <SignDisplay />
-        </SignFrame>
-      </StyledLEDMessageSign>
-    </SignConfigContext.Provider>
+        </Frame>
+      </div>
+    </SignContext.Provider>
   );
 };
-
-const StyledLEDMessageSign = styled.div`
-  & > * {
-    box-sizing: border-box;
-  }
-`;
 
 export default memo(LEDMessageSign);

@@ -30,7 +30,7 @@ export const sanitizeProps = ({
     hideFrame,
     coloredOffLights,
     animationFramesPerUpdate: sanitizeMinMaxValue(
-      Math.round(animationFramesPerUpdate),
+      animationFramesPerUpdate,
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE,
       MAX_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
