@@ -10,13 +10,17 @@ const useSignAnimation = (
   { id, animationFramesPerUpdate }: SignConfig,
   { pixelSize, pixelGrid, frameSize }: SignComputedValues
 ) => {
+  const updateDuration = useMemo(
+    () => FRAME_DURATION * animationFramesPerUpdate,
+    [animationFramesPerUpdate]
+  );
   const animationOptions = useMemo(
     () => ({
-      duration: pixelGrid.length * FRAME_DURATION * animationFramesPerUpdate,
+      duration: pixelGrid.length * updateDuration,
       easing: `steps(${pixelGrid.length})`,
       iterations: Infinity,
     }),
-    [animationFramesPerUpdate, pixelGrid.length]
+    [pixelGrid.length, updateDuration]
   );
 
   const calcKeyframes = useCallback(
@@ -88,15 +92,19 @@ const useSignAnimation = (
         try {
           await onLightsAnimation.ready;
           const { startTime } = onLightsAnimation;
+          const startTimeNum = (startTime ?? 0) as number;
+          const roundedStartTime =
+            Math.ceil(startTimeNum / updateDuration) * updateDuration;
 
+          onLightsAnimation.startTime = roundedStartTime;
           if (horizontalGlowAnimation) {
-            horizontalGlowAnimation.startTime = startTime;
+            horizontalGlowAnimation.startTime = roundedStartTime;
           }
           if (leftGlowAnimation) {
-            leftGlowAnimation.startTime = startTime;
+            leftGlowAnimation.startTime = roundedStartTime;
           }
           if (rightGlowAnimation) {
-            rightGlowAnimation.startTime = startTime;
+            rightGlowAnimation.startTime = roundedStartTime;
           }
         } catch {}
       }
@@ -117,7 +125,7 @@ const useSignAnimation = (
         rightGlowAnimation.cancel();
       }
     };
-  }, [id, animationOptions, pixelKeyframes, frameKeyframes]);
+  }, [id, animationOptions, pixelKeyframes, frameKeyframes, updateDuration]);
 };
 
 export default useSignAnimation;

@@ -8,7 +8,7 @@ import { getCanvasChunks, getCanvasContext } from "../utils/canvas";
 import {
   drawFrameMasking,
   drawFrameShading,
-  drawFrameGlow,
+  drawFrameHorizontalGlow,
   drawFrameVerticalGlow,
 } from "../utils/frame";
 import Canvas from "./Canvas";
@@ -75,7 +75,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   }, [frameMaskingId, frameShadingId, computedValues]);
 
   useEffect(() => {
-    drawFrameGlow(horizontalGlowCanvasChunks, computedValues, config);
+    drawFrameHorizontalGlow(horizontalGlowCanvasChunks, computedValues, config);
     drawFrameVerticalGlow(leftGlowCanvasChunks, computedValues, config);
     drawFrameVerticalGlow(
       rightGlowCanvasChunks,

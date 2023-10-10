@@ -227,7 +227,7 @@ export const drawFrameShading = (
   drawFrameLeftBorder(shadingY);
 };
 
-export const drawFrameGlow = (
+export const drawFrameHorizontalGlow = (
   canvasChunks: CanvasChunk[],
   computedValues: SignComputedValues,
   config: SignConfig
