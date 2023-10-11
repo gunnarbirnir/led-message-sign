@@ -40,9 +40,11 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   return (
     <SignContext.Provider value={{ config, computedValues }}>
       <div ref={containerRef} className={className} style={containerStyle}>
-        <Frame>
-          <SignDisplay />
-        </Frame>
+        {computedValues.signWidth !== 0 && (
+          <Frame>
+            <SignDisplay />
+          </Frame>
+        )}
       </div>
     </SignContext.Provider>
   );
