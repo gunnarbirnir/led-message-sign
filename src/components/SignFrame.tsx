@@ -91,10 +91,6 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     rightGlowCanvasChunks,
   ]);
 
-  if (!signWidth) {
-    return null;
-  }
-
   return (
     <StyledSignFrame style={{ height: signHeight, width: signWidth }}>
       <HorizontalGlow

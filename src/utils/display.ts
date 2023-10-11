@@ -77,7 +77,7 @@ export const drawDisplayOnLights = (
 
       if (ctx) {
         ctx.clearRect(
-          canvasChunks[chunkIdx].start,
+          0,
           0,
           canvasChunks[chunkIdx].end - canvasChunks[chunkIdx].start,
           pixelAreaHeight
