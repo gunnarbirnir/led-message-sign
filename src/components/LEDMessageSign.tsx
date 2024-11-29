@@ -24,6 +24,7 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   const { hideFrame, fullWidth, width } = sanitizedProps;
   const Frame = hideFrame ? Fragment : SignFrame;
   const containerStyle = {
+    overflow: "hidden",
     ...style,
     ...(fullWidth ? { width: "100%" } : {}),
   };
