@@ -5,13 +5,12 @@ import { useSignContext } from "../hooks";
 import { getSignIds } from "../utils";
 import { getCanvasContext, getCanvasChunks } from "../utils/canvas";
 import { drawDisplayOffLights, drawDisplayOnLights } from "../utils/display";
-import { COLORS } from "../constants/colors";
 import Canvas from "./Canvas";
 import AnimationContainer from "./AnimationContainer";
 import CanvasChunks from "./CanvasChunks";
 
 const SignDisplay: FC = () => {
-  const { config, computedValues } = useSignContext();
+  const { config, computedValues, colors } = useSignContext();
   const {
     pixelSize,
     displayWidth,
@@ -35,16 +34,22 @@ const SignDisplay: FC = () => {
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
 
     if (displayOffLightsCtx) {
-      drawDisplayOffLights(displayOffLightsCtx, computedValues, config);
+      drawDisplayOffLights(displayOffLightsCtx, computedValues, colors);
     }
-  }, [displayOffLightsId, computedValues, config]);
+  }, [displayOffLightsId, computedValues, colors]);
 
   useEffect(() => {
-    drawDisplayOnLights(onLightsCanvasChunks, computedValues, config);
-  }, [onLightsCanvasChunks, computedValues, config]);
+    drawDisplayOnLights(onLightsCanvasChunks, computedValues, colors);
+  }, [onLightsCanvasChunks, computedValues, colors]);
 
   return (
-    <StyledSignDisplay style={{ width: displayWidth, height: displayHeight }}>
+    <StyledSignDisplay
+      style={{
+        width: displayWidth,
+        height: displayHeight,
+        backgroundColor: colors.background.color,
+      }}
+    >
       <OffPixels
         id={displayOffLightsId}
         height={displayHeight}
@@ -71,7 +76,6 @@ const SignDisplay: FC = () => {
 
 const StyledSignDisplay = styled.div`
   position: relative;
-  background-color: ${COLORS.BACKGROUND};
 `;
 
 const OffPixels = styled(Canvas)`

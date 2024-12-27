@@ -2,7 +2,7 @@ import React, { FC, memo, useRef, useId, Fragment } from "react";
 
 import { BaseProps, LEDMessageSignProps } from "../types";
 import { sanitizeProps } from "../utils/props";
-import { calcComputedValues } from "../utils";
+import { calcComputedValues, calcColors } from "../utils";
 import { useObjectSize, useSignAnimation } from "../hooks";
 import { SignContext } from "../context";
 import { FRAME_TO_HEIGHT_RATIO } from "../constants";
@@ -36,10 +36,11 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
     frameProportion: hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
   };
   const computedValues = calcComputedValues(config);
+  const colors = calcColors(config);
   useSignAnimation(config, computedValues);
 
   return (
-    <SignContext.Provider value={{ config, computedValues }}>
+    <SignContext.Provider value={{ config, computedValues, colors }}>
       <div ref={containerRef} className={className} style={containerStyle}>
         {computedValues.signWidth !== 0 && (
           <Frame>

@@ -2,7 +2,6 @@ import React, { FC, PropsWithChildren, useMemo, useEffect } from "react";
 import styled from "styled-components";
 
 import { useSignContext } from "../hooks";
-import { COLORS } from "../constants/colors";
 import { getSignIds } from "../utils";
 import { getCanvasChunks, getCanvasContext } from "../utils/canvas";
 import {
@@ -16,7 +15,7 @@ import AnimationContainer from "./AnimationContainer";
 import CanvasChunks from "./CanvasChunks";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
-  const { config, computedValues } = useSignContext();
+  const { config, computedValues, colors } = useSignContext();
   const {
     signHeight,
     signWidth,
@@ -67,32 +66,39 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     const frameShadingCtx = getCanvasContext(frameShadingId, true);
 
     if (frameMaskingCtx) {
-      drawFrameMasking(frameMaskingCtx, computedValues);
+      drawFrameMasking(frameMaskingCtx, computedValues, colors);
     }
     if (frameShadingCtx) {
-      drawFrameShading(frameShadingCtx, computedValues);
+      drawFrameShading(frameShadingCtx, computedValues, colors);
     }
-  }, [frameMaskingId, frameShadingId, computedValues]);
+  }, [frameMaskingId, frameShadingId, computedValues, colors]);
 
   useEffect(() => {
-    drawFrameHorizontalGlow(horizontalGlowCanvasChunks, computedValues, config);
-    drawFrameVerticalGlow(leftGlowCanvasChunks, computedValues, config);
+    drawFrameHorizontalGlow(horizontalGlowCanvasChunks, computedValues, colors);
+    drawFrameVerticalGlow(leftGlowCanvasChunks, computedValues, colors);
     drawFrameVerticalGlow(
       rightGlowCanvasChunks,
       computedValues,
-      config,
+      colors,
       "right"
     );
   }, [
     computedValues,
     config,
+    colors,
     horizontalGlowCanvasChunks,
     leftGlowCanvasChunks,
     rightGlowCanvasChunks,
   ]);
 
   return (
-    <StyledSignFrame style={{ height: signHeight, width: signWidth }}>
+    <StyledSignFrame
+      style={{
+        height: signHeight,
+        width: signWidth,
+        backgroundColor: colors.frame.color,
+      }}
+    >
       <HorizontalGlow
         style={{
           height: signHeight,
@@ -148,7 +154,6 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
 
 const StyledSignFrame = styled.div`
   position: relative;
-  background-color: ${COLORS.FRAME};
 `;
 
 const HorizontalGlow = styled.div`

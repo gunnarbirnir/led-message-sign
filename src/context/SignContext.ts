@@ -1,10 +1,11 @@
 import { createContext } from "react";
 
-import { SignConfig, SignComputedValues } from "../types";
+import { SignConfig, SignComputedValues, SignColors } from "../types";
 
 const SignContext = createContext<{
   config: SignConfig;
   computedValues: SignComputedValues;
+  colors: SignColors;
 }>({
   config: {
     id: "",
@@ -13,6 +14,10 @@ const SignContext = createContext<{
     width: 0,
     fullWidth: false,
     colorHue: 0,
+    onBulbLightness: 0,
+    offBulbLightness: 0,
+    frameLightness: 0,
+    backgroundLightness: 0,
     hideFrame: false,
     frameProportion: 0,
     coloredOffLights: false,
@@ -33,6 +38,44 @@ const SignContext = createContext<{
     pixelCountY: 0,
     pixelGrid: [],
     pixelGridWidth: 0,
+  },
+  colors: {
+    frame: {
+      hue: 0,
+      saturation: 0,
+      lightness: 0,
+      color: "",
+    },
+    background: {
+      hue: 0,
+      saturation: 0,
+      lightness: 0,
+      color: "",
+    },
+    light: {
+      hue: 0,
+      saturation: 0,
+      lightness: 0,
+      color: "",
+    },
+    bulbOn: {
+      hue: 0,
+      saturation: 0,
+      lightness: 0,
+      color: "",
+    },
+    bulbOff: {
+      hue: 0,
+      saturation: 0,
+      lightness: 0,
+      color: "",
+    },
+    glow: {
+      hue: 0,
+      saturation: 0,
+      lightness: 0,
+      color: "",
+    },
   },
 });
 

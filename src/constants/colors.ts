@@ -1,5 +1,4 @@
 import { HSLColorValues } from "../types";
-import { hslValuesToCss } from "../utils";
 
 enum COLOR {
   FRAME = "FRAME",
@@ -42,18 +41,3 @@ export const COLOR_VALUES: Record<COLOR, HSLColorValues> = {
     lightness: 50,
   },
 };
-
-export const COLORS = Object.fromEntries(
-  Object.keys(COLOR_VALUES).map((key) => {
-    const colorKey = key as COLOR;
-    return [
-      colorKey,
-      hslValuesToCss(
-        COLOR_VALUES[colorKey].hue,
-        COLOR_VALUES[colorKey].saturation,
-        COLOR_VALUES[colorKey].lightness,
-        COLOR_VALUES[colorKey].opacity
-      ),
-    ];
-  })
-) as Record<COLOR, string>;

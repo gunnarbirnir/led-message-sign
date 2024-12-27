@@ -1,6 +1,5 @@
-import { COLORS, COLOR_VALUES } from "../constants/colors";
-import { hslValuesToCss, isPixelOn } from "../utils";
-import { SignComputedValues, SignConfig, CanvasChunk } from "../types";
+import { isPixelOn } from "../utils";
+import { SignComputedValues, CanvasChunk, SignColors } from "../types";
 import { getCanvasContext } from "./canvas";
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;
@@ -8,7 +7,7 @@ const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 export const drawDisplayOffLights = (
   ctx: CanvasRenderingContext2D,
   computedValues: SignComputedValues,
-  config: SignConfig
+  colors: SignColors
 ) => {
   const {
     displayWidth,
@@ -19,15 +18,10 @@ export const drawDisplayOffLights = (
     pixelCountX,
     pixelCountY,
   } = computedValues;
-  const { colorHue, coloredOffLights } = config;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
-  ctx.fillStyle = COLORS.BACKGROUND;
+  ctx.fillStyle = colors.background.color;
   ctx.fillRect(0, 0, displayWidth, displayHeight);
-
-  const bulbOffColorSaturation = coloredOffLights
-    ? COLOR_VALUES.BULB_OFF.saturation
-    : 0;
 
   for (let x = 0; x < pixelCountX; x++) {
     const pixelXPos = x * pixelSize + displayPaddingX;
@@ -37,11 +31,7 @@ export const drawDisplayOffLights = (
       const pixelYPos = y * pixelSize + displayPaddingY;
       const pixelYCenterPos = pixelYPos + pixelSize / 2;
 
-      ctx.fillStyle = hslValuesToCss(
-        colorHue,
-        bulbOffColorSaturation,
-        COLOR_VALUES.BULB_OFF.lightness
-      );
+      ctx.fillStyle = colors.bulbOff.color;
       ctx.beginPath();
       ctx.arc(
         pixelXCenterPos,
@@ -61,10 +51,9 @@ const PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO = 2;
 export const drawDisplayOnLights = (
   canvasChunks: CanvasChunk[],
   computedValues: SignComputedValues,
-  config: SignConfig
+  colors: SignColors
 ) => {
   const { pixelSize, pixelCountY, pixelGrid, pixelAreaHeight } = computedValues;
-  const { colorHue } = config;
 
   let chunkIdx = -1;
   let ctx = null;
@@ -103,23 +92,12 @@ export const drawDisplayOnLights = (
             pixelYCenterPos,
             pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
           );
-          grd.addColorStop(
-            0,
-            hslValuesToCss(
-              colorHue,
-              COLOR_VALUES.LIGHT.saturation,
-              COLOR_VALUES.LIGHT.lightness
-            )
-          );
-          grd.addColorStop(1, COLORS.BACKGROUND);
+          grd.addColorStop(0, colors.light.color);
+          grd.addColorStop(1, colors.background.color);
           ctx.fillStyle = grd;
           ctx.fillRect(chunkPixelXPos, pixelYPos, pixelSize, pixelSize);
 
-          ctx.fillStyle = hslValuesToCss(
-            colorHue,
-            COLOR_VALUES.BULB_ON.saturation,
-            COLOR_VALUES.BULB_ON.lightness
-          );
+          ctx.fillStyle = colors.bulbOn.color;
           ctx.beginPath();
           ctx.arc(
             pixelXCenterPos,

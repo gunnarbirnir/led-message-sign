@@ -1,6 +1,13 @@
 import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
+import { COLOR_VALUES } from "../constants/colors";
 import { ALPHABET, UNKNOWN_LETTER, EMPTY_COLUMN } from "../constants/alphabet";
-import { PixelGrid, SignConfig } from "../types";
+import {
+  PixelGrid,
+  SignConfig,
+  HSLColorValues,
+  SignColors,
+  SignColorKey,
+} from "../types";
 
 export const hslValuesToCss = (
   hue: number,
@@ -50,6 +57,59 @@ export const calcComputedValues = (config: SignConfig) => {
     pixelGrid,
     pixelGridWidth,
   };
+};
+
+export const calcColors = ({
+  frameLightness,
+  backgroundLightness,
+  colorHue,
+  onBulbLightness,
+  offBulbLightness,
+  coloredOffLights,
+}: SignConfig) => {
+  const getColorFromValues = (values: HSLColorValues) =>
+    hslValuesToCss(
+      values.hue,
+      values.saturation,
+      values.lightness,
+      values.opacity
+    );
+
+  const colorValues: Record<SignColorKey, HSLColorValues> = {
+    frame: {
+      ...COLOR_VALUES.FRAME,
+      lightness: frameLightness,
+    },
+    background: {
+      ...COLOR_VALUES.BACKGROUND,
+      lightness: backgroundLightness,
+    },
+    light: { ...COLOR_VALUES.LIGHT, hue: colorHue },
+    bulbOn: {
+      ...COLOR_VALUES.BULB_ON,
+      hue: colorHue,
+      lightness: onBulbLightness,
+    },
+    bulbOff: {
+      ...COLOR_VALUES.BULB_OFF,
+      hue: colorHue,
+      lightness: offBulbLightness,
+      saturation: coloredOffLights ? COLOR_VALUES.BULB_OFF.saturation : 0,
+    },
+    glow: { ...COLOR_VALUES.GLOW, hue: colorHue },
+  };
+
+  const colors = Object.fromEntries(
+    Object.keys(colorValues).map((key) => {
+      const values = colorValues[key as SignColorKey];
+      return [
+        key as SignColorKey,
+        { ...values, color: getColorFromValues(values) },
+      ];
+    })
+  );
+
+  return colors as SignColors;
 };
 
 export const calcPixelGrid = (text: string, pixelCountX: number) => {
