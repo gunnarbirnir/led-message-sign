@@ -6,9 +6,8 @@ export interface BaseProps {
 }
 
 export interface LEDMessageSignProps {
-  // TODO: string[]
   /** Message text. Max 100 characters. */
-  text: string;
+  text: string | string[];
   /** Sign height. Default is 150. Min value is 60. */
   height?: number;
   /** Sign width. Default is 800. Min value is 100. */
@@ -35,6 +34,7 @@ export interface LEDMessageSignProps {
 
 export interface SignConfig extends Required<LEDMessageSignProps> {
   id: string;
+  text: string;
   frameProportion: number;
 }
 

@@ -8,7 +8,11 @@ const FRAME_DURATION = 1000 / 60;
 
 const useSignAnimation = (
   { id, animationFramesPerUpdate }: SignConfig,
-  { pixelSize, pixelGrid, frameSize }: SignComputedValues
+  { pixelSize, pixelGrid, frameSize }: SignComputedValues,
+  {
+    onAnimationFinished,
+    updateAnimationId,
+  }: { onAnimationFinished?: () => void; updateAnimationId?: string }
 ) => {
   const updateDuration = useMemo(
     () => FRAME_DURATION * animationFramesPerUpdate,
@@ -18,9 +22,9 @@ const useSignAnimation = (
     () => ({
       duration: pixelGrid.length * updateDuration,
       easing: `steps(${pixelGrid.length})`,
-      iterations: Infinity,
+      iterations: onAnimationFinished ? 1 : Infinity,
     }),
-    [pixelGrid.length, updateDuration]
+    [pixelGrid.length, updateDuration, onAnimationFinished]
   );
 
   const calcKeyframes = useCallback(
@@ -114,6 +118,16 @@ const useSignAnimation = (
     };
     syncAnimations();
 
+    const cycleTextAnimations = async () => {
+      if (onLightsAnimation && onAnimationFinished) {
+        try {
+          await onLightsAnimation.finished;
+          onAnimationFinished();
+        } catch {}
+      }
+    };
+    cycleTextAnimations();
+
     return () => {
       if (onLightsAnimation) {
         onLightsAnimation.cancel();
@@ -128,7 +142,15 @@ const useSignAnimation = (
         rightGlowAnimation.cancel();
       }
     };
-  }, [id, animationOptions, pixelKeyframes, frameKeyframes, updateDuration]);
+  }, [
+    id,
+    animationOptions,
+    pixelKeyframes,
+    frameKeyframes,
+    updateDuration,
+    onAnimationFinished,
+    updateAnimationId,
+  ]);
 };
 
 export default useSignAnimation;

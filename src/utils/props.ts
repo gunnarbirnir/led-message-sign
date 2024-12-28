@@ -19,7 +19,7 @@ export const sanitizeProps = ({
   hideFrame = DEFAULT_VALUE.HIDE_FRAME,
   coloredOffLights = DEFAULT_VALUE.COLORED_OFF_LIGHTS,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
-}: LEDMessageSignProps) => {
+}: Omit<LEDMessageSignProps, "text"> & { text: string }) => {
   return {
     text:
       text.length > MAX_CHARACTERS ? text.substring(0, MAX_CHARACTERS) : text,
