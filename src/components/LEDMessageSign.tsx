@@ -29,18 +29,6 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   ]);
   const [textIndex, setTextIndex] = useState(0);
 
-  const updateTextIndex = useMemo(
-    () =>
-      Array.isArray(props.text)
-        ? () =>
-            setTextIndex((prevIndex) => {
-              const newIndex = prevIndex + 1;
-              return newIndex >= props.text.length ? 0 : newIndex;
-            })
-        : undefined,
-    [props.text]
-  );
-
   const currentText = Array.isArray(props.text)
     ? props.text[textIndex]
     : props.text;
@@ -62,6 +50,19 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   };
   const computedValues = calcComputedValues(config);
   const colors = calcColors(config);
+
+  const textIsArray = Array.isArray(props.text);
+  const updateTextIndex = useMemo(
+    () =>
+      textIsArray
+        ? () =>
+            setTextIndex((prevIndex) => {
+              const newIndex = prevIndex + 1;
+              return newIndex >= props.text.length ? 0 : newIndex;
+            })
+        : undefined,
+    [textIsArray, props.text.length]
+  );
 
   useSignAnimation(config, computedValues, {
     onAnimationFinished: updateTextIndex,
