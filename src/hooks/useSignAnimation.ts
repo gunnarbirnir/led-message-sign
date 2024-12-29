@@ -2,18 +2,23 @@ import { useEffect, useMemo, useCallback } from "react";
 
 import { SignConfig, SignComputedValues } from "../types";
 import { getSignIds } from "../utils";
-
-// 60 frames per second
-const FRAME_DURATION = 1000 / 60;
+import { syncAnimations } from "../utils/animations";
+import { FRAME_DURATION } from "../constants";
+import useStaticSignAnimation from "./useStaticSignAnimation";
 
 const useSignAnimation = (
-  { id, animationFramesPerUpdate }: SignConfig,
-  { pixelSize, pixelGrid, frameSize }: SignComputedValues,
-  {
-    onAnimationFinished,
-    updateAnimationId,
-  }: { onAnimationFinished?: () => void; updateAnimationId?: string }
+  config: SignConfig,
+  computedValues: SignComputedValues,
+  options: {
+    onAnimationFinished?: () => void;
+    updateAnimationId?: string;
+  }
 ) => {
+  const { id, animationFramesPerUpdate, staticMode } = config;
+  const { pixelSize, pixelGrid, frameSize } = computedValues;
+  const { onAnimationFinished, updateAnimationId } = options;
+  useStaticSignAnimation(config, computedValues, { updateAnimationId });
+
   const updateDuration = useMemo(
     () => FRAME_DURATION * animationFramesPerUpdate,
     [animationFramesPerUpdate]
@@ -44,6 +49,10 @@ const useSignAnimation = (
   );
 
   useEffect(() => {
+    if (staticMode) {
+      return;
+    }
+
     const {
       onLightsAnimationId,
       horizontalGlowAnimationId,
@@ -69,21 +78,18 @@ const useSignAnimation = (
         animationOptions
       );
     }
-
     if (horizontalGlowElement) {
       horizontalGlowAnimation = horizontalGlowElement.animate(
         pixelKeyframes,
         animationOptions
       );
     }
-
     if (leftGlowElement) {
       leftGlowAnimation = leftGlowElement.animate(
         frameKeyframes,
         animationOptions
       );
     }
-
     if (rightGlowElement) {
       rightGlowAnimation = rightGlowElement.animate(
         frameKeyframes,
@@ -91,32 +97,11 @@ const useSignAnimation = (
       );
     }
 
-    const syncAnimations = async () => {
-      if (onLightsAnimation) {
-        try {
-          await onLightsAnimation.ready;
-          const { startTime } = onLightsAnimation;
-          // Sync to animation frame
-          const roundedStartTime =
-            startTime !== null
-              ? Math.ceil((startTime as number) / updateDuration) *
-                updateDuration
-              : null;
-
-          onLightsAnimation.startTime = roundedStartTime;
-          if (horizontalGlowAnimation) {
-            horizontalGlowAnimation.startTime = roundedStartTime;
-          }
-          if (leftGlowAnimation) {
-            leftGlowAnimation.startTime = roundedStartTime;
-          }
-          if (rightGlowAnimation) {
-            rightGlowAnimation.startTime = roundedStartTime;
-          }
-        } catch {}
-      }
-    };
-    syncAnimations();
+    syncAnimations(onLightsAnimation, updateDuration, [
+      horizontalGlowAnimation,
+      leftGlowAnimation,
+      rightGlowAnimation,
+    ]);
 
     const cycleTextAnimations = async () => {
       if (onLightsAnimation && onAnimationFinished) {
@@ -150,6 +135,7 @@ const useSignAnimation = (
     updateDuration,
     onAnimationFinished,
     updateAnimationId,
+    staticMode,
   ]);
 };
 

@@ -19,6 +19,8 @@ export const sanitizeProps = ({
   hideFrame = DEFAULT_VALUE.HIDE_FRAME,
   coloredOffLights = DEFAULT_VALUE.COLORED_OFF_LIGHTS,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
+  staticMode = DEFAULT_VALUE.STATIC_MODE,
+  staticModeDelay = DEFAULT_VALUE.STATIC_MODE_DELAY,
 }: Omit<LEDMessageSignProps, "text"> & { text: string }) => {
   return {
     text:
@@ -57,6 +59,12 @@ export const sanitizeProps = ({
       animationFramesPerUpdate,
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE,
       MAX_VALUE.ANIMATION_FRAMES_PER_UPDATE
+    ),
+    staticMode,
+    staticModeDelay: sanitizeMinMaxValue(
+      staticModeDelay,
+      MIN_VALUE.STATIC_MODE_DELAY,
+      MAX_VALUE.STATIC_MODE_DELAY
     ),
   };
 };
