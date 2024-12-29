@@ -12,7 +12,7 @@ const useStaticSignAnimation = (
     updateAnimationId,
   }: { onAnimationFinished?: () => void; updateAnimationId?: string }
 ) => {
-  const [activeAnimationIndex, setActiveAnimationIndex] = useState(0);
+  const [initAnimationActive, setInitAnimationActive] = useState(true);
   const updateDuration = useMemo(
     () => FRAME_DURATION * animationFramesPerUpdate,
     [animationFramesPerUpdate]
@@ -36,25 +36,35 @@ const useStaticSignAnimation = (
   );
 
   const calcInitKeyframes = useCallback(
-    (itemSize: number) => [
-      { transform: `translateX(-${itemSize * pixelCountX}px)` },
-      { transform: `translateX(-${itemSize * pixelCountX}px)` },
-    ],
+    (itemSize: number) => {
+      const initTranslateDistance = itemSize * pixelCountX;
+      return [
+        { transform: `translateX(-${initTranslateDistance}px)` },
+        { transform: `translateX(-${initTranslateDistance}px)` },
+      ];
+    },
     [pixelCountX]
   );
   const calcKeyframes = useCallback(
-    (itemSize: number) => [
-      { transform: `translateX(-${itemSize * pixelCountX}px)` },
-      {
-        transform: `translateX(-${itemSize * pixelGrid.length}px)`,
-        offset: (pixelGrid.length - pixelCountX) / pixelGrid.length,
-      },
-      {
-        transform: `translateX(0px)`,
-        offset: (pixelGrid.length - pixelCountX) / pixelGrid.length,
-      },
-      { transform: `translateX(-${itemSize * pixelCountX}px)` },
-    ],
+    (itemSize: number) => {
+      const initTranslateDistance = itemSize * pixelCountX;
+      const overflowTranslateDistance = itemSize * pixelGrid.length;
+      const overflowTranslateOffset =
+        (pixelGrid.length - pixelCountX) / pixelGrid.length;
+
+      return [
+        { transform: `translateX(-${initTranslateDistance}px)` },
+        {
+          transform: `translateX(-${overflowTranslateDistance}px)`,
+          offset: overflowTranslateOffset,
+        },
+        {
+          transform: `translateX(0px)`,
+          offset: overflowTranslateOffset,
+        },
+        { transform: `translateX(-${initTranslateDistance}px)` },
+      ];
+    },
     [pixelCountX, pixelGrid.length]
   );
 
@@ -80,7 +90,8 @@ const useStaticSignAnimation = (
       return;
     }
 
-    const initAnimation = activeAnimationIndex === 0;
+    const textOverflows = pixelGrid.length > pixelCountX * 2;
+    const initAnimation = initAnimationActive || !textOverflows;
     const {
       onLightsAnimationId,
       horizontalGlowAnimationId,
@@ -128,18 +139,22 @@ const useStaticSignAnimation = (
     }
 
     if (!initAnimation) {
-      syncAnimations(onLightsAnimation, updateDuration, [
-        horizontalGlowAnimation,
-        leftGlowAnimation,
-        rightGlowAnimation,
-      ]);
+      syncAnimations(
+        [
+          onLightsAnimation,
+          horizontalGlowAnimation,
+          leftGlowAnimation,
+          rightGlowAnimation,
+        ],
+        updateDuration
+      );
     }
 
     const cycleBetweenAnimations = async () => {
-      if (onLightsAnimation && pixelGrid.length > pixelCountX * 2) {
+      if (onLightsAnimation && textOverflows) {
         try {
           await onLightsAnimation.finished;
-          setActiveAnimationIndex(initAnimation ? 1 : 0);
+          setInitAnimationActive(!initAnimationActive);
         } catch {}
       }
     };
@@ -161,16 +176,16 @@ const useStaticSignAnimation = (
     };
   }, [
     id,
-    animationOptions,
-    pixelKeyframes,
-    frameKeyframes,
+    initAnimationActive,
     updateDuration,
-    updateAnimationId,
-    staticMode,
+    initAnimationOptions,
+    animationOptions,
     initPixelKeyframes,
     initFrameKeyframes,
-    activeAnimationIndex,
-    initAnimationOptions,
+    pixelKeyframes,
+    frameKeyframes,
+    updateAnimationId,
+    staticMode,
     pixelGrid.length,
     pixelCountX,
   ]);

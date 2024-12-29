@@ -44,7 +44,6 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   const config = {
     ...sanitizedProps,
     id: signId,
-    text: currentText,
     width: fullWidth ? containerWidth : width,
     frameProportion: hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
   };

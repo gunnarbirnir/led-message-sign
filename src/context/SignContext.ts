@@ -22,6 +22,8 @@ const SignContext = createContext<{
     frameProportion: 0,
     coloredOffLights: false,
     animationFramesPerUpdate: 0,
+    staticMode: false,
+    staticModeDelay: 0,
   },
   computedValues: {
     signHeight: 0,

@@ -1,22 +1,21 @@
 export const syncAnimations = async (
-  animation: Animation | null,
-  updateDuration: number,
-  animationsToSync: (Animation | null)[] = []
+  animations: (Animation | null)[] = [],
+  updateDuration: number
 ) => {
-  if (animation) {
+  const firstAnimation = animations[0];
+  if (firstAnimation) {
     try {
-      await animation.ready;
-      const { startTime } = animation;
+      await firstAnimation.ready;
+      const { startTime } = firstAnimation;
       // Sync to animation frame
       const roundedStartTime =
         startTime !== null
           ? Math.ceil((startTime as number) / updateDuration) * updateDuration
           : null;
 
-      animation.startTime = roundedStartTime;
-      animationsToSync.forEach((animationToSync) => {
-        if (animationToSync) {
-          animationToSync.startTime = roundedStartTime;
+      animations.forEach((animation) => {
+        if (animation) {
+          animation.startTime = roundedStartTime;
         }
       });
     } catch {}

@@ -17,6 +17,7 @@ const useSignAnimation = (
   const { id, animationFramesPerUpdate, staticMode } = config;
   const { pixelSize, pixelGrid, frameSize } = computedValues;
   const { onAnimationFinished, updateAnimationId } = options;
+
   useStaticSignAnimation(config, computedValues, { updateAnimationId });
 
   const updateDuration = useMemo(
@@ -97,11 +98,15 @@ const useSignAnimation = (
       );
     }
 
-    syncAnimations(onLightsAnimation, updateDuration, [
-      horizontalGlowAnimation,
-      leftGlowAnimation,
-      rightGlowAnimation,
-    ]);
+    syncAnimations(
+      [
+        onLightsAnimation,
+        horizontalGlowAnimation,
+        leftGlowAnimation,
+        rightGlowAnimation,
+      ],
+      updateDuration
+    );
 
     const cycleTextAnimations = async () => {
       if (onLightsAnimation && onAnimationFinished) {
@@ -129,13 +134,13 @@ const useSignAnimation = (
     };
   }, [
     id,
+    updateDuration,
     animationOptions,
     pixelKeyframes,
     frameKeyframes,
-    updateDuration,
-    onAnimationFinished,
     updateAnimationId,
     staticMode,
+    onAnimationFinished,
   ]);
 };
 
