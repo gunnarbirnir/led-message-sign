@@ -4,15 +4,20 @@ import styled from "styled-components";
 interface AnimationContainerProps {
   id: string;
   width: number;
+  initTranslateX?: number;
 }
 
 const AnimationContainer: FC<PropsWithChildren<AnimationContainerProps>> = ({
   id,
   width,
+  initTranslateX = 0,
   children,
 }) => {
   return (
-    <StyledAnimationContainer id={id} style={{ width }}>
+    <StyledAnimationContainer
+      id={id}
+      style={{ width, transform: `translateX(-${initTranslateX}px)` }}
+    >
       {children}
     </StyledAnimationContainer>
   );

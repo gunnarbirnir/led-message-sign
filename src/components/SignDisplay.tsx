@@ -21,6 +21,7 @@ const SignDisplay: FC = () => {
     displayPaddingY,
     pixelGrid,
     pixelGridWidth,
+    pixelCountX,
   } = computedValues;
 
   const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
@@ -29,6 +30,9 @@ const SignDisplay: FC = () => {
     () => getCanvasChunks(displayOnLightsId, pixelSize, pixelGrid.length),
     [displayOnLightsId, pixelSize, pixelGrid.length]
   );
+  const initPixelTransform = config.staticMode
+    ? pixelSize * pixelCountX
+    : undefined;
 
   useEffect(() => {
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
@@ -63,7 +67,11 @@ const SignDisplay: FC = () => {
           width: pixelAreaWidth,
         }}
       >
-        <AnimationContainer id={onLightsAnimationId} width={pixelGridWidth}>
+        <AnimationContainer
+          id={onLightsAnimationId}
+          width={pixelGridWidth}
+          initTranslateX={initPixelTransform}
+        >
           <CanvasChunks
             chunks={onLightsCanvasChunks}
             height={pixelAreaHeight}

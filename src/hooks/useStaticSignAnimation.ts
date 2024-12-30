@@ -12,39 +12,21 @@ const useStaticSignAnimation = (
     updateAnimationId,
   }: { onAnimationFinished?: () => void; updateAnimationId?: string }
 ) => {
-  const [initAnimationActive, setInitAnimationActive] = useState(true);
+  const [animationTimestamp, setAnimationTimestamp] = useState(Date.now());
   const updateDuration = useMemo(
     () => FRAME_DURATION * animationFramesPerUpdate,
     [animationFramesPerUpdate]
-  );
-  const initAnimationOptions = useMemo(
-    () => ({
-      duration: staticModeDelay,
-      iterations: 1,
-      fill: "both" as FillMode,
-    }),
-    [staticModeDelay]
   );
   const animationOptions = useMemo(
     () => ({
       duration: pixelGrid.length * updateDuration,
       easing: `steps(${pixelGrid.length})`,
       iterations: 1,
-      fill: "both" as FillMode,
+      delay: staticModeDelay,
     }),
-    [pixelGrid.length, updateDuration]
+    [pixelGrid.length, updateDuration, staticModeDelay]
   );
 
-  const calcInitKeyframes = useCallback(
-    (itemSize: number) => {
-      const initTranslateDistance = itemSize * pixelCountX;
-      return [
-        { transform: `translateX(-${initTranslateDistance}px)` },
-        { transform: `translateX(-${initTranslateDistance}px)` },
-      ];
-    },
-    [pixelCountX]
-  );
   const calcKeyframes = useCallback(
     (itemSize: number) => {
       const initTranslateDistance = itemSize * pixelCountX;
@@ -67,15 +49,6 @@ const useStaticSignAnimation = (
     },
     [pixelCountX, pixelGrid.length]
   );
-
-  const initPixelKeyframes = useMemo(
-    () => calcInitKeyframes(pixelSize),
-    [calcInitKeyframes, pixelSize]
-  );
-  const initFrameKeyframes = useMemo(
-    () => calcInitKeyframes(frameSize),
-    [calcInitKeyframes, frameSize]
-  );
   const pixelKeyframes = useMemo(
     () => calcKeyframes(pixelSize),
     [calcKeyframes, pixelSize]
@@ -86,12 +59,11 @@ const useStaticSignAnimation = (
   );
 
   useEffect(() => {
-    if (!staticMode) {
+    const textOverflows = pixelGrid.length > pixelCountX * 2;
+    if (!staticMode || !textOverflows) {
       return;
     }
 
-    const textOverflows = pixelGrid.length > pixelCountX * 2;
-    const initAnimation = initAnimationActive || !textOverflows;
     const {
       onLightsAnimationId,
       horizontalGlowAnimationId,
@@ -112,53 +84,49 @@ const useStaticSignAnimation = (
     let rightGlowAnimation: Animation | null = null;
 
     if (onLightsElement) {
-      onLightsAnimation = initAnimation
-        ? onLightsElement.animate(initPixelKeyframes, initAnimationOptions)
-        : onLightsElement.animate(pixelKeyframes, animationOptions);
+      onLightsAnimation = onLightsElement.animate(
+        pixelKeyframes,
+        animationOptions
+      );
     }
-
     if (horizontalGlowElement) {
-      horizontalGlowAnimation = initAnimation
-        ? horizontalGlowElement.animate(
-            initPixelKeyframes,
-            initAnimationOptions
-          )
-        : horizontalGlowElement.animate(pixelKeyframes, animationOptions);
+      horizontalGlowAnimation = horizontalGlowElement.animate(
+        pixelKeyframes,
+        animationOptions
+      );
     }
-
     if (leftGlowElement) {
-      leftGlowAnimation = initAnimation
-        ? leftGlowElement.animate(initFrameKeyframes, initAnimationOptions)
-        : leftGlowElement.animate(frameKeyframes, animationOptions);
+      leftGlowAnimation = leftGlowElement.animate(
+        frameKeyframes,
+        animationOptions
+      );
     }
-
     if (rightGlowElement) {
-      rightGlowAnimation = initAnimation
-        ? rightGlowElement.animate(initFrameKeyframes, initAnimationOptions)
-        : rightGlowElement.animate(frameKeyframes, animationOptions);
-    }
-
-    if (!initAnimation) {
-      syncAnimations(
-        [
-          onLightsAnimation,
-          horizontalGlowAnimation,
-          leftGlowAnimation,
-          rightGlowAnimation,
-        ],
-        updateDuration
+      rightGlowAnimation = rightGlowElement.animate(
+        frameKeyframes,
+        animationOptions
       );
     }
 
-    const cycleBetweenAnimations = async () => {
-      if (onLightsAnimation && textOverflows) {
+    syncAnimations(
+      [
+        onLightsAnimation,
+        horizontalGlowAnimation,
+        leftGlowAnimation,
+        rightGlowAnimation,
+      ],
+      updateDuration
+    );
+
+    const restartAnimation = async () => {
+      if (onLightsAnimation) {
         try {
           await onLightsAnimation.finished;
-          setInitAnimationActive(!initAnimationActive);
+          setAnimationTimestamp(Date.now());
         } catch {}
       }
     };
-    cycleBetweenAnimations();
+    restartAnimation();
 
     return () => {
       if (onLightsAnimation) {
@@ -176,12 +144,9 @@ const useStaticSignAnimation = (
     };
   }, [
     id,
-    initAnimationActive,
+    animationTimestamp,
     updateDuration,
-    initAnimationOptions,
     animationOptions,
-    initPixelKeyframes,
-    initFrameKeyframes,
     pixelKeyframes,
     frameKeyframes,
     updateAnimationId,

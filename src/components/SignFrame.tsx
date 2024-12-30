@@ -27,6 +27,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     pixelGrid,
     pixelAreaWidth,
     pixelAreaHeight,
+    pixelCountX,
   } = computedValues;
 
   const {
@@ -60,6 +61,12 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     }),
     [frameSize, displayPaddingY, pixelAreaHeight]
   );
+  const initFrameTransform = config.staticMode
+    ? frameSize * pixelCountX
+    : undefined;
+  const initPixelTransform = config.staticMode
+    ? pixelSize * pixelCountX
+    : undefined;
 
   useEffect(() => {
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
@@ -109,6 +116,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         <AnimationContainer
           id={horizontalGlowAnimationId}
           width={pixelGridWidth}
+          initTranslateX={initPixelTransform}
         >
           <CanvasChunks
             chunks={horizontalGlowCanvasChunks}
@@ -121,6 +129,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         <AnimationContainer
           id={leftGlowAnimationId}
           width={pixelGrid.length * frameSize}
+          initTranslateX={initFrameTransform}
         >
           <CanvasChunks
             chunks={leftGlowCanvasChunks}
@@ -135,6 +144,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
         <AnimationContainer
           id={rightGlowAnimationId}
           width={pixelGrid.length * frameSize}
+          initTranslateX={initFrameTransform}
         >
           <CanvasChunks
             chunks={rightGlowCanvasChunks}
