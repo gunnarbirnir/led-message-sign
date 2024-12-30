@@ -16,6 +16,7 @@ import CanvasChunks from "./CanvasChunks";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { config, computedValues, colors } = useSignContext();
+  const { id, staticMode } = config;
   const {
     signHeight,
     signWidth,
@@ -39,7 +40,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     horizontalGlowAnimationId,
     leftGlowAnimationId,
     rightGlowAnimationId,
-  } = useMemo(() => getSignIds(config.id), [config.id]);
+  } = getSignIds(id);
 
   const horizontalGlowCanvasChunks = useMemo(
     () => getCanvasChunks(frameHorizontalGlowId, pixelSize, pixelGrid.length),
@@ -53,20 +54,14 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     () => getCanvasChunks(frameRightGlowId, frameSize, pixelGrid.length),
     [frameRightGlowId, frameSize, pixelGrid.length]
   );
-  const verticalGlowStyle = useMemo(
-    () => ({
-      top: frameSize + displayPaddingY,
-      width: frameSize,
-      height: pixelAreaHeight,
-    }),
-    [frameSize, displayPaddingY, pixelAreaHeight]
-  );
-  const initFrameTransform = config.staticMode
-    ? frameSize * pixelCountX
-    : undefined;
-  const initPixelTransform = config.staticMode
-    ? pixelSize * pixelCountX
-    : undefined;
+
+  const verticalGlowStyle = {
+    top: frameSize + displayPaddingY,
+    width: frameSize,
+    height: pixelAreaHeight,
+  };
+  const initFrameTransform = staticMode ? frameSize * pixelCountX : undefined;
+  const initPixelTransform = staticMode ? pixelSize * pixelCountX : undefined;
 
   useEffect(() => {
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
@@ -91,7 +86,6 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     );
   }, [
     computedValues,
-    config,
     colors,
     horizontalGlowCanvasChunks,
     leftGlowCanvasChunks,

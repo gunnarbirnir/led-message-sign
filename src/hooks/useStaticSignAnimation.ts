@@ -23,6 +23,7 @@ const useStaticSignAnimation = (
       easing: `steps(${pixelGrid.length})`,
       iterations: 1,
       delay: staticModeDelay,
+      fill: "both" as FillMode,
     }),
     [pixelGrid.length, updateDuration, staticModeDelay]
   );

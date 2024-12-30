@@ -11,6 +11,7 @@ import CanvasChunks from "./CanvasChunks";
 
 const SignDisplay: FC = () => {
   const { config, computedValues, colors } = useSignContext();
+  const { id, staticMode } = config;
   const {
     pixelSize,
     displayWidth,
@@ -25,14 +26,12 @@ const SignDisplay: FC = () => {
   } = computedValues;
 
   const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
-    useMemo(() => getSignIds(config.id), [config.id]);
+    getSignIds(id);
   const onLightsCanvasChunks = useMemo(
     () => getCanvasChunks(displayOnLightsId, pixelSize, pixelGrid.length),
     [displayOnLightsId, pixelSize, pixelGrid.length]
   );
-  const initPixelTransform = config.staticMode
-    ? pixelSize * pixelCountX
-    : undefined;
+  const initPixelTransform = staticMode ? pixelSize * pixelCountX : undefined;
 
   useEffect(() => {
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);
