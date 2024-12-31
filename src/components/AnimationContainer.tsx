@@ -1,5 +1,4 @@
 import React, { FC, PropsWithChildren } from "react";
-import styled from "styled-components";
 
 interface AnimationContainerProps {
   id: string;
@@ -14,20 +13,19 @@ const AnimationContainer: FC<PropsWithChildren<AnimationContainerProps>> = ({
   children,
 }) => {
   return (
-    <StyledAnimationContainer
+    <div
       id={id}
-      style={{ width, transform: `translateX(-${initTranslateX}px)` }}
+      style={{
+        width,
+        display: "flex",
+        flexDirection: "row",
+        willChange: "transform",
+        transform: `translateX(-${initTranslateX}px)`,
+      }}
     >
       {children}
-    </StyledAnimationContainer>
+    </div>
   );
 };
-
-const StyledAnimationContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  will-change: transform;
-  // transform: translate3d(0, 0, 0);
-`;
 
 export default AnimationContainer;

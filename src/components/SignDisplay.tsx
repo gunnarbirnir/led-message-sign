@@ -1,5 +1,4 @@
 import React, { FC, useMemo, useEffect } from "react";
-import styled from "styled-components";
 
 import { useSignContext } from "../hooks";
 import { getSignIds } from "../utils";
@@ -46,20 +45,24 @@ const SignDisplay: FC = () => {
   }, [onLightsCanvasChunks, computedValues, colors]);
 
   return (
-    <StyledSignDisplay
+    <div
       style={{
+        position: "relative",
         width: displayWidth,
         height: displayHeight,
         backgroundColor: colors.background.color,
       }}
     >
-      <OffPixels
+      <Canvas
         id={displayOffLightsId}
         height={displayHeight}
         width={displayWidth}
+        style={{ position: "absolute", top: 0, left: 0 }}
       />
-      <OnPixels
+      <div
         style={{
+          position: "absolute",
+          overflow: "hidden",
           top: displayPaddingY,
           left: displayPaddingX,
           height: pixelAreaHeight,
@@ -76,24 +79,9 @@ const SignDisplay: FC = () => {
             height={pixelAreaHeight}
           />
         </AnimationContainer>
-      </OnPixels>
-    </StyledSignDisplay>
+      </div>
+    </div>
   );
 };
-
-const StyledSignDisplay = styled.div`
-  position: relative;
-`;
-
-const OffPixels = styled(Canvas)`
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
-const OnPixels = styled.div`
-  position: absolute;
-  overflow: hidden;
-`;
 
 export default SignDisplay;

@@ -1,5 +1,4 @@
 import React, { FC, PropsWithChildren, useMemo, useEffect } from "react";
-import styled from "styled-components";
 
 import { useSignContext } from "../hooks";
 import { getSignIds } from "../utils";
@@ -93,15 +92,19 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   ]);
 
   return (
-    <StyledSignFrame
+    <div
       style={{
+        position: "relative",
         height: signHeight,
         width: signWidth,
         backgroundColor: colors.frame.color,
       }}
     >
-      <HorizontalGlow
+      <div
         style={{
+          position: "absolute",
+          top: 0,
+          overflow: "hidden",
           height: signHeight,
           width: pixelAreaWidth,
           left: frameSize + displayPaddingX,
@@ -117,9 +120,16 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
             height={signHeight}
           />
         </AnimationContainer>
-      </HorizontalGlow>
+      </div>
 
-      <VerticalGlow style={{ ...verticalGlowStyle, left: 0 }}>
+      <div
+        style={{
+          ...verticalGlowStyle,
+          left: 0,
+          position: "absolute",
+          overflow: "hidden",
+        }}
+      >
         <AnimationContainer
           id={leftGlowAnimationId}
           width={pixelGrid.length * frameSize}
@@ -130,10 +140,15 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
             height={pixelAreaHeight}
           />
         </AnimationContainer>
-      </VerticalGlow>
+      </div>
 
-      <VerticalGlow
-        style={{ ...verticalGlowStyle, left: signWidth - frameSize }}
+      <div
+        style={{
+          ...verticalGlowStyle,
+          left: signWidth - frameSize,
+          position: "absolute",
+          overflow: "hidden",
+        }}
       >
         <AnimationContainer
           id={rightGlowAnimationId}
@@ -145,40 +160,25 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
             height={pixelAreaHeight}
           />
         </AnimationContainer>
-      </VerticalGlow>
+      </div>
 
-      <FrameLayer id={frameMaskingId} height={signHeight} width={signWidth} />
-      <FrameLayer id={frameShadingId} height={signHeight} width={signWidth} />
-      <SignContent style={{ top: frameSize, left: frameSize }}>
+      <Canvas
+        id={frameMaskingId}
+        height={signHeight}
+        width={signWidth}
+        style={{ position: "absolute", top: 0, left: 0 }}
+      />
+      <Canvas
+        id={frameShadingId}
+        height={signHeight}
+        width={signWidth}
+        style={{ position: "absolute", top: 0, left: 0 }}
+      />
+      <div style={{ position: "absolute", top: frameSize, left: frameSize }}>
         {children}
-      </SignContent>
-    </StyledSignFrame>
+      </div>
+    </div>
   );
 };
-
-const StyledSignFrame = styled.div`
-  position: relative;
-`;
-
-const HorizontalGlow = styled.div`
-  position: absolute;
-  top: 0;
-  overflow: hidden;
-`;
-
-const VerticalGlow = styled.div`
-  position: absolute;
-  overflow: hidden;
-`;
-
-const FrameLayer = styled(Canvas)`
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
-const SignContent = styled.div`
-  position: absolute;
-`;
 
 export default SignFrame;
