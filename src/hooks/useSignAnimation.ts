@@ -27,7 +27,7 @@ const useSignAnimation = (
   const animationOptions = useMemo(
     () => ({
       duration: pixelGrid.length * updateDuration,
-      easing: `steps(${pixelGrid.length})`,
+      easing: `steps(${pixelGrid.length}, start)`,
       iterations: onAnimationFinished ? 1 : Infinity,
     }),
     [pixelGrid.length, updateDuration, onAnimationFinished]
