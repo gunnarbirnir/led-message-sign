@@ -20,7 +20,7 @@ const useStaticSignAnimation = (
   const animationOptions = useMemo(
     () => ({
       duration: pixelGrid.length * updateDuration,
-      easing: `steps(${pixelGrid.length}, start)`,
+      easing: `steps(${pixelGrid.length})`,
       iterations: 1,
       delay: staticModeDelay,
       fill: "both" as FillMode,
