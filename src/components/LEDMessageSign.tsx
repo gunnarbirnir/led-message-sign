@@ -50,17 +50,17 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   const computedValues = calcComputedValues(config);
   const colors = calcColors(config);
 
-  const textIsArray = Array.isArray(props.text);
+  const multipleMessages = Array.isArray(props.text) && props.text.length > 1;
   const updateTextIndex = useMemo(
     () =>
-      textIsArray
+      multipleMessages
         ? () =>
             setTextIndex((prevIndex) => {
               const newIndex = prevIndex + 1;
               return newIndex >= props.text.length ? 0 : newIndex;
             })
         : undefined,
-    [textIsArray, props.text.length]
+    [multipleMessages, props.text.length]
   );
 
   useSignAnimation(config, computedValues, {
