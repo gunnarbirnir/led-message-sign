@@ -1,15 +1,16 @@
-import React, { FC, PropsWithChildren, useMemo, useEffect } from "react";
+import React, { FC, PropsWithChildren, useEffect, useMemo } from "react";
 
-import { useSignContext } from "../hooks";
-import { getSignIds } from "../utils";
-import { getCanvasChunks, getCanvasContext } from "../utils/canvas";
+import Canvas from "~/components/Canvas";
+import { getCanvasContext, getSignIds } from "~/utils";
 import {
+  drawFrameHorizontalGlow,
   drawFrameMasking,
   drawFrameShading,
-  drawFrameHorizontalGlow,
   drawFrameVerticalGlow,
-} from "../utils/frame";
-import Canvas from "./Canvas";
+} from "~/utils/frame";
+
+import useSignContext from "../hooks/useSignContext";
+import { getCanvasChunks } from "../utils";
 import AnimationContainer from "./AnimationContainer";
 import CanvasChunks from "./CanvasChunks";
 

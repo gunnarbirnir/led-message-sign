@@ -1,6 +1,5 @@
-import { isPixelOn } from "../utils";
-import { SignComputedValues, CanvasChunk, SignColors } from "../types";
-import { getCanvasContext } from "./canvas";
+import { CanvasChunk, SignColors, SignComputedValues } from "~/types";
+import { getCanvasContext, isPixelOn } from "~/utils";
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 

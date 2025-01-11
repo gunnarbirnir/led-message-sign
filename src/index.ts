@@ -1,3 +1,4 @@
-import LEDMessageSign from "./components/LEDMessageSign";
+import LEDImageSign from "~/modules/led-image-sign";
+import LEDMessageSign from "~/modules/led-message-sign";
 
-export { LEDMessageSign };
+export { LEDImageSign, LEDMessageSign };

@@ -5,9 +5,7 @@ export interface BaseProps {
   className?: string;
 }
 
-export interface LEDMessageSignProps {
-  /** Message text. Max 100 characters. */
-  text: string | string[];
+export interface LEDSignBaseProps extends BaseProps {
   /** Sign height. Default is 150. Min value is 60. */
   height?: number;
   /** Sign width. Default is 800. Min value is 100. */
@@ -30,17 +28,6 @@ export interface LEDMessageSignProps {
   coloredOffLights?: boolean;
   /** How many animation frames pass between sign updates. Default is 6. Value is between 1 and 60. */
   animationFramesPerUpdate?: number;
-  /** In static mode the text stays still. If the text overflows it will eventually move to reveal the rest. Default is false.
-      Static mode does not work with a text array, so the first value will be used. */
-  staticMode?: boolean;
-  /** Delay in milliseconds before moving to reveal overflowing text. Default is 2000. Value is between 100ms and 60s. */
-  staticModeDelay?: number;
-}
-
-export interface SignConfig extends Required<LEDMessageSignProps> {
-  id: string;
-  text: string;
-  frameProportion: number;
 }
 
 export interface SignComputedValues {
@@ -83,10 +70,6 @@ export type SignColors = Record<
 >;
 
 export type PixelGrid = number[][];
-
-export type Letter = number[][];
-
-export type Alphabet = { [letter: string]: Letter };
 
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 

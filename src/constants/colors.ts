@@ -1,4 +1,4 @@
-import { HSLColorValues } from "../types";
+import { HSLColorValues } from "~/types";
 
 enum COLOR {
   FRAME = "FRAME",

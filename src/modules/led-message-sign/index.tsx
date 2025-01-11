@@ -1,23 +1,25 @@
 import React, {
   FC,
-  memo,
-  useRef,
-  useId,
   Fragment,
-  useState,
+  memo,
+  useId,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 
-import { BaseProps, LEDMessageSignProps } from "../types";
-import { sanitizeProps } from "../utils/props";
-import { calcComputedValues, calcColors } from "../utils";
-import { useObjectSize, useSignAnimation } from "../hooks";
-import { SignContext } from "../context";
-import { FRAME_TO_HEIGHT_RATIO } from "../constants";
-import SignFrame from "./SignFrame";
-import SignDisplay from "./SignDisplay";
+import { FRAME_TO_HEIGHT_RATIO } from "~/constants";
+import { useObjectSize } from "~/hooks";
+import { calcColors, calcComputedValues } from "~/utils";
 
-const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
+import SignDisplay from "./components/SignDisplay";
+import SignFrame from "./components/SignFrame";
+import SignContext from "./context/SignContext";
+import useSignAnimation from "./hooks/useSignAnimation";
+import { LEDMessageSignProps } from "./types";
+import { sanitizeProps } from "./utils/props";
+
+const LEDMessageSign: FC<LEDMessageSignProps> = ({
   style = {},
   className,
   ...props

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { SignConfig, SignComputedValues } from "../types";
-import { FRAME_DURATION } from "../constants";
-import { getSignIds } from "../utils";
-import { syncAnimations } from "../utils/animations";
+import { FRAME_DURATION } from "~/constants";
+import { SignComputedValues } from "~/types";
+import { getSignIds, syncAnimations } from "~/utils";
+
+import { SignConfig } from "../types";
 
 const useStaticSignAnimation = (
   { id, animationFramesPerUpdate, staticMode, staticModeDelay }: SignConfig,

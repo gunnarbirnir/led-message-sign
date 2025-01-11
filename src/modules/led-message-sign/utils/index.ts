@@ -1,16 +1,29 @@
-import { CanvasChunk } from "../types";
-import { CANVAS_SCALING } from "../constants";
+import { CANVAS_SCALING } from "~/constants";
+import { CanvasChunk } from "~/types";
 
-export const getCanvasContext = (id: string, alpha: boolean = false) => {
-  const canvas = document.getElementById(id) as HTMLCanvasElement;
-  const ctx = canvas ? canvas.getContext("2d", { alpha }) : null;
+import { ALPHABET, EMPTY_COLUMN, UNKNOWN_LETTER } from "../constants/alphabet";
 
-  if (ctx) {
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(CANVAS_SCALING, CANVAS_SCALING);
+export const calcPixelGrid = (text: string, pixelCountX: number) => {
+  // Add back to remove trailing space
+  /* const addSpaceBehindLetter = (text: string, index: number) => {
+    return index !== text.length - 1 ? [EMPTY_COLUMN] : [];
+  }; */
+
+  const grid = text
+    .toUpperCase()
+    .split("")
+    .map((letter) => [
+      ...(ALPHABET[letter] || UNKNOWN_LETTER),
+      ...[EMPTY_COLUMN],
+    ])
+    .flat();
+
+  const frontPadding = [];
+  for (let i = 0; i < pixelCountX; i++) {
+    frontPadding.push(EMPTY_COLUMN);
   }
 
-  return ctx;
+  return [...frontPadding, ...grid];
 };
 
 const CANVAS_CHUNK_SIZE = 4000 / CANVAS_SCALING;

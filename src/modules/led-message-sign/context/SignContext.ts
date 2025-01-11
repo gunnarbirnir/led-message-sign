@@ -1,6 +1,8 @@
 import { createContext } from "react";
 
-import { SignConfig, SignComputedValues, SignColors } from "../types";
+import { SignColors, SignComputedValues } from "~/types";
+
+import { SignConfig } from "../types";
 
 const SignContext = createContext<{
   config: SignConfig;

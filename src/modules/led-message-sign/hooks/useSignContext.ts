@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { SignContext } from "../context";
+import SignContext from "../context/SignContext";
 
 const useSignContext = () => {
   const contextValue = useContext(SignContext);

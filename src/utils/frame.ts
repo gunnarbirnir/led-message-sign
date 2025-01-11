@@ -1,12 +1,11 @@
-import { hslValuesToCss, isPixelOn } from "../utils";
 import {
+  CanvasChunk,
+  FillStyle,
+  SignColors,
   SignComputedValues,
   Tuple,
-  FillStyle,
-  CanvasChunk,
-  SignColors,
-} from "../types";
-import { getCanvasContext } from "./canvas";
+} from "~/types";
+import { getCanvasContext, hslValuesToCss, isPixelOn } from "~/utils";
 
 const getFrameUtils = (
   ctx: CanvasRenderingContext2D,

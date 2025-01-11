@@ -1,10 +1,11 @@
-import React, { FC, useMemo, useEffect } from "react";
+import React, { FC, useEffect, useMemo } from "react";
 
-import { useSignContext } from "../hooks";
-import { getSignIds } from "../utils";
-import { getCanvasContext, getCanvasChunks } from "../utils/canvas";
-import { drawDisplayOffLights, drawDisplayOnLights } from "../utils/display";
-import Canvas from "./Canvas";
+import Canvas from "~/components/Canvas";
+import { getCanvasContext, getSignIds } from "~/utils";
+import { drawDisplayOffLights, drawDisplayOnLights } from "~/utils/display";
+
+import useSignContext from "../hooks/useSignContext";
+import { getCanvasChunks } from "../utils";
 import AnimationContainer from "./AnimationContainer";
 import CanvasChunks from "./CanvasChunks";
 

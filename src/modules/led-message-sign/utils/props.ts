@@ -1,10 +1,10 @@
-import { LEDMessageSignProps } from "../types";
 import {
   DEFAULT_VALUE,
   MAX_CHARACTERS,
-  MIN_VALUE,
   MAX_VALUE,
+  MIN_VALUE,
 } from "../constants/props";
+import { LEDMessageSignProps } from "../types";
 
 export const sanitizeProps = ({
   text,
@@ -67,18 +67,4 @@ export const sanitizeProps = ({
       MAX_VALUE.STATIC_MODE_DELAY
     ),
   };
-};
-
-export const sanitizeMinValue = (val: number, minVal: number) => {
-  const roundedVal = Math.round(val);
-  return Math.max(roundedVal, minVal);
-};
-
-export const sanitizeMinMaxValue = (
-  val: number,
-  minVal: number,
-  maxVal: number
-) => {
-  const roundedVal = Math.round(val);
-  return Math.max(Math.min(roundedVal, maxVal), minVal);
 };
