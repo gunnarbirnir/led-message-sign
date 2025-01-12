@@ -9,7 +9,7 @@ import {
   drawFrameVerticalGlow,
 } from "~/utils/frame";
 
-import useSignContext from "../hooks/useSignContext";
+import { useSignContext } from "../hooks";
 import { getCanvasChunks } from "../utils";
 import AnimationContainer from "./AnimationContainer";
 import CanvasChunks from "./CanvasChunks";

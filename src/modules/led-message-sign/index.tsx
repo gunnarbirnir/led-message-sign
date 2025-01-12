@@ -10,16 +10,16 @@ import React, {
 
 import { FRAME_TO_HEIGHT_RATIO } from "~/constants";
 import { useObjectSize } from "~/hooks";
-import { calcColors, calcComputedValues } from "~/utils";
+import { BaseProps } from "~/types";
 
-import SignDisplay from "./components/SignDisplay";
-import SignFrame from "./components/SignFrame";
-import SignContext from "./context/SignContext";
-import useSignAnimation from "./hooks/useSignAnimation";
+import { SignDisplay, SignFrame } from "./components";
+import { SignContext } from "./context";
+import { useSignAnimation } from "./hooks";
 import { LEDMessageSignProps } from "./types";
+import { calcColors, calcComputedValues } from "./utils";
 import { sanitizeProps } from "./utils/props";
 
-const LEDMessageSign: FC<LEDMessageSignProps> = ({
+const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
   style = {},
   className,
   ...props

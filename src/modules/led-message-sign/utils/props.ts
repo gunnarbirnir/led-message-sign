@@ -1,3 +1,5 @@
+import { sanitizeMinMaxValue, sanitizeMinValue } from "~/utils";
+
 import {
   DEFAULT_VALUE,
   MAX_CHARACTERS,
