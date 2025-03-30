@@ -1,3 +1,4 @@
 import useObjectSize from "./useObjectSize";
+import useSignContext from "./useSignContext";
 
-export { useObjectSize };
+export { useObjectSize, useSignContext };

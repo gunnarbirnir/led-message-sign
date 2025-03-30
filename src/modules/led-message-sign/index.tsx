@@ -11,12 +11,13 @@ import React, {
 import { FRAME_TO_HEIGHT_RATIO } from "~/constants";
 import { useObjectSize } from "~/hooks";
 import { BaseProps } from "~/types";
+import { calcColors } from "~/utils";
+import { SignDisplay, SignFrame } from "~/components";
+import { SignContext } from "~/context";
 
-import { SignDisplay, SignFrame } from "./components";
-import { SignContext } from "./context";
 import { useSignAnimation } from "./hooks";
 import { LEDMessageSignProps } from "./types";
-import { calcColors, calcComputedValues } from "./utils";
+import { calcComputedValues } from "./utils";
 import { sanitizeProps } from "./utils/props";
 
 const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
@@ -64,6 +65,9 @@ const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
         : undefined,
     [multipleMessages, props.text.length]
   );
+  const shiftByPixels = config.staticMode
+    ? computedValues.pixelCountX
+    : undefined;
 
   useSignAnimation(config, computedValues, {
     onAnimationFinished: updateTextIndex,
@@ -71,7 +75,9 @@ const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
   });
 
   return (
-    <SignContext.Provider value={{ config, computedValues, colors }}>
+    <SignContext.Provider
+      value={{ id: signId, shiftByPixels, computedValues, colors }}
+    >
       <div ref={containerRef} className={className} style={containerStyle}>
         {computedValues.signWidth !== 0 && (
           <Frame>

@@ -1,6 +1,10 @@
 import { LEDSignBaseProps } from "~/types";
 
 export interface LEDMessageSignProps extends LEDSignBaseProps {
+  /** Sign height. Default is 150. Min value is 60. */
+  height?: number;
+  /** Sign width. Default is 800. Min value is 100. */
+  width?: number;
   /** Message text. Max 100 characters. */
   text: string | string[];
   /** Hue value for HSL color. Default is 0. Value is between 0 and 360. */
@@ -14,7 +18,7 @@ export interface LEDMessageSignProps extends LEDSignBaseProps {
   staticModeDelay?: number;
 }
 
-export interface SignConfig extends Required<LEDMessageSignProps> {
+export interface MessageSignConfig extends Required<LEDMessageSignProps> {
   id: string;
   text: string;
   frameProportion: number;

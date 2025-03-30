@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { FRAME_DURATION } from "~/constants";
-import { SignComputedValues } from "~/types";
 import { getSignIds, syncAnimations } from "~/utils";
+import { SignComputedValues } from "~/types";
 
-import { SignConfig } from "../types";
+import { MessageSignConfig } from "../types";
 import useStaticSignAnimation from "./useStaticSignAnimation";
 
 const useSignAnimation = (
-  config: SignConfig,
+  config: MessageSignConfig,
   computedValues: SignComputedValues,
   options: {
     onAnimationFinished?: () => void;

@@ -1,7 +1,8 @@
 import React, { FC } from "react";
 
-import { Canvas } from "~/components";
 import { CanvasChunk } from "~/types";
+
+import Canvas from "./Canvas";
 
 interface CanvasChunksProps {
   chunks: CanvasChunk[];

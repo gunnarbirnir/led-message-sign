@@ -6,10 +6,6 @@ export interface BaseProps {
 }
 
 export interface LEDSignBaseProps {
-  /** Sign height. Default is 150. Min value is 60. */
-  height?: number;
-  /** Sign width. Default is 800. Min value is 100. */
-  width?: number;
   /** Make sign fill available space. If true width prop will be ignored. Default is false. */
   fullWidth?: boolean;
   /** Lightness value for HSL color of on bulbs. Default is 95. Value is between 70 and 100. */
@@ -25,6 +21,16 @@ export interface LEDSignBaseProps {
   /** How many animation frames pass between sign updates. Default is 6. Value is between 1 and 60. */
   animationFramesPerUpdate?: number;
 }
+
+export interface SignConfig extends Required<LEDSignBaseProps> {
+  id: string; //
+  frameProportion: number;
+  colorHue: number;
+  coloredOffLights: boolean;
+  staticMode: boolean; //
+}
+
+export type PixelGrid = number[][];
 
 export interface SignComputedValues {
   signHeight: number;
@@ -64,8 +70,6 @@ export type SignColors = Record<
   SignColorKey,
   HSLColorValues & { color: string }
 >;
-
-export type PixelGrid = number[][];
 
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 

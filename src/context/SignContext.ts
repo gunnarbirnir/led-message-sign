@@ -2,31 +2,13 @@ import { createContext } from "react";
 
 import { SignColors, SignComputedValues } from "~/types";
 
-import { SignConfig } from "../types";
-
 const SignContext = createContext<{
-  config: SignConfig;
+  id: string;
+  shiftByPixels?: number;
   computedValues: SignComputedValues;
   colors: SignColors;
 }>({
-  config: {
-    id: "",
-    text: "",
-    height: 0,
-    width: 0,
-    fullWidth: false,
-    colorHue: 0,
-    onBulbLightness: 0,
-    offBulbLightness: 0,
-    frameLightness: 0,
-    backgroundLightness: 0,
-    hideFrame: false,
-    frameProportion: 0,
-    coloredOffLights: false,
-    animationFramesPerUpdate: 0,
-    staticMode: false,
-    staticModeDelay: 0,
-  },
+  id: "",
   computedValues: {
     signHeight: 0,
     signWidth: 0,

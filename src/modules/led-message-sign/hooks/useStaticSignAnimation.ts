@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { FRAME_DURATION } from "~/constants";
-import { SignComputedValues } from "~/types";
 import { getSignIds, syncAnimations } from "~/utils";
+import { SignComputedValues } from "~/types";
 
-import { SignConfig } from "../types";
+import { MessageSignConfig } from "../types";
 
 const useStaticSignAnimation = (
-  { id, animationFramesPerUpdate, staticMode, staticModeDelay }: SignConfig,
+  {
+    id,
+    animationFramesPerUpdate,
+    staticMode,
+    staticModeDelay,
+  }: MessageSignConfig,
   { pixelSize, pixelGrid, frameSize, pixelCountX }: SignComputedValues,
   {
     updateAnimationId,

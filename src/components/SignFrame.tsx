@@ -1,22 +1,20 @@
 import React, { FC, PropsWithChildren, useEffect, useMemo } from "react";
 
-import Canvas from "~/components/Canvas";
-import { getCanvasContext, getSignIds } from "~/utils";
+import { getCanvasContext, getSignIds, getCanvasChunks } from "~/utils";
 import {
   drawFrameHorizontalGlow,
   drawFrameMasking,
   drawFrameShading,
   drawFrameVerticalGlow,
 } from "~/utils/frame";
+import { useSignContext } from "~/hooks";
 
-import { useSignContext } from "../hooks";
-import { getCanvasChunks } from "../utils";
 import AnimationContainer from "./AnimationContainer";
+import Canvas from "./Canvas";
 import CanvasChunks from "./CanvasChunks";
 
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
-  const { config, computedValues, colors } = useSignContext();
-  const { id, staticMode } = config;
+  const { id, shiftByPixels, computedValues, colors } = useSignContext();
   const {
     signHeight,
     signWidth,
@@ -28,7 +26,6 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     pixelGrid,
     pixelAreaWidth,
     pixelAreaHeight,
-    pixelCountX,
   } = computedValues;
 
   const {
@@ -60,8 +57,12 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
     width: frameSize,
     height: pixelAreaHeight,
   };
-  const initFrameTransform = staticMode ? frameSize * pixelCountX : undefined;
-  const initPixelTransform = staticMode ? pixelSize * pixelCountX : undefined;
+  const initFrameTransform = shiftByPixels
+    ? frameSize * shiftByPixels
+    : undefined;
+  const initPixelTransform = shiftByPixels
+    ? pixelSize * shiftByPixels
+    : undefined;
 
   useEffect(() => {
     const frameMaskingCtx = getCanvasContext(frameMaskingId, true);
