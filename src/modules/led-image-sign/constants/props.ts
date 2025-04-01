@@ -3,11 +3,11 @@ import { COLOR_VALUES } from "~/constants/colors";
 export const DEFAULT_VALUE = {
   IMAGES: [
     {
-      pixelGrid: Array.from({ length: 7 }, () => Array(7).fill(null)),
+      pixelGrid: Array.from({ length: 10 }, () => Array(20).fill(null)),
       duration: 1,
     },
   ],
-  WIDTH: 300,
+  WIDTH: 500,
   FULL_WIDTH: false,
   ON_BULB_LIGHTNESS: COLOR_VALUES.BULB_ON.lightness,
   OFF_BULB_LIGHTNESS: COLOR_VALUES.BULB_OFF.lightness,

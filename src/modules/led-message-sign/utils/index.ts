@@ -1,7 +1,5 @@
-import { PADDING_TO_HEIGHT_RATIO } from "~/constants";
-
 import { MessageSignConfig } from "../types";
-import { VERTICAL_PIXEL_COUNT } from "../constants";
+import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, EMPTY_COLUMN, UNKNOWN_LETTER } from "../constants/alphabet";
 
 export const calcPixelGrid = (text: string, pixelCountX: number) => {

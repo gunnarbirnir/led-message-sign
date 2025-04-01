@@ -1,12 +1,12 @@
 import React, { FC, Fragment, memo, useId, useRef } from "react";
 
-import { FRAME_TO_HEIGHT_RATIO } from "~/constants";
 import { useObjectSize } from "~/hooks";
 import { BaseProps } from "~/types";
 import { calcColors } from "~/utils";
 import { SignDisplay, SignFrame } from "~/components";
 import { SignContext } from "~/context";
 
+import { FRAME_TO_WIDTH_RATIO } from "./constants";
 // import { useSignAnimation } from "./hooks";
 import { LEDImageSignProps } from "./types";
 import { sanitizeProps } from "./utils/props";
@@ -36,7 +36,7 @@ const LEDImageSign: FC<LEDImageSignProps & BaseProps> = ({
     ...sanitizedProps,
     id: signId,
     width: fullWidth ? containerWidth : width,
-    frameProportion: hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
+    frameProportion: hideFrame ? 0 : FRAME_TO_WIDTH_RATIO,
   };
   const computedValues = calcComputedValues(config);
   const colors = calcColors(config);

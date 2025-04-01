@@ -8,13 +8,13 @@ import React, {
   useState,
 } from "react";
 
-import { FRAME_TO_HEIGHT_RATIO } from "~/constants";
 import { useObjectSize } from "~/hooks";
 import { BaseProps } from "~/types";
 import { calcColors } from "~/utils";
 import { SignDisplay, SignFrame } from "~/components";
 import { SignContext } from "~/context";
 
+import { FRAME_TO_HEIGHT_RATIO } from "./constants";
 import { useSignAnimation } from "./hooks";
 import { LEDMessageSignProps } from "./types";
 import { calcComputedValues } from "./utils";
