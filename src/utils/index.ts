@@ -50,7 +50,7 @@ export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
   if (x < 0 || x >= pixelGrid.length) {
     return false;
   }
-  return !!pixelGrid[x][y];
+  return pixelGrid[x][y] !== null;
 };
 
 export const getSignIds = (signId: string) => {

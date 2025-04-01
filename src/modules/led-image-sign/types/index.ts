@@ -1,9 +1,7 @@
-import { LEDSignBaseProps, HSLColorValues } from "~/types";
-
-export type ImagePixelGrid = (HSLColorValues | null)[][];
+import { LEDSignBaseProps, PixelGrid } from "~/types";
 
 export type SignImage = {
-  pixelGrid: ImagePixelGrid;
+  pixelGrid: PixelGrid;
   /** How many frames should the image span. Default is 1. */
   duration?: number;
 };

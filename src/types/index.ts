@@ -30,7 +30,8 @@ export interface SignConfig extends Required<LEDSignBaseProps> {
   staticMode: boolean; //
 }
 
-export type PixelGrid = number[][];
+// The number is the hue value of the pixel
+export type PixelGrid = (number | null)[][];
 
 export interface SignComputedValues {
   signHeight: number;

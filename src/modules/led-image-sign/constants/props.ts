@@ -1,12 +1,15 @@
 import { COLOR_VALUES } from "~/constants/colors";
 
+import { TESTING_G } from "./testing";
+
 export const DEFAULT_VALUE = {
-  IMAGES: [
+  IMAGES: TESTING_G,
+  /* [
     {
       pixelGrid: Array.from({ length: 10 }, () => Array(20).fill(null)),
       duration: 1,
     },
-  ],
+  ], */
   WIDTH: 500,
   FULL_WIDTH: false,
   ON_BULB_LIGHTNESS: COLOR_VALUES.BULB_ON.lightness,

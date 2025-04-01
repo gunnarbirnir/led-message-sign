@@ -2,7 +2,11 @@ import { MessageSignConfig } from "../types";
 import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
 import { ALPHABET, EMPTY_COLUMN, UNKNOWN_LETTER } from "../constants/alphabet";
 
-export const calcPixelGrid = (text: string, pixelCountX: number) => {
+export const calcPixelGrid = (
+  text: string,
+  pixelCountX: number,
+  colorHue: number
+) => {
   // Add back to remove trailing space
   /* const addSpaceBehindLetter = (text: string, index: number) => {
     return index !== text.length - 1 ? [EMPTY_COLUMN] : [];
@@ -22,7 +26,9 @@ export const calcPixelGrid = (text: string, pixelCountX: number) => {
     frontPadding.push(EMPTY_COLUMN);
   }
 
-  return [...frontPadding, ...grid];
+  return [...frontPadding, ...grid].map((col) =>
+    col.map((pixel) => (pixel ? colorHue : null))
+  );
 };
 
 export const calcComputedValues = (config: MessageSignConfig) => {
@@ -42,7 +48,7 @@ export const calcComputedValues = (config: MessageSignConfig) => {
   const pixelAreaWidth = pixelSize * pixelCountX;
   const displayPaddingX = (displayWidth - pixelAreaWidth) / 2;
   const pixelCountY = VERTICAL_PIXEL_COUNT;
-  const pixelGrid = calcPixelGrid(config.text, pixelCountX);
+  const pixelGrid = calcPixelGrid(config.text, pixelCountX, config.colorHue);
   const pixelGridWidth = pixelSize * pixelGrid.length;
 
   return {
