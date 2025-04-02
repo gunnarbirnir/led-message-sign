@@ -53,6 +53,13 @@ export const isPixelOn = (x: number, y: number, pixelGrid: PixelGrid) => {
   return pixelGrid[x][y] !== null;
 };
 
+export const getPixelHue = (x: number, y: number, pixelGrid: PixelGrid) => {
+  if (x < 0 || x >= pixelGrid.length) {
+    return COLOR_VALUES.LIGHT.hue;
+  }
+  return pixelGrid[x][y] ?? COLOR_VALUES.LIGHT.hue;
+};
+
 export const getSignIds = (signId: string) => {
   const generateId = (baseId: string) => {
     return `${baseId}-${signId}`;

@@ -1,5 +1,10 @@
 import { CanvasChunk, SignColors, SignComputedValues } from "~/types";
-import { getCanvasContext, isPixelOn } from "~/utils";
+import {
+  getCanvasContext,
+  isPixelOn,
+  hslValuesToCss,
+  getPixelHue,
+} from "~/utils";
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;
 
@@ -79,6 +84,7 @@ export const drawDisplayOnLights = (
 
       for (let y = 0; y < pixelCountY; y++) {
         const pixelOn = isPixelOn(x, y, pixelGrid);
+        const pixelHue = getPixelHue(x, y, pixelGrid);
         const pixelYPos = y * pixelSize;
         const pixelYCenterPos = pixelYPos + pixelSize / 2;
 
@@ -91,12 +97,23 @@ export const drawDisplayOnLights = (
             pixelYCenterPos,
             pixelSize / PIXEL_TO_LIGHT_OUTER_RADIUS_RATIO
           );
-          grd.addColorStop(0, colors.light.color);
+          grd.addColorStop(
+            0,
+            hslValuesToCss(
+              pixelHue,
+              colors.light.saturation,
+              colors.light.lightness
+            )
+          );
           grd.addColorStop(1, colors.background.color);
           ctx.fillStyle = grd;
           ctx.fillRect(chunkPixelXPos, pixelYPos, pixelSize, pixelSize);
 
-          ctx.fillStyle = colors.bulbOn.color;
+          ctx.fillStyle = hslValuesToCss(
+            pixelHue,
+            colors.bulbOn.saturation,
+            colors.bulbOn.lightness
+          );
           ctx.beginPath();
           ctx.arc(
             pixelXCenterPos,
