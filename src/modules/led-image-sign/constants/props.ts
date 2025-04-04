@@ -1,23 +1,23 @@
 import { COLOR_VALUES } from "~/constants/colors";
 
-import { TESTING_G } from "./testing";
+import { TESTING_PARTY } from "./testing";
 
 export const DEFAULT_VALUE = {
-  IMAGES: TESTING_G,
+  IMAGES: TESTING_PARTY,
   /* [
     {
       pixelGrid: Array.from({ length: 10 }, () => Array(20).fill(null)),
       duration: 1,
     },
   ], */
-  WIDTH: 500,
+  WIDTH: 300, // 500,
   FULL_WIDTH: false,
   ON_BULB_LIGHTNESS: COLOR_VALUES.BULB_ON.lightness,
   OFF_BULB_LIGHTNESS: COLOR_VALUES.BULB_OFF.lightness,
   FRAME_LIGHTNESS: COLOR_VALUES.FRAME.lightness,
   BACKGROUND_LIGHTNESS: COLOR_VALUES.BACKGROUND.lightness,
   HIDE_FRAME: false,
-  ANIMATION_FRAMES_PER_UPDATE: 6,
+  ANIMATION_FRAMES_PER_UPDATE: 6, // 6,
 };
 
 export const MIN_VALUE = {

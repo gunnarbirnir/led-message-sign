@@ -7,7 +7,7 @@ import { SignDisplay, SignFrame } from "~/components";
 import { SignContext } from "~/context";
 
 import { FRAME_TO_WIDTH_RATIO } from "./constants";
-// import { useSignAnimation } from "./hooks";
+import { useSignAnimation } from "./hooks";
 import { LEDImageSignProps } from "./types";
 import { sanitizeProps } from "./utils/props";
 import { calcComputedValues } from "./utils";
@@ -41,7 +41,7 @@ const LEDImageSign: FC<LEDImageSignProps & BaseProps> = ({
   const computedValues = calcComputedValues(config);
   const colors = calcColors(config);
 
-  // useSignAnimation(config, computedValues);
+  useSignAnimation(config, computedValues);
 
   return (
     <SignContext.Provider value={{ id: signId, computedValues, colors }}>

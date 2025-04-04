@@ -11,10 +11,35 @@ const flipAxis = (pixelGrid: PixelGrid) => {
   return flippedPixelGrid;
 };
 
-const calcPixelGrid = (images: SignImage[]) => {
-  const pixelGrid = images[0].pixelGrid;
+const calcPixelGrid = (
+  images: SignImage[],
+  pixelCountX: number,
+  pixelCountY: number
+) => {
+  const emptyRow = new Array(pixelCountX).fill(null);
 
-  return flipAxis(pixelGrid);
+  const pixelGrid: PixelGrid = images.reduce(
+    (currentGrid: PixelGrid, image) => {
+      const imageGrid = [];
+
+      for (let y = 0; y < pixelCountY; y++) {
+        if (image.pixelGrid[y]) {
+          const gridRow = [];
+          for (let x = 0; x < pixelCountX; x++) {
+            gridRow.push(image.pixelGrid[y][x] ?? null);
+          }
+          imageGrid.push(gridRow);
+        } else {
+          imageGrid.push(emptyRow);
+        }
+      }
+
+      return [...currentGrid, ...flipAxis(imageGrid)];
+    },
+    []
+  );
+
+  return pixelGrid;
 };
 
 export const calcComputedValues = (config: ImageSignConfig) => {
@@ -32,7 +57,7 @@ export const calcComputedValues = (config: ImageSignConfig) => {
   const displayPaddingY = displayPaddingX;
   const displayHeight = pixelAreaHeight + displayPaddingY * 2;
   const signHeight = displayHeight + frameSize * 2;
-  const pixelGrid = calcPixelGrid(config.images);
+  const pixelGrid = calcPixelGrid(config.images, pixelCountX, pixelCountY);
   const pixelGridWidth = pixelSize * pixelGrid.length;
 
   return {
