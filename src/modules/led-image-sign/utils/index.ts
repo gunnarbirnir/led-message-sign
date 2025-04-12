@@ -1,7 +1,7 @@
-import { PixelGrid } from "~/types";
+import { type PixelGrid } from "~/types";
 
 import { PADDING_TO_WIDTH_RATIO } from "../constants";
-import { ImageSignConfig } from "../types";
+import { type ImageSignConfig } from "../types";
 
 const flipAxis = (pixelGrid: PixelGrid) => {
   const flippedPixelGrid = pixelGrid[0].map((_, index) =>

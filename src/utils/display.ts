@@ -1,9 +1,13 @@
-import { CanvasChunk, SignColors, SignComputedValues } from "~/types";
+import {
+  type CanvasChunk,
+  type SignColors,
+  type SignComputedValues,
+} from "~/types";
 import {
   getCanvasContext,
-  isPixelOn,
-  hslValuesToCss,
   getPixelHue,
+  hslValuesToCss,
+  isPixelOn,
 } from "~/utils";
 
 const PIXEL_TO_BULB_RADIUS_RATIO = 6;

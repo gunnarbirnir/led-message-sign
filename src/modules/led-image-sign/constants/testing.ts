@@ -1,4 +1,4 @@
-import { PixelGrid } from "~/types";
+import { type PixelGrid } from "~/types";
 
 const REDD = 0;
 

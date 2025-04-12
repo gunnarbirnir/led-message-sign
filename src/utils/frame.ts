@@ -1,15 +1,15 @@
 import {
-  CanvasChunk,
-  FillStyle,
-  SignColors,
-  SignComputedValues,
-  Tuple,
+  type CanvasChunk,
+  type FillStyle,
+  type SignColors,
+  type SignComputedValues,
+  type Tuple,
 } from "~/types";
 import {
   getCanvasContext,
+  getPixelHue,
   hslValuesToCss,
   isPixelOn,
-  getPixelHue,
 } from "~/utils";
 
 const getFrameUtils = (

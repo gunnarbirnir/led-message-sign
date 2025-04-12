@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import { FRAME_DURATION } from "~/constants";
+import { type SignComputedValues } from "~/types";
 import { getSignIds, syncAnimations } from "~/utils";
-import { SignComputedValues } from "~/types";
 
-import { ImageSignConfig } from "../types";
+import { type ImageSignConfig } from "../types";
 
 const useSignAnimation = (
   config: ImageSignConfig,

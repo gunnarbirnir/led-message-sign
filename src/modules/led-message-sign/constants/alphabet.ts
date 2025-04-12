@@ -1,4 +1,4 @@
-import { Alphabet, Letter } from "../types";
+import { type Alphabet, type Letter } from "../types";
 
 export const EMPTY_COLUMN = [0, 0, 0, 0, 0, 0, 0];
 

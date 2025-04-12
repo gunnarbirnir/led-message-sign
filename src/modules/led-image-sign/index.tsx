@@ -1,16 +1,16 @@
-import React, { FC, Fragment, memo, useId, useRef } from "react";
+import React, { type FC, Fragment, memo, useId, useRef } from "react";
 
-import { useObjectSize } from "~/hooks";
-import { BaseProps } from "~/types";
-import { calcColors } from "~/utils";
 import { SignDisplay, SignFrame } from "~/components";
 import { SignContext } from "~/context";
+import { useObjectSize } from "~/hooks";
+import { type BaseProps } from "~/types";
+import { calcColors } from "~/utils";
 
 import { FRAME_TO_WIDTH_RATIO } from "./constants";
 import { useSignAnimation } from "./hooks";
-import { LEDImageSignProps } from "./types";
-import { sanitizeProps } from "./utils/props";
+import { type LEDImageSignProps } from "./types";
 import { calcComputedValues } from "./utils";
+import { sanitizeProps } from "./utils/props";
 
 const LEDImageSign: FC<LEDImageSignProps & BaseProps> = ({
   style = {},

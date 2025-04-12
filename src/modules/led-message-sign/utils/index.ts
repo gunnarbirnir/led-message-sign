@@ -1,6 +1,6 @@
-import { MessageSignConfig } from "../types";
-import { VERTICAL_PIXEL_COUNT, PADDING_TO_HEIGHT_RATIO } from "../constants";
+import { PADDING_TO_HEIGHT_RATIO, VERTICAL_PIXEL_COUNT } from "../constants";
 import { ALPHABET, EMPTY_COLUMN, UNKNOWN_LETTER } from "../constants/alphabet";
+import { type MessageSignConfig } from "../types";
 
 export const calcPixelGrid = (
   text: string,

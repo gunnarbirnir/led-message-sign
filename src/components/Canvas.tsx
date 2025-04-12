@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import React, { type FC } from "react";
 
 import { CANVAS_SCALING } from "~/constants";
-import { BaseProps } from "~/types";
+import { type BaseProps } from "~/types";
 
 interface CanvasProps extends BaseProps {
   id: string;

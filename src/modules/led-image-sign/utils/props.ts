@@ -1,7 +1,7 @@
 import { sanitizeMinMaxValue, sanitizeMinValue } from "~/utils";
 
 import { DEFAULT_VALUE, MAX_VALUE, MIN_VALUE } from "../constants/props";
-import { LEDImageSignProps } from "../types";
+import { type LEDImageSignProps } from "../types";
 
 export const sanitizeProps = ({
   images = DEFAULT_VALUE.IMAGES,

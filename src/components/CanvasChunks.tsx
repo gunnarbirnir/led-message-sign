@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React, { type FC } from "react";
 
-import { CanvasChunk } from "~/types";
+import { type CanvasChunk } from "~/types";
 
 import Canvas from "./Canvas";
 

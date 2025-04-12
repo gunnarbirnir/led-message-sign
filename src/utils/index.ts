@@ -1,11 +1,11 @@
-import { CANVAS_SCALING, CANVAS_CHUNK_SIZE } from "~/constants";
+import { CANVAS_CHUNK_SIZE, CANVAS_SCALING } from "~/constants";
 import { COLOR_VALUES } from "~/constants/colors";
 import {
-  PixelGrid,
-  HSLColorValues,
-  SignColorKey,
-  SignColors,
-  CanvasChunk,
+  type CanvasChunk,
+  type HSLColorValues,
+  type PixelGrid,
+  type SignColorKey,
+  type SignColors,
 } from "~/types";
 
 export const hslValuesToCss = (

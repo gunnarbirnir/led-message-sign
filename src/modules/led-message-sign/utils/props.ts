@@ -6,7 +6,7 @@ import {
   MAX_VALUE,
   MIN_VALUE,
 } from "../constants/props";
-import { LEDMessageSignProps } from "../types";
+import { type LEDMessageSignProps } from "../types";
 
 export const sanitizeProps = ({
   text,

@@ -1,8 +1,8 @@
-import React, { FC, useEffect, useMemo } from "react";
+import React, { type FC, useEffect, useMemo } from "react";
 
-import { getCanvasContext, getSignIds, getCanvasChunks } from "~/utils";
-import { drawDisplayOffLights, drawDisplayOnLights } from "~/utils/display";
 import { useSignContext } from "~/hooks";
+import { getCanvasChunks, getCanvasContext, getSignIds } from "~/utils";
+import { drawDisplayOffLights, drawDisplayOnLights } from "~/utils/display";
 
 import AnimationContainer from "./AnimationContainer";
 import Canvas from "./Canvas";
