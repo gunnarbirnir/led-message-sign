@@ -370,9 +370,11 @@ export const drawFrameHorizontalGlow = (
       const secondTopPixelHue = getPixelHue(x, 1, pixelGrid);
       topPixelHue = topPixelOn ? firstTopPixelHue : secondTopPixelHue;
 
-      const firstBottomPixelHue = getPixelHue(x, 0, pixelGrid);
-      const secondBottomPixelHue = getPixelHue(x, 1, pixelGrid);
-      topPixelHue = topPixelOn ? firstBottomPixelHue : secondBottomPixelHue;
+      const firstBottomPixelHue = getPixelHue(x, pixelCountY - 1, pixelGrid);
+      const secondBottomPixelHue = getPixelHue(x, pixelCountY - 2, pixelGrid);
+      bottomPixelHue = bottomPixelOn
+        ? firstBottomPixelHue
+        : secondBottomPixelHue;
 
       addGlowColorStop({
         gradient: topGlow,

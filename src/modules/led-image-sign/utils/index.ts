@@ -1,7 +1,7 @@
 import { PixelGrid } from "~/types";
 
 import { PADDING_TO_WIDTH_RATIO } from "../constants";
-import { ImageSignConfig, SignImage } from "../types";
+import { ImageSignConfig } from "../types";
 
 const flipAxis = (pixelGrid: PixelGrid) => {
   const flippedPixelGrid = pixelGrid[0].map((_, index) =>
@@ -12,7 +12,7 @@ const flipAxis = (pixelGrid: PixelGrid) => {
 };
 
 const calcPixelGrid = (
-  images: SignImage[],
+  images: PixelGrid[],
   pixelCountX: number,
   pixelCountY: number
 ) => {
@@ -23,10 +23,10 @@ const calcPixelGrid = (
       const imageGrid = [];
 
       for (let y = 0; y < pixelCountY; y++) {
-        if (image.pixelGrid[y]) {
+        if (image[y]) {
           const gridRow = [];
           for (let x = 0; x < pixelCountX; x++) {
-            gridRow.push(image.pixelGrid[y][x] ?? null);
+            gridRow.push(image[y][x] ?? null);
           }
           imageGrid.push(gridRow);
         } else {
@@ -43,7 +43,7 @@ const calcPixelGrid = (
 };
 
 export const calcComputedValues = (config: ImageSignConfig) => {
-  const firstImageGrid = config.images[0].pixelGrid;
+  const firstImageGrid = config.images[0];
   const pixelCountY = firstImageGrid.length;
   const pixelCountX = firstImageGrid[0].length;
   const signWidth = config.width;
