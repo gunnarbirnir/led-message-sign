@@ -5,6 +5,13 @@ export interface LEDImageSignProps extends LEDSignBaseProps {
   width?: number;
   /** Images to use in sign animation. Will all use the dimensions of the first image. */
   images: PixelGrid[];
+  animationOptions?: {
+    delay?: number;
+    direction?: PlaybackDirection;
+    endDelay?: number;
+    fill?: FillMode;
+    iterations?: number;
+  };
 }
 
 export interface ImageSignConfig extends Required<LEDImageSignProps> {

@@ -13,6 +13,7 @@ export const sanitizeProps = ({
   backgroundLightness = DEFAULT_VALUE.BACKGROUND_LIGHTNESS,
   hideFrame = DEFAULT_VALUE.HIDE_FRAME,
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
+  animationOptions = DEFAULT_VALUE.ANIMATION_OPTIONS,
 }: LEDImageSignProps) => {
   return {
     images: images.length ? images : DEFAULT_VALUE.IMAGES,
@@ -44,5 +45,6 @@ export const sanitizeProps = ({
       MIN_VALUE.ANIMATION_FRAMES_PER_UPDATE,
       MAX_VALUE.ANIMATION_FRAMES_PER_UPDATE
     ),
+    animationOptions,
   };
 };

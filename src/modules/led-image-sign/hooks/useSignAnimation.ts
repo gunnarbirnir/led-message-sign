@@ -10,7 +10,18 @@ const useSignAnimation = (
   config: ImageSignConfig,
   computedValues: SignComputedValues
 ) => {
-  const { id, animationFramesPerUpdate, images } = config;
+  const {
+    id,
+    animationFramesPerUpdate,
+    images,
+    animationOptions: {
+      delay,
+      direction,
+      endDelay,
+      fill,
+      iterations = Infinity,
+    },
+  } = config;
   const { pixelSize, pixelGrid, frameSize } = computedValues;
 
   const updateDuration = useMemo(
@@ -20,11 +31,23 @@ const useSignAnimation = (
 
   const animationOptions = useMemo(
     () => ({
+      delay,
+      direction,
+      endDelay,
+      fill,
+      iterations,
       duration: images.length * updateDuration,
       easing: `steps(${images.length})`,
-      iterations: Infinity,
     }),
-    [images.length, updateDuration]
+    [
+      images.length,
+      updateDuration,
+      delay,
+      direction,
+      endDelay,
+      fill,
+      iterations,
+    ]
   );
 
   const calcKeyframes = useCallback(
