@@ -1,21 +1,13 @@
-import { CSSProperties } from "react";
+import { type CSSProperties } from "react";
 
 export interface BaseProps {
   style?: CSSProperties;
   className?: string;
 }
 
-export interface LEDMessageSignProps {
-  /** Message text. Max 100 characters. */
-  text: string | string[];
-  /** Sign height. Default is 150. Min value is 60. */
-  height?: number;
-  /** Sign width. Default is 800. Min value is 100. */
-  width?: number;
+export interface LEDSignBaseProps {
   /** Make sign fill available space. If true width prop will be ignored. Default is false. */
   fullWidth?: boolean;
-  /** Hue value for HSL color. Default is 0. Value is between 0 and 360. */
-  colorHue?: number;
   /** Lightness value for HSL color of on bulbs. Default is 95. Value is between 70 and 100. */
   onBulbLightness?: number;
   /** Lightness value for HSL color of off bulbs. Default is 10. Value is between 0 and 30. */
@@ -26,22 +18,20 @@ export interface LEDMessageSignProps {
   backgroundLightness?: number;
   /** Hide sign frame. Default is false. */
   hideFrame?: boolean;
-  /** Should the off lights be colored. Default is true. */
-  coloredOffLights?: boolean;
   /** How many animation frames pass between sign updates. Default is 6. Value is between 1 and 60. */
   animationFramesPerUpdate?: number;
-  /** In static mode the text stays still. If the text overflows it will eventually move to reveal the rest. Default is false.
-      Static mode does not work with a text array, so the first value will be used. */
-  staticMode?: boolean;
-  /** Delay in milliseconds before moving to reveal overflowing text. Default is 2000. Value is between 100ms and 60s. */
-  staticModeDelay?: number;
 }
 
-export interface SignConfig extends Required<LEDMessageSignProps> {
-  id: string;
-  text: string;
+export interface SignConfig extends Required<LEDSignBaseProps> {
+  id: string; //
   frameProportion: number;
+  colorHue: number;
+  coloredOffLights: boolean;
+  staticMode: boolean; //
 }
+
+// The number is the hue value of the pixel
+export type PixelGrid = (number | null)[][];
 
 export interface SignComputedValues {
   signHeight: number;
@@ -81,12 +71,6 @@ export type SignColors = Record<
   SignColorKey,
   HSLColorValues & { color: string }
 >;
-
-export type PixelGrid = number[][];
-
-export type Letter = number[][];
-
-export type Alphabet = { [letter: string]: Letter };
 
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 

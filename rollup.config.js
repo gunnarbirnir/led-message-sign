@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
-import typescript from "rollup-plugin-typescript2";
-import bundleSize from "rollup-plugin-bundle-size";
 import terser from "@rollup/plugin-terser";
+import bundleSize from "rollup-plugin-bundle-size";
+import typescript from "rollup-plugin-typescript2";
 
 import pkg from "./package.json";
 

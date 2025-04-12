@@ -1,3 +1,1 @@
-import SignContext from "./SignContext";
-
-export { SignContext };
+export { default as SignContext } from "./SignContext";

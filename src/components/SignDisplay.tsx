@@ -1,16 +1,15 @@
-import React, { FC, useMemo, useEffect } from "react";
+import React, { type FC, useEffect, useMemo } from "react";
 
-import { useSignContext } from "../hooks";
-import { getSignIds } from "../utils";
-import { getCanvasContext, getCanvasChunks } from "../utils/canvas";
-import { drawDisplayOffLights, drawDisplayOnLights } from "../utils/display";
-import Canvas from "./Canvas";
+import { useSignContext } from "~/hooks";
+import { getCanvasChunks, getCanvasContext, getSignIds } from "~/utils";
+import { drawDisplayOffLights, drawDisplayOnLights } from "~/utils/display";
+
 import AnimationContainer from "./AnimationContainer";
+import Canvas from "./Canvas";
 import CanvasChunks from "./CanvasChunks";
 
 const SignDisplay: FC = () => {
-  const { config, computedValues, colors } = useSignContext();
-  const { id, staticMode } = config;
+  const { id, shiftByPixels, computedValues, colors } = useSignContext();
   const {
     pixelSize,
     displayWidth,
@@ -21,7 +20,6 @@ const SignDisplay: FC = () => {
     displayPaddingY,
     pixelGrid,
     pixelGridWidth,
-    pixelCountX,
   } = computedValues;
 
   const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
@@ -30,7 +28,9 @@ const SignDisplay: FC = () => {
     () => getCanvasChunks(displayOnLightsId, pixelSize, pixelGrid.length),
     [displayOnLightsId, pixelSize, pixelGrid.length]
   );
-  const initPixelTransform = staticMode ? pixelSize * pixelCountX : undefined;
+  const initPixelTransform = shiftByPixels
+    ? pixelSize * shiftByPixels
+    : undefined;
 
   useEffect(() => {
     const displayOffLightsCtx = getCanvasContext(displayOffLightsId);

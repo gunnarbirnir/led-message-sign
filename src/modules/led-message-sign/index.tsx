@@ -1,23 +1,26 @@
 import React, {
-  FC,
-  memo,
-  useRef,
-  useId,
+  type FC,
   Fragment,
-  useState,
+  memo,
+  useId,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 
-import { BaseProps, LEDMessageSignProps } from "../types";
-import { sanitizeProps } from "../utils/props";
-import { calcComputedValues, calcColors } from "../utils";
-import { useObjectSize, useSignAnimation } from "../hooks";
-import { SignContext } from "../context";
-import { FRAME_TO_HEIGHT_RATIO } from "../constants";
-import SignFrame from "./SignFrame";
-import SignDisplay from "./SignDisplay";
+import { SignDisplay, SignFrame } from "~/components";
+import { SignContext } from "~/context";
+import { useObjectSize } from "~/hooks";
+import { type BaseProps } from "~/types";
+import { calcColors } from "~/utils";
 
-const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
+import { FRAME_TO_HEIGHT_RATIO } from "./constants";
+import { useSignAnimation } from "./hooks";
+import { type LEDMessageSignProps } from "./types";
+import { calcComputedValues } from "./utils";
+import { sanitizeProps } from "./utils/props";
+
+const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
   style = {},
   className,
   ...props
@@ -62,6 +65,9 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
         : undefined,
     [multipleMessages, props.text.length]
   );
+  const shiftByPixels = config.staticMode
+    ? computedValues.pixelCountX
+    : undefined;
 
   useSignAnimation(config, computedValues, {
     onAnimationFinished: updateTextIndex,
@@ -69,7 +75,9 @@ const LEDMessageSign: FC<BaseProps & LEDMessageSignProps> = ({
   });
 
   return (
-    <SignContext.Provider value={{ config, computedValues, colors }}>
+    <SignContext.Provider
+      value={{ id: signId, shiftByPixels, computedValues, colors }}
+    >
       <div ref={containerRef} className={className} style={containerStyle}>
         {computedValues.signWidth !== 0 && (
           <Frame>

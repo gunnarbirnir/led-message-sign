@@ -1,4 +1,4 @@
-import { COLOR_VALUES } from "./colors";
+import { COLOR_VALUES } from "~/constants/colors";
 
 export const DEFAULT_VALUE = {
   HEIGHT: 150,

@@ -1,54 +1,61 @@
-import { useEffect, useMemo, useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-import { SignConfig, SignComputedValues } from "../types";
-import { FRAME_DURATION } from "../constants";
-import { getSignIds } from "../utils";
-import { syncAnimations } from "../utils/animations";
+import { FRAME_DURATION } from "~/constants";
+import { type SignComputedValues } from "~/types";
+import { getSignIds, syncAnimations } from "~/utils";
 
-const useStaticSignAnimation = (
-  { id, animationFramesPerUpdate, staticMode, staticModeDelay }: SignConfig,
-  { pixelSize, pixelGrid, frameSize, pixelCountX }: SignComputedValues,
-  {
-    updateAnimationId,
-  }: { onAnimationFinished?: () => void; updateAnimationId?: string }
+import { type ImageSignConfig } from "../types";
+
+const useSignAnimation = (
+  config: ImageSignConfig,
+  computedValues: SignComputedValues
 ) => {
-  const [animationTimestamp, setAnimationTimestamp] = useState(Date.now());
+  const {
+    id,
+    animationFramesPerUpdate,
+    images,
+    animationOptions: {
+      delay,
+      direction,
+      endDelay,
+      fill,
+      iterations = Infinity,
+    },
+  } = config;
+  const { pixelSize, pixelGrid, frameSize } = computedValues;
+
   const updateDuration = useMemo(
     () => FRAME_DURATION * animationFramesPerUpdate,
     [animationFramesPerUpdate]
   );
+
   const animationOptions = useMemo(
     () => ({
-      duration: pixelGrid.length * updateDuration,
-      easing: `steps(${pixelGrid.length})`,
-      iterations: 1,
-      delay: staticModeDelay,
-      fill: "both" as FillMode,
+      delay,
+      direction,
+      endDelay,
+      fill,
+      iterations,
+      duration: images.length * updateDuration,
+      easing: `steps(${images.length})`,
     }),
-    [pixelGrid.length, updateDuration, staticModeDelay]
+    [
+      images.length,
+      updateDuration,
+      delay,
+      direction,
+      endDelay,
+      fill,
+      iterations,
+    ]
   );
 
   const calcKeyframes = useCallback(
-    (itemSize: number) => {
-      const initTranslateDistance = itemSize * pixelCountX;
-      const overflowTranslateDistance = itemSize * pixelGrid.length;
-      const overflowTranslateOffset =
-        (pixelGrid.length - pixelCountX) / pixelGrid.length;
-
-      return [
-        { transform: `translateX(-${initTranslateDistance}px)` },
-        {
-          transform: `translateX(-${overflowTranslateDistance}px)`,
-          offset: overflowTranslateOffset,
-        },
-        {
-          transform: `translateX(0px)`,
-          offset: overflowTranslateOffset,
-        },
-        { transform: `translateX(-${initTranslateDistance}px)` },
-      ];
-    },
-    [pixelCountX, pixelGrid.length]
+    (itemSize: number) => [
+      { transform: "translateX(0px)" },
+      { transform: `translateX(-${itemSize * pixelGrid.length}px)` },
+    ],
+    [pixelGrid.length]
   );
   const pixelKeyframes = useMemo(
     () => calcKeyframes(pixelSize),
@@ -60,11 +67,6 @@ const useStaticSignAnimation = (
   );
 
   useEffect(() => {
-    const textOverflows = pixelGrid.length > pixelCountX * 2;
-    if (!staticMode || !textOverflows) {
-      return;
-    }
-
     const {
       onLightsAnimationId,
       horizontalGlowAnimationId,
@@ -119,16 +121,6 @@ const useStaticSignAnimation = (
       updateDuration
     );
 
-    const restartAnimation = async () => {
-      if (onLightsAnimation) {
-        try {
-          await onLightsAnimation.finished;
-          setAnimationTimestamp(Date.now());
-        } catch {}
-      }
-    };
-    restartAnimation();
-
     return () => {
       if (onLightsAnimation) {
         onLightsAnimation.cancel();
@@ -143,18 +135,7 @@ const useStaticSignAnimation = (
         rightGlowAnimation.cancel();
       }
     };
-  }, [
-    id,
-    animationTimestamp,
-    updateDuration,
-    animationOptions,
-    pixelKeyframes,
-    frameKeyframes,
-    updateAnimationId,
-    staticMode,
-    pixelGrid.length,
-    pixelCountX,
-  ]);
+  }, [id, updateDuration, animationOptions, pixelKeyframes, frameKeyframes]);
 };
 
-export default useStaticSignAnimation;
+export default useSignAnimation;
