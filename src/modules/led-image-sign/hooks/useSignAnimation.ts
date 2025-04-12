@@ -14,13 +14,7 @@ const useSignAnimation = (
     id,
     animationFramesPerUpdate,
     images,
-    animationOptions: {
-      delay,
-      direction,
-      endDelay,
-      fill,
-      iterations = Infinity,
-    },
+    animationOptions: { delay, direction, fill, iterations = Infinity },
   } = config;
   const { pixelSize, pixelGrid, frameSize } = computedValues;
 
@@ -33,21 +27,12 @@ const useSignAnimation = (
     () => ({
       delay,
       direction,
-      endDelay,
       fill,
       iterations,
       duration: images.length * updateDuration,
       easing: `steps(${images.length})`,
     }),
-    [
-      images.length,
-      updateDuration,
-      delay,
-      direction,
-      endDelay,
-      fill,
-      iterations,
-    ]
+    [images.length, updateDuration, delay, direction, fill, iterations]
   );
 
   const calcKeyframes = useCallback(

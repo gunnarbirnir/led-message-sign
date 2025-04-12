@@ -8,7 +8,6 @@ export interface LEDImageSignProps extends LEDSignBaseProps {
   animationOptions?: {
     delay?: number;
     direction?: PlaybackDirection;
-    endDelay?: number;
     fill?: FillMode;
     iterations?: number;
   };

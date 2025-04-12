@@ -45,6 +45,5 @@ Works the same as the message sign but animates images instead of text.
 | `animationOptions`            | `object`            | Options for animation behavior.                                                         |         |                             |
 | `animationOptions.delay`      | `number`            | Delay in milliseconds before starting the animation.                                    |         |                             |
 | `animationOptions.direction`  | `PlaybackDirection` | Direction of the animation playback.                                                    |         |                             |
-| `animationOptions.endDelay`   | `number`            | Delay in milliseconds after the animation ends before restarting.                       |         |                             |
 | `animationOptions.fill`       | `FillMode`          | Determines how the animation applies styles to its target before and after execution.   |         |                             |
 | `animationOptions.iterations` | `number`            | Number of times the animation should repeat.                                            |         |                             |
