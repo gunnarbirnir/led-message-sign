@@ -1,4 +1,4 @@
-import { type LEDSignBaseProps } from "~/types";
+import { type LEDSignBaseProps } from "../../../types";
 
 export interface LEDMessageSignProps extends LEDSignBaseProps {
   /** Sign height. Default is 150. Min value is 60. */

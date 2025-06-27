@@ -1,4 +1,4 @@
-import { type LEDSignBaseProps, type PixelGrid } from "~/types";
+import { type LEDSignBaseProps, type PixelGrid } from "../../../types";
 
 export interface LEDImageSignProps extends LEDSignBaseProps {
   /** Sign width. Default is 500. Min value is 60. */

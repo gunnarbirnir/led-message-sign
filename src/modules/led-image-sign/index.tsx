@@ -3,9 +3,9 @@ import React, { type FC, Fragment, memo, useId, useRef } from "react";
 import { SignDisplay, SignFrame } from "~/components";
 import { SignContext } from "~/context";
 import { useObjectSize } from "~/hooks";
-import { type BaseProps } from "~/types";
 import { calcColors } from "~/utils";
 
+import { type BaseProps } from "../../types";
 import { FRAME_TO_WIDTH_RATIO } from "./constants";
 import { useSignAnimation } from "./hooks";
 import { type LEDImageSignProps } from "./types";
