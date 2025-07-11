@@ -18,6 +18,9 @@ import AnimationContainer from "./AnimationContainer";
 import Canvas from "./Canvas";
 import CanvasChunks from "./CanvasChunks";
 
+// To prevent overflow
+const OFFSET_PADDING = 1;
+
 const SignFrame: FC<PropsWithChildren> = ({ children }) => {
   const { id, shiftByPixels, computedValues, colors } = useSignContext();
   const {
@@ -59,7 +62,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
 
   const verticalGlowStyle = {
     top: frameSize + displayPaddingY,
-    width: frameSize,
+    width: frameSize - OFFSET_PADDING,
     height: pixelAreaHeight,
   };
   const initFrameTransform = shiftByPixels
@@ -110,9 +113,9 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
+          top: OFFSET_PADDING,
           overflow: "hidden",
-          height: signHeight,
+          height: signHeight - OFFSET_PADDING * 2,
           width: pixelAreaWidth,
           left: frameSize + displayPaddingX,
         }}
@@ -132,7 +135,7 @@ const SignFrame: FC<PropsWithChildren> = ({ children }) => {
       <div
         style={{
           ...verticalGlowStyle,
-          left: 0,
+          left: OFFSET_PADDING,
           position: "absolute",
           overflow: "hidden",
         }}
