@@ -29,6 +29,10 @@ See here: [LED Message Sign](https://master--willowy-tarsier-1357d9.netlify.app/
 
 Works the same as the message sign but animates images instead of text.
 
+UI to change props can be found here: [led-image-sign-ui](https://github.com/gunnarbirnir/led-image-sign-ui).
+
+See here: [LED Image Sign](https://ephemeral-zuccutto-46fa11.netlify.app/)
+
 ### Props
 
 | Property                      | Type                | Description                                                                             | Default | Constraints                 |
