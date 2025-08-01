@@ -83,6 +83,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
     [frameRightGlowId, frameSize, pixelGrid.length, pixelsPerChunk]
   );
 
+  const horizontalGlowHeight = signHeight - 2 * OFFSET_PADDING;
   const verticalGlowStyle = {
     top: frameSize + displayPaddingY,
     width: frameSize - OFFSET_PADDING,
@@ -110,7 +111,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
   useEffect(() => {
     drawFrameHorizontalGlow(
       horizontalGlowCanvasChunks,
-      computedValues,
+      { ...computedValues, signHeight: horizontalGlowHeight },
       colors,
       isImageSign
     );
@@ -128,6 +129,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
     leftGlowCanvasChunks,
     rightGlowCanvasChunks,
     isImageSign,
+    horizontalGlowHeight,
   ]);
 
   return (
@@ -144,7 +146,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
           position: "absolute",
           top: OFFSET_PADDING,
           overflow: "hidden",
-          height: signHeight - OFFSET_PADDING * 2,
+          height: horizontalGlowHeight,
           width: pixelAreaWidth,
           left: frameSize + displayPaddingX,
         }}
@@ -156,7 +158,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
         >
           <CanvasChunks
             chunks={horizontalGlowCanvasChunks}
-            height={signHeight}
+            height={horizontalGlowHeight}
           />
         </AnimationContainer>
       </div>
