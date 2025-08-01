@@ -3,6 +3,7 @@ import { COLOR_VALUES } from "~/constants/colors";
 export const DEFAULT_VALUE = {
   IMAGES: [Array.from({ length: 10 }, () => Array(20).fill(null))],
   WIDTH: 500,
+  MIN_HEIGHT: 0,
   FULL_WIDTH: false,
   ON_BULB_LIGHTNESS: COLOR_VALUES.BULB_ON.lightness,
   OFF_BULB_LIGHTNESS: COLOR_VALUES.BULB_OFF.lightness,
@@ -16,6 +17,7 @@ export const DEFAULT_VALUE = {
 
 export const MIN_VALUE = {
   WIDTH: 60,
+  MIN_HEIGHT: 0,
   ON_BULB_LIGHTNESS: 70,
   OFF_BULB_LIGHTNESS: 0,
   FRAME_LIGHTNESS: 10,

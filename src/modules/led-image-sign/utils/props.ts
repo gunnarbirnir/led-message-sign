@@ -6,6 +6,7 @@ import { type LEDImageSignProps } from "../types";
 export const sanitizeProps = ({
   images = DEFAULT_VALUE.IMAGES,
   width = DEFAULT_VALUE.WIDTH,
+  minHeight = DEFAULT_VALUE.MIN_HEIGHT,
   fullWidth = DEFAULT_VALUE.FULL_WIDTH,
   onBulbLightness = DEFAULT_VALUE.ON_BULB_LIGHTNESS,
   offBulbLightness = DEFAULT_VALUE.OFF_BULB_LIGHTNESS,
@@ -19,6 +20,7 @@ export const sanitizeProps = ({
   return {
     images: images.length ? images : DEFAULT_VALUE.IMAGES,
     width: sanitizeMinValue(width, MIN_VALUE.WIDTH),
+    minHeight: sanitizeMinValue(minHeight, MIN_VALUE.MIN_HEIGHT),
     fullWidth,
     onBulbLightness: sanitizeMinMaxValue(
       onBulbLightness,

@@ -53,13 +53,19 @@ export const calcComputedValues = (config: ImageSignConfig) => {
   const approxPaddingX = signWidth * PADDING_TO_WIDTH_RATIO * 2;
   const pixelSize = Math.round((displayWidth - approxPaddingX) / pixelCountX);
   const pixelAreaWidth = pixelSize * pixelCountX;
-  const pixelAreaHeight = pixelSize * pixelCountY;
   const displayPaddingX = (displayWidth - pixelAreaWidth) / 2;
-  const displayPaddingY = displayPaddingX;
-  const displayHeight = pixelAreaHeight + displayPaddingY * 2;
-  const signHeight = displayHeight + frameSize * 2;
   const pixelGrid = calcPixelGrid(config.images, pixelCountX, pixelCountY);
   const pixelGridWidth = pixelSize * pixelGrid.length;
+
+  const pixelAreaHeight = pixelSize * pixelCountY;
+  const approxDisplayPaddingY = displayPaddingX;
+  const approxDisplayHeight = pixelAreaHeight + approxDisplayPaddingY * 2;
+  const signHeight = Math.max(
+    approxDisplayHeight + frameSize * 2,
+    config.minHeight
+  );
+  const displayHeight = signHeight - frameSize * 2;
+  const displayPaddingY = (displayHeight - pixelAreaHeight) / 2;
 
   return {
     signHeight,

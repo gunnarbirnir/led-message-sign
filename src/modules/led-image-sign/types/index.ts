@@ -3,6 +3,8 @@ import { type LEDSignBaseProps, type PixelGrid } from "../../../types";
 export interface LEDImageSignProps extends LEDSignBaseProps {
   /** Sign width. Default is 500. Min value is 60. */
   width?: number;
+  /** Sign minimum height. */
+  minHeight?: number;
   /** Images to use in sign animation. Will all use the dimensions of the first image. */
   images: PixelGrid[];
   /** How much of the available width the frame should take up. Default is 0.04. */
