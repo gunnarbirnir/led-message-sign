@@ -5,6 +5,8 @@ export interface LEDImageSignProps extends LEDSignBaseProps {
   width?: number;
   /** Images to use in sign animation. Will all use the dimensions of the first image. */
   images: PixelGrid[];
+  /** How much of the available width the frame should take up. Default is 0.04. */
+  frameToWidthRatio?: number;
   animationOptions?: {
     delay?: number;
     direction?: PlaybackDirection;

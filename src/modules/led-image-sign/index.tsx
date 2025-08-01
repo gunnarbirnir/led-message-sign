@@ -6,7 +6,6 @@ import { useObjectSize } from "~/hooks";
 import { calcColors } from "~/utils";
 
 import { type BaseProps } from "../../types";
-import { FRAME_TO_WIDTH_RATIO } from "./constants";
 import { useSignAnimation } from "./hooks";
 import { type LEDImageSignProps } from "./types";
 import { calcComputedValues } from "./utils";
@@ -24,7 +23,7 @@ const LEDImageSign: FC<LEDImageSignProps & BaseProps> = ({
   ]);
 
   const sanitizedProps = sanitizeProps(props);
-  const { hideFrame, fullWidth, width } = sanitizedProps;
+  const { hideFrame, fullWidth, width, frameToWidthRatio } = sanitizedProps;
   const Frame = hideFrame ? Fragment : SignFrame;
   const containerStyle = {
     overflow: "hidden",
@@ -36,7 +35,7 @@ const LEDImageSign: FC<LEDImageSignProps & BaseProps> = ({
     ...sanitizedProps,
     id: signId,
     width: fullWidth ? containerWidth : width,
-    frameProportion: hideFrame ? 0 : FRAME_TO_WIDTH_RATIO,
+    frameProportion: hideFrame ? 0 : frameToWidthRatio,
   };
   const computedValues = calcComputedValues(config);
   const colors = calcColors(config);

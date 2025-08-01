@@ -16,6 +16,8 @@ export interface LEDMessageSignProps extends LEDSignBaseProps {
   staticMode?: boolean;
   /** Delay in milliseconds before moving to reveal overflowing text. Default is 2000. Value is between 100ms and 60s. */
   staticModeDelay?: number;
+  /** How much of the available height the frame should take up. Default is 0.1. */
+  frameToHeightRatio?: number;
 }
 
 export interface MessageSignConfig extends Required<LEDMessageSignProps> {

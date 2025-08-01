@@ -23,6 +23,7 @@ export const sanitizeProps = ({
   animationFramesPerUpdate = DEFAULT_VALUE.ANIMATION_FRAMES_PER_UPDATE,
   staticMode = DEFAULT_VALUE.STATIC_MODE,
   staticModeDelay = DEFAULT_VALUE.STATIC_MODE_DELAY,
+  frameToHeightRatio = DEFAULT_VALUE.FRAME_TO_HEIGHT_RATIO,
 }: Omit<LEDMessageSignProps, "text"> & { text: string }) => {
   return {
     text:
@@ -67,6 +68,12 @@ export const sanitizeProps = ({
       staticModeDelay,
       MIN_VALUE.STATIC_MODE_DELAY,
       MAX_VALUE.STATIC_MODE_DELAY
+    ),
+    frameToHeightRatio: sanitizeMinMaxValue(
+      frameToHeightRatio,
+      MIN_VALUE.FRAME_TO_HEIGHT_RATIO,
+      MAX_VALUE.FRAME_TO_HEIGHT_RATIO,
+      false
     ),
   };
 };

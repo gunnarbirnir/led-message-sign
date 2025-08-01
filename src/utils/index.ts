@@ -28,9 +28,10 @@ export const sanitizeMinValue = (val: number, minVal: number) => {
 export const sanitizeMinMaxValue = (
   val: number,
   minVal: number,
-  maxVal: number
+  maxVal: number,
+  roundValue: boolean = true
 ) => {
-  const roundedVal = Math.round(val);
+  const roundedVal = roundValue ? Math.round(val) : val;
   return Math.max(Math.min(roundedVal, maxVal), minVal);
 };
 

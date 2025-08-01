@@ -14,7 +14,6 @@ import { useObjectSize } from "~/hooks";
 import { calcColors } from "~/utils";
 
 import { type BaseProps } from "../../types";
-import { FRAME_TO_HEIGHT_RATIO } from "./constants";
 import { useSignAnimation } from "./hooks";
 import { type LEDMessageSignProps } from "./types";
 import { calcComputedValues } from "./utils";
@@ -36,7 +35,7 @@ const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
     ? props.text[textIndex]
     : props.text;
   const sanitizedProps = sanitizeProps({ ...props, text: currentText });
-  const { hideFrame, fullWidth, width } = sanitizedProps;
+  const { hideFrame, fullWidth, width, frameToHeightRatio } = sanitizedProps;
   const Frame = hideFrame ? Fragment : SignFrame;
   const containerStyle = {
     overflow: "hidden",
@@ -48,7 +47,7 @@ const LEDMessageSign: FC<LEDMessageSignProps & BaseProps> = ({
     ...sanitizedProps,
     id: signId,
     width: fullWidth ? containerWidth : width,
-    frameProportion: hideFrame ? 0 : FRAME_TO_HEIGHT_RATIO,
+    frameProportion: hideFrame ? 0 : frameToHeightRatio,
   };
   const computedValues = calcComputedValues(config);
   const colors = calcColors(config);
