@@ -46,8 +46,8 @@ const LEDImageSign: FC<LEDImageSignProps & BaseProps> = ({
     <SignContext.Provider value={{ id: signId, computedValues, colors }}>
       <div ref={containerRef} className={className} style={containerStyle}>
         {computedValues.signWidth !== 0 && (
-          <Frame>
-            <SignDisplay />
+          <Frame isImageSign>
+            <SignDisplay isImageSign />
           </Frame>
         )}
       </div>

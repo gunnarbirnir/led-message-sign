@@ -257,7 +257,8 @@ const PART_GLOW_OPACITY = 0.5;
 export const drawFrameHorizontalGlow = (
   canvasChunks: CanvasChunk[],
   computedValues: SignComputedValues,
-  colors: SignColors
+  colors: SignColors,
+  isImageSign: boolean
 ) => {
   const { signHeight, pixelSize, pixelCountY, pixelGrid, frameSize } =
     computedValues;
@@ -287,8 +288,8 @@ export const drawFrameHorizontalGlow = (
       position,
       hslValuesToCss(
         pixelHue,
-        colors.glow.saturation,
-        colors.glow.lightness,
+        opacity === 0 ? colors.frame.saturation : colors.glow.saturation,
+        opacity === 0 ? colors.frame.lightness : colors.glow.lightness,
         opacity
       )
     );
@@ -303,7 +304,8 @@ export const drawFrameHorizontalGlow = (
         addGlowColorStop({
           gradient: topGlow,
           position: 1,
-          opacity: topOpacity,
+          // Image sign is chunked to frames
+          opacity: isImageSign ? 0 : topOpacity,
           pixelHue: topPixelHue,
         });
         ctx.fillStyle = topGlow;
@@ -312,7 +314,7 @@ export const drawFrameHorizontalGlow = (
         addGlowColorStop({
           gradient: bottomGlow,
           position: 1,
-          opacity: bottomOpacity,
+          opacity: isImageSign ? 0 : bottomOpacity,
           pixelHue: bottomPixelHue,
         });
         ctx.fillStyle = bottomGlow;
@@ -330,7 +332,7 @@ export const drawFrameHorizontalGlow = (
         addGlowColorStop({
           gradient: topGlow,
           position: 0,
-          opacity: topOpacity,
+          opacity: isImageSign ? 0 : topOpacity,
           pixelHue: topPixelHue,
         });
 
@@ -338,7 +340,7 @@ export const drawFrameHorizontalGlow = (
         addGlowColorStop({
           gradient: bottomGlow,
           position: 0,
-          opacity: bottomOpacity,
+          opacity: isImageSign ? 0 : bottomOpacity,
           pixelHue: bottomPixelHue,
         });
       }
@@ -438,8 +440,8 @@ export const drawFrameVerticalGlow = (
       position,
       hslValuesToCss(
         pixelHue,
-        colors.glow.saturation,
-        colors.glow.lightness,
+        opacity === 0 ? colors.frame.saturation : colors.glow.saturation,
+        opacity === 0 ? colors.frame.lightness : colors.glow.lightness,
         opacity
       )
     );

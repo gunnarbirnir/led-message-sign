@@ -168,10 +168,12 @@ export const calcColors = ({
 export const getCanvasChunks = (
   chunkBaseId: string,
   itemSize: number,
-  itemCount: number
+  itemCount: number,
+  itemsPerChunkCount?: number | null
 ) => {
   const canvasChunks: CanvasChunk[] = [];
-  const itemsPerChunk = Math.floor(CANVAS_CHUNK_SIZE / itemSize);
+  const itemsPerChunk =
+    itemsPerChunkCount ?? Math.floor(CANVAS_CHUNK_SIZE / itemSize);
   const chunkWidth = itemsPerChunk * itemSize;
   const totalWidth = itemCount * itemSize;
   const chunkCount = Math.ceil(totalWidth / chunkWidth);

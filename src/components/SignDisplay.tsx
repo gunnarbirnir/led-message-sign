@@ -8,7 +8,9 @@ import AnimationContainer from "./AnimationContainer";
 import Canvas from "./Canvas";
 import CanvasChunks from "./CanvasChunks";
 
-const SignDisplay: FC = () => {
+const SignDisplay: FC<{ isImageSign?: boolean }> = ({
+  isImageSign = false,
+}) => {
   const { id, shiftByPixels, computedValues, colors } = useSignContext();
   const {
     pixelSize,
@@ -20,13 +22,21 @@ const SignDisplay: FC = () => {
     displayPaddingY,
     pixelGrid,
     pixelGridWidth,
+    pixelCountX,
   } = computedValues;
 
+  const pixelsPerChunk = isImageSign ? pixelCountX : null;
   const { displayOnLightsId, displayOffLightsId, onLightsAnimationId } =
     getSignIds(id);
   const onLightsCanvasChunks = useMemo(
-    () => getCanvasChunks(displayOnLightsId, pixelSize, pixelGrid.length),
-    [displayOnLightsId, pixelSize, pixelGrid.length]
+    () =>
+      getCanvasChunks(
+        displayOnLightsId,
+        pixelSize,
+        pixelGrid.length,
+        pixelsPerChunk
+      ),
+    [displayOnLightsId, pixelSize, pixelGrid.length, pixelsPerChunk]
   );
   const initPixelTransform = shiftByPixels
     ? pixelSize * shiftByPixels
