@@ -5,6 +5,7 @@ export interface BaseProps {
   className?: string;
 }
 
+// TODO: Update docs
 export interface LEDSignBaseProps {
   /** Make sign fill available space. If true width prop will be ignored. Default is false. */
   fullWidth?: boolean;
@@ -20,14 +21,15 @@ export interface LEDSignBaseProps {
   hideFrame?: boolean;
   /** How many animation frames pass between sign updates. Default is 6. Value is between 1 and 60. */
   animationFramesPerUpdate?: number;
+  // TODO: Custom on and off bulbs
 }
 
 export interface SignConfig extends Required<LEDSignBaseProps> {
-  id: string; //
+  id: string;
   frameProportion: number;
   colorHue: number;
   coloredOffLights: boolean;
-  staticMode: boolean; //
+  staticMode: boolean;
 }
 
 // The number is the hue value of the pixel

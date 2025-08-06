@@ -21,3 +21,7 @@ export interface ImageSignConfig extends Required<LEDImageSignProps> {
   id: string;
   frameProportion: number;
 }
+
+export type ImageSignRef = {
+  redrawImage: ({ newImage }: { newImage: (number | null)[][] }) => void;
+};
