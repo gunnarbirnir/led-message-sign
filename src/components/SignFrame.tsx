@@ -5,6 +5,7 @@ import React, {
   useMemo,
 } from "react";
 
+import { FRAME_OFFSET_PADDING } from "~/constants";
 import { useSignContext } from "~/hooks";
 import { getCanvasChunks, getCanvasContext, getSignIds } from "~/utils";
 import {
@@ -17,9 +18,6 @@ import {
 import AnimationContainer from "./AnimationContainer";
 import Canvas from "./Canvas";
 import CanvasChunks from "./CanvasChunks";
-
-// To prevent overflow
-const OFFSET_PADDING = 1;
 
 const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
   children,
@@ -83,10 +81,10 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
     [frameRightGlowId, frameSize, pixelGrid.length, pixelsPerChunk]
   );
 
-  const horizontalGlowHeight = signHeight - 2 * OFFSET_PADDING;
+  const horizontalGlowHeight = signHeight - 2 * FRAME_OFFSET_PADDING;
   const verticalGlowStyle = {
     top: frameSize + displayPaddingY,
-    width: frameSize - OFFSET_PADDING,
+    width: frameSize - FRAME_OFFSET_PADDING,
     height: pixelAreaHeight,
   };
   const initFrameTransform = shiftByPixels
@@ -144,7 +142,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
       <div
         style={{
           position: "absolute",
-          top: OFFSET_PADDING,
+          top: FRAME_OFFSET_PADDING,
           overflow: "hidden",
           height: horizontalGlowHeight,
           width: pixelAreaWidth,
@@ -166,7 +164,7 @@ const SignFrame: FC<PropsWithChildren & { isImageSign?: boolean }> = ({
       <div
         style={{
           ...verticalGlowStyle,
-          left: OFFSET_PADDING,
+          left: FRAME_OFFSET_PADDING,
           position: "absolute",
           overflow: "hidden",
         }}

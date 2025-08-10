@@ -23,11 +23,11 @@ export interface LEDSignBaseProps {
 }
 
 export interface SignConfig extends Required<LEDSignBaseProps> {
-  id: string; //
+  id: string;
   frameProportion: number;
   colorHue: number;
   coloredOffLights: boolean;
-  staticMode: boolean; //
+  staticMode: boolean;
 }
 
 // The number is the hue value of the pixel
