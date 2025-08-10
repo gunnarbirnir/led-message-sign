@@ -39,6 +39,7 @@ See here: [LED Image Sign](https://ephemeral-zuccutto-46fa11.netlify.app/)
 | ----------------------------- | ------------------- | --------------------------------------------------------------------------------------- | ------- | --------------------------- |
 | `images`                      | `PixelGrid[]`       | Images to use in sign animation. All images will use the dimensions of the first image. |         |                             |
 | `width`                       | `number`            | Sign width.                                                                             | 500     | Min value is 60             |
+| `minHeight`                   | `number`            | Sign minimum height.                                                                    |         |                             |
 | `fullWidth`                   | `boolean`           | Make sign fill available space. If true, width prop will be ignored.                    | false   |                             |
 | `onBulbLightness`             | `number`            | Lightness value for HSL color of on bulbs.                                              | 95      | Value is between 70 and 100 |
 | `offBulbLightness`            | `number`            | Lightness value for HSL color of off bulbs.                                             | 10      | Value is between 0 and 30   |
