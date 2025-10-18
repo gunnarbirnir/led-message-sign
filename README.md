@@ -33,6 +33,8 @@ UI to change props can be found here: [led-image-sign-ui](https://github.com/gun
 
 See here: [LED Image Sign](https://ephemeral-zuccutto-46fa11.netlify.app/)
 
+For imperative control of LEDImageSign, the component exposes a function to update the current image on the screen, `redrawImage`. It can be accessed with a ref on the component. The function has one parameter, which is an object with one property `newImage` of type `PixelGrid`. It can be useful when the sequence of images is not known in advance, for example in games.
+
 ### Props
 
 | Property                      | Type                | Description                                                                             | Default | Constraints                 |
